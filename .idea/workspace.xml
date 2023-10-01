@@ -5,11 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="e122cee9-82eb-44c3-9c04-849ea5971deb" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/kotlin/ie/setu/config/AccessManagerConfiguration.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/kotlin/ie/setu/domain/Meal.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/ie/setu/config/JavalinConfig.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/ie/setu/config/JavalinConfig.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/ie/setu/controllers/AuthenticationController.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/ie/setu/controllers/AuthenticationController.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/ie/setu/utils/authentication/JwtProvider.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/ie/setu/utils/authentication/JwtProvider.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/ie/setu/domain/User.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/ie/setu/domain/User.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -19,8 +18,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Kotlin Class" />
         <option value="Kotlin File" />
+        <option value="Kotlin Class" />
       </list>
     </option>
   </component>
@@ -55,12 +54,13 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "WebServerToolWindowFactoryState": "false",
-    "git-widget-placeholder": "user-authentication-test",
+    "git-widget-placeholder": "4-diet-recorder",
     "last_opened_file_path": "/Users/setu/SETU/agile-workspace/healthtrackerrest",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
+    "settings.editor.selected.configurable": "preferences.sourceCode.Kotlin",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -74,12 +74,6 @@
       <option name="MAIN_CLASS_NAME" value="ie.setu.AppKt" />
       <module name="healthtrackerrest" />
       <shortenClasspath name="NONE" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration default="true" type="JetRunConfigurationType">
-      <module name="healthtrackerrest" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -101,6 +95,7 @@
       <workItem from="1696075551422" duration="2803000" />
       <workItem from="1696078367281" duration="112000" />
       <workItem from="1696078484080" duration="12985000" />
+      <workItem from="1696183294262" duration="406000" />
     </task>
     <task id="LOCAL-00001" summary="Complete Lab-04 exercises">
       <option name="closed" value="true" />
@@ -134,7 +129,15 @@
       <option name="project" value="LOCAL" />
       <updated>1696154978494</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="Add Ktlint">
+      <option name="closed" value="true" />
+      <created>1696161492765</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1696161492765</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -155,6 +158,7 @@
     <MESSAGE value="Complete Lab-04 exercises" />
     <MESSAGE value="Add javalin-jwt dependency" />
     <MESSAGE value="Add basic implementation" />
-    <option name="LAST_COMMIT_MESSAGE" value="Add basic implementation" />
+    <MESSAGE value="Add Ktlint" />
+    <option name="LAST_COMMIT_MESSAGE" value="Add Ktlint" />
   </component>
 </project>
