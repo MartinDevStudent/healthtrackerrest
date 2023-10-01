@@ -7,17 +7,15 @@ import io.javalin.Javalin
 import io.javalin.apibuilder.ApiBuilder.*
 import javalinjwt.JWTAccessManager
 
-
-
 class JavalinConfig {
     fun startJavalinService(): Javalin {
-
-        val app = Javalin.create {
-            it.accessManager(JWTAccessManager("level", rolesMapping, Roles.ANYONE))
-        }.apply {
-            exception(Exception::class.java)  { e, _ -> e.printStackTrace() }
-            error(404) { ctx -> ctx.json("404 - Not Found") }
-        }.start(7000)
+        val app =
+            Javalin.create {
+                it.accessManager(JWTAccessManager("level", rolesMapping, Roles.ANYONE))
+            }.apply {
+                exception(Exception::class.java) { e, _ -> e.printStackTrace() }
+                error(404) { ctx -> ctx.json("404 - Not Found") }
+            }.start(7000)
 
         app.before(JwtProvider.decodeHandler)
 

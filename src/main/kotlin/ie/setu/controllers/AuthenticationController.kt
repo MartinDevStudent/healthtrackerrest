@@ -6,10 +6,9 @@ import ie.setu.utils.authentication.JwtResponse
 import io.javalin.http.Context
 import javalinjwt.JavalinJWT
 
-
 object AuthenticationController {
     fun generate(ctx: Context) {
-        val mockUser = User(1,"Mocky McMockface", "mock@email.com","user")
+        val mockUser = User(1, "Mocky McMockface", "mock@email.com", "user")
         val token = JwtProvider.provider.generateToken(mockUser)
         ctx.json(JwtResponse(token))
     }

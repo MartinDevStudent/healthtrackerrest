@@ -4,17 +4,16 @@ import ie.setu.domain.User
 import java.util.*
 import kotlin.collections.ArrayList
 
-
 class UserDAO {
+    private val users =
+        arrayListOf<User>(
+            User(name = "Alice", email = "alice@wonderland.com", id = 0, level = "user"),
+            User(name = "Bob", email = "bob@cat.ie", id = 1, level = "user"),
+            User(name = "Mary", email = "mary@contrary.com", id = 2, level = "user"),
+            User(name = "Carol", email = "carol@singer.com", id = 3, level = "user"),
+        )
 
-    private val users = arrayListOf<User>(
-        User(name = "Alice", email = "alice@wonderland.com", id = 0, level = "user"),
-        User(name = "Bob", email = "bob@cat.ie", id = 1, level = "user"),
-        User(name = "Mary", email = "mary@contrary.com", id = 2, level = "user"),
-        User(name = "Carol", email = "carol@singer.com", id = 3, level = "user")
-    )
-
-    fun getAll() : ArrayList<User>{
+    fun getAll(): ArrayList<User> {
         return users
     }
 
@@ -22,7 +21,7 @@ class UserDAO {
         return users.find { it.id == id }
     }
 
-    fun findByEmail(email: String) :User? {
+    fun findByEmail(email: String): User? {
         return users.find { it.email.lowercase(Locale.getDefault()) == email.lowercase(Locale.getDefault()) }
     }
 
@@ -34,7 +33,10 @@ class UserDAO {
         users.removeIf { it.id == id }
     }
 
-    fun update(id: Int, user: User) {
+    fun update(
+        id: Int,
+        user: User,
+    ) {
         val index = users.indexOfFirst { it.id == id }
         if (index != -1) {
             users[index] = user
