@@ -4,13 +4,14 @@ import ie.setu.domain.User
 import java.util.*
 import kotlin.collections.ArrayList
 
+
 class UserDAO {
 
     private val users = arrayListOf<User>(
-        User(name = "Alice", email = "alice@wonderland.com", id = 0),
-        User(name = "Bob", email = "bob@cat.ie", id = 1),
-        User(name = "Mary", email = "mary@contrary.com", id = 2),
-        User(name = "Carol", email = "carol@singer.com", id = 3)
+        User(name = "Alice", email = "alice@wonderland.com", id = 0, level = "user"),
+        User(name = "Bob", email = "bob@cat.ie", id = 1, level = "user"),
+        User(name = "Mary", email = "mary@contrary.com", id = 2, level = "user"),
+        User(name = "Carol", email = "carol@singer.com", id = 3, level = "user")
     )
 
     fun getAll() : ArrayList<User>{
