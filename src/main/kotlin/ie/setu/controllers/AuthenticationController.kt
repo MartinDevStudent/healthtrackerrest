@@ -15,16 +15,8 @@ object AuthenticationController {
     }
 
     fun validate(ctx: Context) {
-        val decodedJWT = JavalinJWT.getTokenFromHeader(ctx)
-            .flatMap { token: String? ->
-                JwtProvider.provider.validateToken(
-                    token
-                )
-            }
-        if (!decodedJWT.isPresent) {
-            ctx.status(401).result("Missing or invalid token")
-        } else {
-            ctx.result("Hi " + decodedJWT.get().getClaim("name").asString())
-        }
+        println("test")
+        val decodedJWT = JavalinJWT.getDecodedFromContext(ctx)
+        ctx.result("Hi " + decodedJWT.getClaim("name").asString())
     }
 }

@@ -6,6 +6,10 @@ import com.auth0.jwt.algorithms.Algorithm
 import ie.setu.domain.User
 import javalinjwt.JWTGenerator
 import javalinjwt.JWTProvider
+import javalinjwt.JavalinJWT
+
+
+
 
 object JwtProvider {
     //1.
@@ -24,5 +28,6 @@ object JwtProvider {
 
     //4.
     val provider: JWTProvider<User> = JWTProvider(algorithm, generator, verifier)
+    val decodeHandler = JavalinJWT.createHeaderDecodeHandler(provider)
 }
 
