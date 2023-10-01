@@ -1,18 +1,28 @@
 package ie.setu.config
 
+import ie.setu.controllers.AuthenticationController
 import ie.setu.controllers.HealthTrackerController
+import ie.setu.utils.authentication.JwtProvider
 import io.javalin.Javalin
 import io.javalin.apibuilder.ApiBuilder.*
+import javalinjwt.JWTAccessManager
+
+
 
 class JavalinConfig {
     fun startJavalinService(): Javalin {
 
-        val app = Javalin.create().apply {
-            exception(Exception::class.java)  { e, ctx -> e.printStackTrace() }
+        val app = Javalin.create {
+            it.accessManager(JWTAccessManager("level", rolesMapping, Roles.ANYONE))
+        }.apply {
+            exception(Exception::class.java)  { e, _ -> e.printStackTrace() }
             error(404) { ctx -> ctx.json("404 - Not Found") }
         }.start(7000)
 
+        app.before(JwtProvider.decodeHandler)
+
         registerRoutes(app)
+
         return app
     }
 
@@ -28,6 +38,14 @@ class JavalinConfig {
                 }
                 path("/email/{email}") {
                     get(HealthTrackerController::getUserByEmail)
+                }
+            }
+            path("/api/authentication") {
+                path("/generate") {
+                    get(AuthenticationController::generate, Roles.ANYONE)
+                }
+                path("/validate") {
+                    get(AuthenticationController::validate, Roles.USER)
                 }
             }
         }
