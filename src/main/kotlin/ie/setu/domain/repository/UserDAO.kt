@@ -3,6 +3,7 @@ package ie.setu.domain.repository
 import ie.setu.domain.User
 import ie.setu.domain.db.Users
 import ie.setu.utils.mapToUser
+import org.jetbrains.exposed.sql.lowerCase
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -32,8 +33,12 @@ class UserDAO {
     }
 
     fun findByEmail(email: String) :User? {
-        return null
-        //return users.find { it.email.lowercase(Locale.getDefault()) == email.lowercase(Locale.getDefault()) }
+        return transaction {
+            Users.select() {
+                Users.email.lowerCase() eq email.lowercase()}
+                .map{mapToUser(it)}
+                .firstOrNull()
+        }
     }
 
     fun save(user: User) {
