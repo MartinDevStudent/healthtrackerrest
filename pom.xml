@@ -9,8 +9,7 @@
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>Greeting - A Sample Kotlin App</name>
-    <url>http://maven.apache.org</url>
+    <name>Health Tracker App</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
