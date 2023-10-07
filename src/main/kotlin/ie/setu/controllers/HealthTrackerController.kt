@@ -42,8 +42,11 @@ object HealthTrackerController {
 
     fun updateUser(ctx: Context) {
         val mapper = jacksonObjectMapper()
-        val user = mapper.readValue<User>(ctx.body())
-        userDao.update(ctx.pathParam("user-id").toInt(), user)
-        ctx.json(user)
+        val userToUpdate = mapper.readValue<User>(ctx.body())
+        userDao.update(
+            id = ctx.pathParam("user-id").toInt(),
+            user = userToUpdate
+        )
+        ctx.json(userToUpdate)
     }
 }
