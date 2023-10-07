@@ -9,7 +9,7 @@ import java.net.http.HttpRequest
 import java.net.http.HttpResponse.BodyHandlers
 
 object NutrientHttpClient {
-    val mapper = jacksonObjectMapper()
+    private val mapper = jacksonObjectMapper()
 
     fun get(mealName: String): Array<Ingredient> {
         val client = HttpClient.newHttpClient()
