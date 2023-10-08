@@ -18,7 +18,7 @@ class JavalinConfig {
         }.apply {
             exception(Exception::class.java)  { e, _ -> e.printStackTrace() }
             error(404) { ctx -> ctx.json("404 - Not Found") }
-        }.start(7000)
+        }.start(getRemoteAssignedPort())
 
         app.before(JwtProvider.decodeHandler)
 
@@ -27,24 +27,29 @@ class JavalinConfig {
         return app
     }
 
+    private fun getRemoteAssignedPort(): Int {
+        val remotePort = System.getenv("PORT")
+        return if (remotePort != null) {
+            Integer.parseInt(remotePort)
+        } else 7000
+    }
+
     private fun registerRoutes(app: Javalin) {
         app.routes {
             path("/api/users") {
-                get(HealthTrackerController::getAllUsers)
-                post(HealthTrackerController::addUser)
+                get(HealthTrackerController::getAllUsers, Roles.ANYONE)
+                post(HealthTrackerController::addUser, Roles.ANYONE)
                 path("{user-id}") {
-                    get(HealthTrackerController::getUserByUserId)
-                    delete(HealthTrackerController::deleteUser)
-                    patch(HealthTrackerController::updateUser)
+                    get(HealthTrackerController::getUserByUserId, Roles.ANYONE)
+                    delete(HealthTrackerController::deleteUser, Roles.ANYONE)
+                    patch(HealthTrackerController::updateUser, Roles.ANYONE)
                 }
                 path("/email/{email}") {
-                    get(HealthTrackerController::getUserByEmail)
+                    get(HealthTrackerController::getUserByEmail, Roles.ANYONE)
                 }
             }
             path("/api/authentication") {
-                path("/generate") {
-                    get(AuthenticationController::generate, Roles.ANYONE)
-                }
+                post(AuthenticationController::login, Roles.ANYONE)
                 path("/validate") {
                     get(AuthenticationController::validate, Roles.USER)
                 }
