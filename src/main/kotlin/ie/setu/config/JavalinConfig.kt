@@ -13,7 +13,7 @@ class JavalinConfig {
     fun startJavalinService(): Javalin {
 
         val app = Javalin.create {
-            //it.accessManager(JWTAccessManager("level", rolesMapping, Roles.ANYONE))
+            it.accessManager(JWTAccessManager("level", rolesMapping, Roles.ANYONE))
         }.apply {
             exception(Exception::class.java)  { e, _ -> e.printStackTrace() }
             error(404) { ctx -> ctx.json("404 - Not Found") }
@@ -36,20 +36,20 @@ class JavalinConfig {
     private fun registerRoutes(app: Javalin) {
         app.routes {
             path("/api/users") {
-                get(HealthTrackerController::getAllUsers)
-                post(HealthTrackerController::addUser)
+                get(HealthTrackerController::getAllUsers, Roles.ANYONE)
+                post(HealthTrackerController::addUser, Roles.ANYONE)
                 path("{user-id}") {
-                    get(HealthTrackerController::getUserByUserId)
-                    delete(HealthTrackerController::deleteUser)
-                    patch(HealthTrackerController::updateUser)
+                    get(HealthTrackerController::getUserByUserId, Roles.ANYONE)
+                    delete(HealthTrackerController::deleteUser, Roles.ANYONE)
+                    patch(HealthTrackerController::updateUser, Roles.ANYONE)
                 }
                 path("/email/{email}") {
-                    get(HealthTrackerController::getUserByEmail)
+                    get(HealthTrackerController::getUserByEmail, Roles.ANYONE)
                 }
             }
             path("/api/authentication") {
-                path("/generate") {
-                    get(AuthenticationController::generate, Roles.ANYONE)
+                path("/login") {
+                    post(AuthenticationController::login, Roles.ANYONE)
                 }
                 path("/validate") {
                     get(AuthenticationController::validate, Roles.USER)

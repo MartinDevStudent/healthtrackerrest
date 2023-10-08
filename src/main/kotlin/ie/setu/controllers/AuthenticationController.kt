@@ -1,22 +1,41 @@
 package ie.setu.controllers
 
-import ie.setu.domain.User
-import ie.setu.utils.authentication.JwtProvider
-import ie.setu.utils.authentication.JwtResponse
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
+import ie.setu.domain.UserDTO
+import ie.setu.domain.repository.UserDAO
+import ie.setu.utils.authentication.*
 import io.javalin.http.Context
-import javalinjwt.JavalinJWT
+import io.javalin.http.HttpStatus
 
 
 object AuthenticationController {
-    fun generate(ctx: Context) {
-        val mockUser = User(1,"Mocky McMockface", "mock@email.com","user")
-        val token = JwtProvider.provider.generateToken(mockUser)
-        ctx.json(JwtResponse(token))
+    private val userDao = UserDAO()
+
+    fun login(ctx: Context) {
+        val mapper = jacksonObjectMapper()
+        val userDTO = mapper.readValue<UserDTO>(ctx.body())
+
+        val user = userDao.findByEmail(userDTO.email)
+
+        if (user == null) {
+            ctx.status(HttpStatus.BAD_REQUEST)
+        }
+
+        val isCorrectPassword = isCorrectPassword(userDTO.password, user!!.passwordHash)
+
+        if (isCorrectPassword) {
+            val token = JwtProvider.provider.generateToken(user)
+            ctx.json(JwtResponse(token))
+        }
+        else {
+            ctx.status(HttpStatus.BAD_REQUEST)
+        }
     }
 
     fun validate(ctx: Context) {
         println("test")
-        val decodedJWT = JavalinJWT.getDecodedFromContext(ctx)
+        val decodedJWT = decodeJWT(ctx)
         ctx.result("Hi " + decodedJWT.getClaim("name").asString())
     }
 }
