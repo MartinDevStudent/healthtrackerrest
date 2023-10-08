@@ -3,9 +3,8 @@ package ie.setu.domain.repository
 import ie.setu.domain.User
 import ie.setu.domain.db.Users
 import ie.setu.utils.mapToUser
-import org.jetbrains.exposed.sql.selectAll
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
-import java.util.*
 import kotlin.collections.ArrayList
 
 
@@ -22,20 +21,49 @@ class UserDAO {
     }
 
     fun findById(id: Int): User? {
-        return null
+        return transaction {
+            Users.select() {
+                Users.id eq id}
+                .map{mapToUser(it)}
+                .firstOrNull()
+        }
     }
 
     fun findByEmail(email: String) :User? {
-        return null
-        //return users.find { it.email.lowercase(Locale.getDefault()) == email.lowercase(Locale.getDefault()) }
+        return transaction {
+            Users.select() {
+                Users.email.lowerCase() eq email.lowercase()}
+                .map{mapToUser(it)}
+                .firstOrNull()
+        }
     }
 
     fun save(user: User) {
+        transaction {
+            Users.insert {
+                it[name] = user.name
+                it[email] = user.email
+                it[level] = user.level
+            }
+        }
     }
 
     fun delete(id: Int) {
+        return transaction{
+            Users.deleteWhere{
+                Users.id eq id
+            }
+        }
     }
 
     fun update(id: Int, user: User) {
+        transaction {
+            Users.update ({
+                Users.id eq id}) {
+                it[name] = user.name
+                it[email] = user.email
+                it[level] = user.level
+            }
+        }
     }
 }

@@ -1,0 +1,232 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: Health Tracker API
+  description: This API provides endpoints for handling CRUD operations on the Health Tracker data.
+  contact:
+    name: Martin Lorimer
+    email: martin.lorimer@gmail.com
+paths:
+  /api/users:
+    get:
+      responses:
+        200:
+          description: This is a list of the users in the app
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+      tags:
+        - Users
+    post:
+      description: Add a user to the app
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        200:
+          description: The user has been created
+      tags:
+        - Users
+  /api/users/{user-id}:
+    get:
+      parameters:
+        - $ref: '#/components/parameters/UserIdPath'
+      responses:
+        200:
+          description: This is a specific user in the app
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        404:
+          description: User not found
+      tags:
+        - Users
+    patch:
+      parameters:
+        - $ref: '#/components/parameters/UserIdPath'
+      description: This updates/modifies a specific user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        200:
+          description: The user has been updated/modified
+        404:
+          description: User not found
+      tags:
+        - Users
+    delete:
+      parameters:
+        - $ref: '#/components/parameters/UserIdPath'
+      description: This deletes a specific user in the app
+      responses:
+        200:
+          description: The user has been deleted
+        404:
+          description: User not found
+      tags:
+        - Users
+  /api/users/email/{email}:
+    get:
+      parameters:
+        - $ref: '#/components/parameters/EmailPath'
+      responses:
+        200:
+          description: This is a user associated with an email address
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/User'
+        404:
+          description: User associated with email address not found
+      tags:
+        - Users
+  /api/users/{user-id}/activities:
+    get:
+      parameters:
+        - $ref: '#/components/parameters/UserIdPath'
+      responses:
+        200:
+          description: This is a list of activities associated with the user
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Activity'
+        404:
+          description: User not found
+      tags:
+        - Users
+    delete:
+      parameters:
+        - $ref: '#/components/parameters/UserIdPath'
+      description: This deletes all activities associated with a user
+      responses:
+        200:
+          description: All activities associated with the user are deleted
+        404:
+          description: User not found
+      tags:
+        - Users
+  /api/activities/{activity-id}:
+    get:
+      parameters:
+        - $ref: '#/components/parameters/ActivityIdPath'
+      responses:
+        200:
+          description: This is a specific activity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Activity'
+        404:
+          description: Activity with Id not found
+      tags:
+        - Activities
+    patch:
+      parameters:
+        - $ref: '#/components/parameters/ActivityIdPath'
+      description: This updates/modifies the activity with the specified Id
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Activity'
+      responses:
+        200:
+          description: The activity has been updated/modified
+        404:
+          description: Activity with Id not found
+      tags:
+        - Activities
+    delete:
+      parameters:
+        - $ref: '#/components/parameters/ActivityIdPath'
+      description: This deletes the activity with the specified Id
+      responses:
+        200:
+          description: Activity has been deleted
+      tags:
+        - Activities
+  /api/activities:
+    get:
+      responses:
+        200:
+          description: This is a list of all activities
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Activity'
+      tags:
+        - Activities
+    post:
+      description: This creates a new activity
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Activity'
+      responses:
+        200:
+          description: The activity is created
+      tags:
+        - Activities
+components:
+  parameters:
+    ActivityIdPath:
+      in: path
+      name: activity-id
+      description: Activity Id path parameter
+      required: true
+      schema:
+        type: integer
+        example: 3232
+    EmailPath:
+      in: path
+      name: email
+      description: Email path parameter
+      required: true
+      schema:
+        type: string
+        example: joe@soap.com
+    UserIdPath:
+      in: path
+      name: user-id
+      description: User id path parameter
+      required: true
+      schema:
+        type: integer
+        example: 3232
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 3232
+        name:
+          type: string
+          example: Joe Soap
+        email:
+          type: string
+          example: joe@soap.com
+    Activity:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 3232
+        name:
+          type: string
+          example: Exercise
