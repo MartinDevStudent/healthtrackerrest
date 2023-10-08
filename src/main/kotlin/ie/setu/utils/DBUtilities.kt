@@ -8,5 +8,6 @@ fun mapToUser(it: ResultRow) = User(
     id = it[Users.id],
     name = it[Users.name],
     email = it[Users.email],
-    level = it[Users.level]
+    level = it[Users.level],
+    passwordHash = it[Users.passwordHash]
 )
