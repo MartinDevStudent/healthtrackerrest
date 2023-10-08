@@ -44,6 +44,7 @@ class UserDAO {
                 it[name] = user.name
                 it[email] = user.email
                 it[level] = user.level
+                it[passwordHash] = user.passwordHash
             }
         }
     }
