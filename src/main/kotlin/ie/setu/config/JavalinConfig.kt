@@ -13,7 +13,7 @@ class JavalinConfig {
     fun startJavalinService(): Javalin {
 
         val app = Javalin.create {
-            //it.accessManager(JWTAccessManager("level", rolesMapping, Roles.ANYONE))
+            it.accessManager(JWTAccessManager("level", rolesMapping, Roles.ANYONE))
         }.apply {
             exception(Exception::class.java)  { e, _ -> e.printStackTrace() }
             error(404) { ctx -> ctx.json("404 - Not Found") }
@@ -49,7 +49,10 @@ class JavalinConfig {
             }
             path("/api/authentication") {
                 path("/generate") {
-                    get(AuthenticationController::generate, Roles.ANYONE)
+                    post(AuthenticationController::generate, Roles.ANYONE)
+                }
+                path("/login") {
+                    post(AuthenticationController::login, Roles.ANYONE)
                 }
                 path("/validate") {
                     get(AuthenticationController::validate, Roles.USER)
