@@ -35,9 +35,9 @@ class UserDAO {
     }
 
     fun update(id: Int, user: User) {
-        val index = users.indexOfFirst { it.id == id }
-        if (index != -1) {
-            users[index] = user
-        }
+        val foundUser = findById(id)
+        foundUser?.email = user.email
+        foundUser?.name = user.name
+        foundUser?.id = user.id
     }
 }
