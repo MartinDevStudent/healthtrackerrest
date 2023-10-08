@@ -182,6 +182,41 @@ paths:
           description: The activity is created
       tags:
         - Activities
+  /api/authentication:
+    post:
+      description: Checks user credentials and returns JWT token for authentication
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserDTO'
+      responses:
+        200:
+          description: User provided correct credentials
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  jwt:
+                    type: string
+                    example: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJsZXZlbCI6InVzZXIiLCJuYW1lIjoiTWFydGluIiwiZW1haWwiOiJtYXJ0aW5AbWFpbC5jb20ifQ.yI2gVktSbSmZGh4Tv3a4Hx0C9CLHsBO-60hL40PBQ0U
+        401:
+          description: Invalid user credentials
+      tags:
+        - Authentication
+  /api/authentication/validate:
+    get:
+      responses:
+        200:
+          description: Token in Authorization header is valid
+          content:
+            text/plain:
+              example: Hi Siobhan
+        401:
+          description: Not authorized
+      tags:
+        - Authentication
 components:
   parameters:
     ActivityIdPath:
@@ -221,6 +256,18 @@ components:
         email:
           type: string
           example: joe@soap.com
+    UserDTO:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Joe Soap
+        email:
+          type: string
+          example: joe@soap.com
+        password:
+          type: string
+          example: password
     Activity:
       type: object
       properties:
