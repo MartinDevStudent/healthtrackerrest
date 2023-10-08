@@ -37,7 +37,7 @@ class JavalinConfig {
         app.routes {
             path("/api/users") {
                 get(HealthTrackerController::getAllUsers)
-                post(HealthTrackerController::addUser)
+                post(HealthTrackerController::addUser, Roles.ANYONE)
                 path("{user-id}") {
                     get(HealthTrackerController::getUserByUserId)
                     delete(HealthTrackerController::deleteUser)
@@ -48,9 +48,6 @@ class JavalinConfig {
                 }
             }
             path("/api/authentication") {
-                path("/generate") {
-                    post(AuthenticationController::generate, Roles.ANYONE)
-                }
                 path("/login") {
                     post(AuthenticationController::login, Roles.ANYONE)
                 }

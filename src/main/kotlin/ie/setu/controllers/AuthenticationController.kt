@@ -2,7 +2,6 @@ package ie.setu.controllers
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
-import ie.setu.domain.User
 import ie.setu.domain.UserDTO
 import ie.setu.domain.repository.UserDAO
 import ie.setu.utils.authentication.*
@@ -12,22 +11,6 @@ import io.javalin.http.HttpStatus
 
 object AuthenticationController {
     private val userDao = UserDAO()
-
-    fun generate(ctx: Context) {
-        val mapper = jacksonObjectMapper()
-        val userDTO = mapper.readValue<UserDTO>(ctx.body())
-        val passwordHash = hashPassword(userDTO.password)
-
-        val user = User(
-            id = -1,
-            name = userDTO.name,
-            email =  userDTO.email,
-            level = "user",
-            passwordHash = passwordHash,
-        )
-
-        userDao.save(user)
-    }
 
     fun login(ctx: Context) {
         val mapper = jacksonObjectMapper()
