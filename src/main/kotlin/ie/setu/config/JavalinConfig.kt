@@ -48,9 +48,7 @@ class JavalinConfig {
                 }
             }
             path("/api/authentication") {
-                path("/login") {
-                    post(AuthenticationController::login, Roles.ANYONE)
-                }
+                post(AuthenticationController::login, Roles.ANYONE)
                 path("/validate") {
                     get(AuthenticationController::validate, Roles.USER)
                 }
