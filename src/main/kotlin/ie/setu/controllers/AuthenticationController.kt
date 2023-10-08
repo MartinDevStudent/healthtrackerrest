@@ -6,7 +6,6 @@ import ie.setu.domain.UserDTO
 import ie.setu.domain.repository.UserDAO
 import ie.setu.utils.authentication.*
 import io.javalin.http.Context
-import io.javalin.http.HttpStatus
 
 
 object AuthenticationController {
@@ -19,7 +18,7 @@ object AuthenticationController {
         val user = userDao.findByEmail(userDTO.email)
 
         if (user == null) {
-            ctx.status(HttpStatus.BAD_REQUEST)
+            ctx.status(401)
         }
 
         val isCorrectPassword = isCorrectPassword(userDTO.password, user!!.passwordHash)
@@ -29,7 +28,7 @@ object AuthenticationController {
             ctx.json(JwtResponse(token))
         }
         else {
-            ctx.status(HttpStatus.BAD_REQUEST)
+            ctx.status(401)
         }
     }
 
