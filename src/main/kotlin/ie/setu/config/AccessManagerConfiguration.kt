@@ -5,12 +5,13 @@ import io.javalin.security.RouteRole
 enum class Roles : RouteRole {
     ANYONE,
     USER,
-    ADMIN
+    ADMIN,
 }
 
-var rolesMapping: HashMap<String?, RouteRole?> = object : HashMap<String?, RouteRole?>() {
-    init {
-        put("user", Roles.USER)
-        put("admin", Roles.ADMIN)
+var rolesMapping: HashMap<String?, RouteRole?> =
+    object : HashMap<String?, RouteRole?>() {
+        init {
+            put("user", Roles.USER)
+            put("admin", Roles.ADMIN)
+        }
     }
-}
