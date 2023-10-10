@@ -55,10 +55,10 @@ class JavalinConfig {
                 }
             }
             path("/api/meals") {
-                get(MealController::getAllMeals)
-                post(MealController::addMeal)
+                get(MealController::getAllMeals, Roles.ANYONE)
+                post(MealController::addMeal, Roles.ANYONE)
                 path("{meal-id}") {
-                    get(MealController::getMealById)
+                    get(MealController::getMealById, Roles.ANYONE)
                 }
             }
         }
