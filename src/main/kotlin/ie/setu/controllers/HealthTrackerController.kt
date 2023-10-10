@@ -1,13 +1,18 @@
 package ie.setu.controllers
 
+import io.javalin.http.Context
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import ie.setu.domain.User
+import ie.setu.domain.UserDTO
 import ie.setu.domain.repository.UserDAO
-import io.javalin.http.Context
+import ie.setu.utils.authentication.hashPassword
+
 
 object HealthTrackerController {
+
     private val userDao = UserDAO()
+    private val mapper = jacksonObjectMapper()
 
     fun getAllUsers(ctx: Context) {
         ctx.json(userDao.getAll())
@@ -28,10 +33,18 @@ object HealthTrackerController {
     }
 
     fun addUser(ctx: Context) {
-        val mapper = jacksonObjectMapper()
-        val user = mapper.readValue<User>(ctx.body())
+        val userDTO = mapper.readValue<UserDTO>(ctx.body())
+        val passwordHash = hashPassword(userDTO.password)
+
+        val user = User(
+            id = -1,
+            name = userDTO.name,
+            email =  userDTO.email,
+            level = "user",
+            passwordHash = passwordHash,
+        )
+
         userDao.save(user)
-        ctx.json(user)
     }
 
     fun deleteUser(ctx: Context) {
@@ -39,9 +52,11 @@ object HealthTrackerController {
     }
 
     fun updateUser(ctx: Context) {
-        val mapper = jacksonObjectMapper()
-        val user = mapper.readValue<User>(ctx.body())
-        userDao.update(ctx.pathParam("user-id").toInt(), user)
-        ctx.json(user)
+        val userToUpdate = mapper.readValue<User>(ctx.body())
+        userDao.update(
+            id = ctx.pathParam("user-id").toInt(),
+            user = userToUpdate
+        )
+        ctx.json(userToUpdate)
     }
 }

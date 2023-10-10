@@ -1,45 +1,70 @@
 package ie.setu.domain.repository
 
 import ie.setu.domain.User
-import java.util.*
+import ie.setu.domain.db.Users
+import ie.setu.utils.mapToUser
+import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.transactions.transaction
 import kotlin.collections.ArrayList
 
-class UserDAO {
-    private val users =
-        arrayListOf<User>(
-            User(name = "Alice", email = "alice@wonderland.com", id = 0, level = "user"),
-            User(name = "Bob", email = "bob@cat.ie", id = 1, level = "user"),
-            User(name = "Mary", email = "mary@contrary.com", id = 2, level = "user"),
-            User(name = "Carol", email = "carol@singer.com", id = 3, level = "user"),
-        )
 
-    fun getAll(): ArrayList<User> {
-        return users
+class UserDAO {
+
+    fun getAll() : ArrayList<User>{
+        val userList: ArrayList<User> = arrayListOf()
+        transaction {
+            Users.selectAll().map {
+                userList.add(mapToUser(it))
+            }
+        }
+        return userList
     }
 
     fun findById(id: Int): User? {
-        return users.find { it.id == id }
+        return transaction {
+            Users.select() {
+                Users.id eq id}
+                .map{mapToUser(it)}
+                .firstOrNull()
+        }
     }
 
-    fun findByEmail(email: String): User? {
-        return users.find { it.email.lowercase(Locale.getDefault()) == email.lowercase(Locale.getDefault()) }
+    fun findByEmail(email: String) :User? {
+        return transaction {
+            Users.select() {
+                Users.email.lowerCase() eq email.lowercase()}
+                .map{mapToUser(it)}
+                .firstOrNull()
+        }
     }
 
     fun save(user: User) {
-        users.add(user)
+        transaction {
+            Users.insert {
+                it[name] = user.name
+                it[email] = user.email
+                it[level] = user.level
+                it[passwordHash] = user.passwordHash
+            }
+        }
     }
 
     fun delete(id: Int) {
-        users.removeIf { it.id == id }
+        return transaction{
+            Users.deleteWhere{
+                Users.id eq id
+            }
+        }
     }
 
-    fun update(
-        id: Int,
-        user: User,
-    ) {
-        val index = users.indexOfFirst { it.id == id }
-        if (index != -1) {
-            users[index] = user
+    fun update(id: Int, user: User) {
+        transaction {
+            Users.update ({
+                Users.id eq id}) {
+                it[name] = user.name
+                it[email] = user.email
+                it[level] = user.level
+            }
         }
     }
 }

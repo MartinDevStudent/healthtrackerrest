@@ -1,8 +1,9 @@
 package ie.setu.domain
 
 data class User(
-    val id: Int,
-    val name: String,
-    val email: String,
-    val level: String,
+    var id: Int,
+    var name: String,
+    var email: String,
+    var level: String,
+    var passwordHash: String
 )
