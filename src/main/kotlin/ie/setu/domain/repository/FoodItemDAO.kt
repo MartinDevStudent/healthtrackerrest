@@ -1,11 +1,11 @@
 package ie.setu.domain.repository
 
-import ie.setu.domain.Ingredient
+import ie.setu.domain.FoodItem
 import kotlin.collections.ArrayList
 
-class MealDAO {
-    private val meals = arrayListOf<Ingredient>(
-        Ingredient(
+class FoodItemDAO {
+    private val foodItems = arrayListOf<FoodItem>(
+        FoodItem(
             id = 1,
             name = "brisket",
             calories = 1312.3,
@@ -20,7 +20,7 @@ class MealDAO {
             fiberG = 0.0,
             sugarG = 0.0
         ),
-        Ingredient(
+        FoodItem(
             id = 2,
             name = "fries",
             calories = 317.7,
@@ -37,11 +37,15 @@ class MealDAO {
         )
     )
 
-    fun getAll(): ArrayList<Ingredient>  {
-        return meals
+    fun getAll(): ArrayList<FoodItem>  {
+        return foodItems
     }
 
-    fun findById(id: Int): Ingredient? {
-        return meals.find { it.id == id }
+    fun findById(id: Int): FoodItem? {
+        return foodItems.find { it.id == id }
+    }
+
+    fun save (foodItem: FoodItem) {
+        foodItems.add(foodItem)
     }
 }

@@ -2,7 +2,7 @@ package ie.setu.domain
 
 import com.fasterxml.jackson.annotation.JsonProperty
 
-data class Ingredient(
+data class FoodItem(
     val id: Int,
     val name: String,
     val calories: Double,
