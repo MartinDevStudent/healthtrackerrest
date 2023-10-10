@@ -2,6 +2,7 @@ package ie.setu.config
 
 import ie.setu.controllers.AuthenticationController
 import ie.setu.controllers.HealthTrackerController
+import ie.setu.controllers.MealController
 import ie.setu.utils.authentication.JwtProvider
 import io.javalin.Javalin
 import io.javalin.apibuilder.ApiBuilder.*
@@ -51,6 +52,13 @@ class JavalinConfig {
                 post(AuthenticationController::login, Roles.ANYONE)
                 path("/validate") {
                     get(AuthenticationController::validate, Roles.USER)
+                }
+            }
+            path("/api/meals") {
+                get(MealController::getAllMeals, Roles.ANYONE)
+                post(MealController::addMeal, Roles.ANYONE)
+                path("{meal-id}") {
+                    get(MealController::getMealById, Roles.ANYONE)
                 }
             }
         }
