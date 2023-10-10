@@ -108,7 +108,7 @@
                                 <java taskname="ktlint" dir="${basedir}" fork="true" failonerror="true"
                                       classpathref="maven.plugin.classpath" classname="com.pinterest.ktlint.Main">
                                     <!-- Note: the JVM arg below is only required when running ktlint with Java 16+ in format mode.
-                                    <jvmarg value="--add-opens=java.base/java.lang=ALL-UNNAMED"/>
+                                    <jvmarg value="-add-opens=java.base/java.lang=ALL-UNNAMED"/>
                                     -->
                                     <!-- see https://pinterest.github.io/ktlint/install/cli/#command-line-usage for more information -->
                                     <arg value="src/**/*.kt"/>
