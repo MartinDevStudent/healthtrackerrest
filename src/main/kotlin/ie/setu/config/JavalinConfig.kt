@@ -36,17 +36,9 @@ class JavalinConfig {
 
     private fun registerRoutes(app: Javalin) {
         app.routes {
-            path("/api/users") {
-                get(HealthTrackerController::getAllUsers, Roles.ANYONE)
-                post(HealthTrackerController::addUser, Roles.ANYONE)
-                path("{user-id}") {
-                    get(HealthTrackerController::getUserByUserId, Roles.ANYONE)
-                    delete(HealthTrackerController::deleteUser, Roles.ANYONE)
-                    patch(HealthTrackerController::updateUser, Roles.ANYONE)
-                }
-                path("/email/{email}") {
-                    get(HealthTrackerController::getUserByEmail, Roles.ANYONE)
-                }
+            path("/api/activities") {
+                get(HealthTrackerController::getAllActivities, Roles.ANYONE)
+                post(HealthTrackerController::addActivity, Roles.ANYONE)
             }
             path("/api/authentication") {
                 post(AuthenticationController::login, Roles.ANYONE)
@@ -59,6 +51,21 @@ class JavalinConfig {
                 post(MealController::addMeal, Roles.ANYONE)
                 path("{meal-id}") {
                     get(MealController::getMealById, Roles.ANYONE)
+                }
+            }
+            path("/api/users") {
+                get(HealthTrackerController::getAllUsers, Roles.ANYONE)
+                post(HealthTrackerController::addUser, Roles.ANYONE)
+                path("{user-id}") {
+                    get(HealthTrackerController::getUserByUserId, Roles.ANYONE)
+                    delete(HealthTrackerController::deleteUser, Roles.ANYONE)
+                    patch(HealthTrackerController::updateUser, Roles.ANYONE)
+                    path("activities"){
+                        get(HealthTrackerController::getActivitiesByUserId, Roles.ANYONE)
+                    }
+                }
+                path("/email/{email}") {
+                    get(HealthTrackerController::getUserByEmail, Roles.ANYONE)
                 }
             }
         }
