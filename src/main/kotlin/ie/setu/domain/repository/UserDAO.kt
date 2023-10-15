@@ -10,7 +10,7 @@ import kotlin.collections.ArrayList
 
 class UserDAO {
 
-    fun getAll() : ArrayList<User>{
+    fun getAll(): ArrayList<User>{
         val userList: ArrayList<User> = arrayListOf()
         transaction {
             Users.selectAll().map {
@@ -29,7 +29,7 @@ class UserDAO {
         }
     }
 
-    fun findByEmail(email: String) :User? {
+    fun findByEmail(email: String): User? {
         return transaction {
             Users.select() {
                 Users.email.lowerCase() eq email.lowercase()}
