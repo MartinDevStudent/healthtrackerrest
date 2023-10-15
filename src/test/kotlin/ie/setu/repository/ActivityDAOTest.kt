@@ -42,7 +42,7 @@ class ActivityDAOTest {
             transaction {
 
                 //Arrange - create and populate user and activity tables
-                val userDAO = populateUserTable()
+                populateUserTable()
                 val activityDAO = populateActivityTable()
 
                 //Act & Assert
@@ -55,7 +55,7 @@ class ActivityDAOTest {
             transaction {
 
                 //Arrange - create and populate user and activity tables
-                val userDAO = populateUserTable()
+                populateUserTable()
                 val activityDAO = populateActivityTable()
 
                 //Act & Assert
@@ -68,7 +68,7 @@ class ActivityDAOTest {
             transaction {
 
                 //Arrange - create and populate user and activity tables
-                val userDAO = populateUserTable()
+                populateUserTable()
                 val activityDAO = populateActivityTable()
 
                 //Act & Assert
@@ -96,7 +96,7 @@ class ActivityDAOTest {
             transaction {
 
                 //Arrange - create and populate user and activity tables
-                val userDAO = populateUserTable()
+                populateUserTable()
                 val activityDAO = populateActivityTable()
 
                 //Act & Assert
@@ -109,7 +109,7 @@ class ActivityDAOTest {
             transaction {
 
                 //Arrange - create and populate user and activity tables
-                val userDAO = populateUserTable()
+                populateUserTable()
                 val activityDAO = populateActivityTable()
 
                 //Act & Assert
@@ -125,7 +125,7 @@ class ActivityDAOTest {
             transaction {
 
                 //Arrange - create and populate user and activity tables
-                val userDAO = populateUserTable()
+                populateUserTable()
                 val activityDAO = populateActivityTable()
 
                 //Act & Assert
@@ -144,7 +144,7 @@ class ActivityDAOTest {
             transaction {
 
                 //Arrange - create and populate user and activity tables
-                val userDAO = populateUserTable()
+                populateUserTable()
                 val activityDAO = populateActivityTable()
 
                 //Act & Assert
@@ -159,7 +159,7 @@ class ActivityDAOTest {
             transaction {
 
                 //Arrange - create and populate user and activity tables
-                val userDAO = populateUserTable()
+                populateUserTable()
                 val activityDAO = populateActivityTable()
 
                 //Act & Assert
@@ -174,7 +174,7 @@ class ActivityDAOTest {
             transaction {
 
                 //Arrange - create and populate user and activity tables
-                val userDAO = populateUserTable()
+                populateUserTable()
                 val activityDAO = populateActivityTable()
 
                 //Act & Assert
@@ -189,7 +189,7 @@ class ActivityDAOTest {
             transaction {
 
                 //Arrange - create and populate user and activity tables
-                val userDAO = populateUserTable()
+                populateUserTable()
                 val activityDAO = populateActivityTable()
 
                 //Act & Assert
@@ -208,7 +208,7 @@ class ActivityDAOTest {
             transaction {
 
                 //Arrange - create and populate user and activity tables
-                val userDAO = populateUserTable()
+                populateUserTable()
                 val activityDAO = populateActivityTable()
 
                 //Act & Assert
@@ -222,7 +222,7 @@ class ActivityDAOTest {
                 transaction {
 
                     //Arrange - create and populate user and activity tables
-                    val userDAO = populateUserTable()
+                    populateUserTable()
                     val activityDAO = populateActivityTable()
 
                     //Act & Assert
