@@ -5,18 +5,18 @@ import ie.setu.domain.db.Users
 import ie.setu.domain.repository.UserDAO
 import ie.setu.helpers.nonExistingEmail
 import ie.setu.helpers.users
-import junit.framework.TestCase.assertEquals
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
 //retrieving some test data from Fixtures
-val user1 = users.get(0)
-val user2 = users.get(1)
-val user3 = users.get(2)
+val user1 = users[0]
+val user2 = users[1]
+val user3 = users[2]
 
 class UserDAOTest {
 
@@ -59,12 +59,9 @@ class UserDAOTest {
         @Test
         fun `get user by id that exists, results in a correct user returned`() {
             transaction {
+
                 //Arrange - create and populate table with three users
-                SchemaUtils.create(Users)
-                val userDAO = UserDAO()
-                userDAO.save(user1)
-                userDAO.save(user2)
-                userDAO.save(user3)
+                val userDAO = populateUserTable()
 
                 //Act & Assert
                 assertEquals(null, userDAO.findById(4))
@@ -129,7 +126,7 @@ class UserDAOTest {
     @Nested
     inner class DeleteUsers {
         @Test
-        fun `deleting a non-existant user in table results in no deletion`() {
+        fun `deleting a non-existent user in table results in no deletion`() {
             transaction {
 
                 //Arrange - create and populate table with three users
@@ -175,7 +172,7 @@ class UserDAOTest {
         }
 
         @Test
-        fun `updating non-existant user in table results in no updates`() {
+        fun `updating non-existent user in table results in no updates`() {
             transaction {
 
                 //Arrange - create and populate table with three users

@@ -1,7 +1,8 @@
 package ie.setu.config
 
+import ie.setu.controllers.ActivityController
 import ie.setu.controllers.AuthenticationController
-import ie.setu.controllers.HealthTrackerController
+import ie.setu.controllers.UserController
 import ie.setu.controllers.MealController
 import ie.setu.utils.authentication.JwtProvider
 import io.javalin.Javalin
@@ -37,8 +38,12 @@ class JavalinConfig {
     private fun registerRoutes(app: Javalin) {
         app.routes {
             path("/api/activities") {
-                get(HealthTrackerController::getAllActivities, Roles.ANYONE)
-                post(HealthTrackerController::addActivity, Roles.ANYONE)
+                get(ActivityController::getAllActivities, Roles.ANYONE)
+                post(ActivityController::addActivity, Roles.ANYONE)
+                path("{activity-id}") {
+                    get(ActivityController::getActivityActivityId, Roles.ANYONE) // TODO
+                    delete(ActivityController::deleteActivity, Roles.ANYONE) // TODO
+                }
             }
             path("/api/authentication") {
                 post(AuthenticationController::login, Roles.ANYONE)
@@ -54,18 +59,19 @@ class JavalinConfig {
                 }
             }
             path("/api/users") {
-                get(HealthTrackerController::getAllUsers, Roles.ANYONE)
-                post(HealthTrackerController::addUser, Roles.ANYONE)
+                get(UserController::getAllUsers, Roles.ANYONE)
+                post(UserController::addUser, Roles.ANYONE)
                 path("{user-id}") {
-                    get(HealthTrackerController::getUserByUserId, Roles.ANYONE)
-                    delete(HealthTrackerController::deleteUser, Roles.ANYONE)
-                    patch(HealthTrackerController::updateUser, Roles.ANYONE)
+                    get(UserController::getUserByUserId, Roles.ANYONE)
+                    delete(UserController::deleteUser, Roles.ANYONE)
+                    patch(UserController::updateUser, Roles.ANYONE)
                     path("activities"){
-                        get(HealthTrackerController::getActivitiesByUserId, Roles.ANYONE)
+                        get(ActivityController::getActivitiesByUserId, Roles.ANYONE)
+                        delete(ActivityController::deleteActivitiesByUserId, Roles.ANYONE) // TODO
                     }
                 }
                 path("/email/{email}") {
-                    get(HealthTrackerController::getUserByEmail, Roles.ANYONE)
+                    get(UserController::getUserByEmail, Roles.ANYONE)
                 }
             }
         }
