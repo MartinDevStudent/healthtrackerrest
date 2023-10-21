@@ -1,7 +1,8 @@
 package ie.setu.config
 
+import ie.setu.controllers.ActivityController
 import ie.setu.controllers.AuthenticationController
-import ie.setu.controllers.HealthTrackerController
+import ie.setu.controllers.UserController
 import ie.setu.controllers.MealController
 import ie.setu.utils.authentication.JwtProvider
 import io.javalin.Javalin
@@ -36,16 +37,12 @@ class JavalinConfig {
 
     private fun registerRoutes(app: Javalin) {
         app.routes {
-            path("/api/users") {
-                get(HealthTrackerController::getAllUsers, Roles.ANYONE)
-                post(HealthTrackerController::addUser, Roles.ANYONE)
-                path("{user-id}") {
-                    get(HealthTrackerController::getUserByUserId, Roles.ANYONE)
-                    delete(HealthTrackerController::deleteUser, Roles.ANYONE)
-                    patch(HealthTrackerController::updateUser, Roles.ANYONE)
-                }
-                path("/email/{email}") {
-                    get(HealthTrackerController::getUserByEmail, Roles.ANYONE)
+            path("/api/activities") {
+                get(ActivityController::getAllActivities, Roles.ANYONE)
+                post(ActivityController::addActivity, Roles.ANYONE)
+                path("{activity-id}") {
+                    get(ActivityController::getActivityActivityId, Roles.ANYONE) // TODO
+                    delete(ActivityController::deleteActivity, Roles.ANYONE) // TODO
                 }
             }
             path("/api/authentication") {
@@ -59,6 +56,22 @@ class JavalinConfig {
                 post(MealController::addMeal, Roles.ANYONE)
                 path("{meal-id}") {
                     get(MealController::getMealById, Roles.ANYONE)
+                }
+            }
+            path("/api/users") {
+                get(UserController::getAllUsers, Roles.ANYONE)
+                post(UserController::addUser, Roles.ANYONE)
+                path("{user-id}") {
+                    get(UserController::getUserByUserId, Roles.ANYONE)
+                    delete(UserController::deleteUser, Roles.ANYONE)
+                    patch(UserController::updateUser, Roles.ANYONE)
+                    path("activities"){
+                        get(ActivityController::getActivitiesByUserId, Roles.ANYONE)
+                        delete(ActivityController::deleteActivitiesByUserId, Roles.ANYONE) // TODO
+                    }
+                }
+                path("/email/{email}") {
+                    get(UserController::getUserByEmail, Roles.ANYONE)
                 }
             }
         }
