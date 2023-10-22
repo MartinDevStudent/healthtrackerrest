@@ -4,7 +4,7 @@ import io.javalin.http.Context
 import ie.setu.domain.Activity
 import ie.setu.domain.repository.ActivityDAO
 import ie.setu.domain.repository.UserDAO
-import mapJsonWithDateToType
+import jsonToObject
 import mapObjectWithDateToJson
 
 
@@ -34,7 +34,7 @@ object ActivityController {
     }
 
     fun addActivity(ctx: Context) {
-        val activity = mapJsonWithDateToType<Activity>(ctx.body())
+        val activity : Activity = jsonToObject(ctx.body())
         activityDao.save(activity)
         ctx.json(mapObjectWithDateToJson(activity))
     }

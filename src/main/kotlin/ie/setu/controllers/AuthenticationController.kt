@@ -21,7 +21,7 @@ object AuthenticationController {
             ctx.status(401)
         }
 
-        val isCorrectPassword = isCorrectPassword(userDTO.password, user!!.passwordHash)
+        val isCorrectPassword = isCorrectPassword(userDTO.password, user!!.passwordHash!!)
 
         if (isCorrectPassword) {
             val token = JwtProvider.provider.generateToken(user)
