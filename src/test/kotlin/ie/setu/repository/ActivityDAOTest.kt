@@ -18,12 +18,12 @@ import org.junit.jupiter.api.Test
 
 class ActivityDAOTest {
     //retrieving some test data from Fixtures
-    val user1 = users.get(0)
-    val user2 = users.get(1)
-    val user3 = users.get(2)
-    val activity1 = activities.get(0)
-    val activity2 = activities.get(1)
-    val activity3 = activities.get(2)
+    private val user1 = users[0]
+    private val user2 = users[1]
+    private val user3 = users[2]
+    private val activity1 = activities[0]
+    private val activity2 = activities[1]
+    private val activity3 = activities[2]
 
     companion object {
 
@@ -140,7 +140,7 @@ class ActivityDAOTest {
     @Nested
     inner class DeleteActivities {
         @Test
-        fun `deleting a non-existant activity in table results in no deletion`() {
+        fun `deleting a non-existent activity in table results in no deletion`() {
             transaction {
 
                 //Arrange - create and populate user and activity tables
@@ -170,7 +170,7 @@ class ActivityDAOTest {
         }
 
         @Test
-        fun `deleting activities of a non-existant user in table results in no deletion`() {
+        fun `deleting activities of a non-existent user in table results in no deletion`() {
             transaction {
 
                 //Arrange - create and populate user and activity tables
@@ -218,7 +218,7 @@ class ActivityDAOTest {
             }
         }
             @Test
-            fun `updating non-existant activity in table results in no updates`() {
+            fun `updating non-existent activity in table results in no updates`() {
                 transaction {
 
                     //Arrange - create and populate user and activity tables
