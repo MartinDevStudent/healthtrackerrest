@@ -74,6 +74,12 @@
             <artifactId>jackson-module-kotlin</artifactId>
             <version>2.13.3</version>
         </dependency>
+        <!-- json dependency for serialising joda date time -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-joda</artifactId>
+            <version>2.15.2</version>
+        </dependency>
         <!-- Jetbrains exposed dependency -->
         <dependency>
             <groupId>org.jetbrains.exposed</groupId>
@@ -111,6 +117,23 @@
             <artifactId>unirest-java</artifactId>
             <version>3.14.1</version>
             <classifier>standalone</classifier>
+        </dependency>
+        <!-- Jackson depenency for serialising JodaTime -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+            <version>2.15.2</version>
+        </dependency>
+        <!-- adding Vue -->
+        <dependency>
+            <groupId>org.webjars.npm</groupId>
+            <artifactId>vue</artifactId>
+            <version>3.2.47</version>
+        </dependency>
+        <dependency>
+            <groupId>org.webjars.npm</groupId>
+            <artifactId>axios</artifactId>
+            <version>1.5.0</version>
         </dependency>
     </dependencies>
 
