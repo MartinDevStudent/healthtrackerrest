@@ -6,8 +6,6 @@ import ie.setu.domain.UserDTO
 import ie.setu.domain.repository.UserDAO
 import ie.setu.utils.authentication.hashPassword
 import jsonToObject
-import mapJsonToType
-
 
 object UserController {
 
