@@ -6,13 +6,16 @@ import ie.setu.domain.UserDTO
 import ie.setu.domain.repository.UserDAO
 import ie.setu.utils.authentication.hashPassword
 import jsonToObject
-import mapJsonToType
-
 
 object UserController {
 
     private val userDao = UserDAO()
 
+    /**
+     * Retrieves and returns a list of all users as JSON.
+     *
+     * @param ctx The context for handling the HTTP request and response.
+     */
     fun getAllUsers(ctx: Context) {
         val users = userDao.getAll()
         if (users.size != 0) {
@@ -24,6 +27,11 @@ object UserController {
         ctx.json(users)
     }
 
+    /**
+     * Retrieves and returns a user by their unique user ID as JSON.
+     *
+     * @param ctx The context for handling the HTTP request and response.
+     */
     fun getUserByUserId(ctx: Context) {
         val user = userDao.findById(ctx.pathParam("user-id").toInt())
         if (user != null) {
@@ -35,6 +43,11 @@ object UserController {
         }
     }
 
+    /**
+     * Retrieves and returns a user by their email as JSON.
+     *
+     * @param ctx The context for handling the HTTP request and response.
+     */
     fun getUserByEmail(ctx: Context) {
         val user = userDao.findByEmail(ctx.pathParam("email"))
         if (user != null) {
@@ -46,8 +59,13 @@ object UserController {
         }
     }
 
+    /**
+     * Adds a new user to the database based on the provided UserDTO and returns the added user as JSON.
+     *
+     * @param ctx The context for handling the HTTP request and response.
+     */
     fun addUser(ctx: Context) {
-        val userDTO = mapJsonToType<UserDTO>(ctx.body())
+        val userDTO: UserDTO = jsonToObject(ctx.body())
         val passwordHash = hashPassword(userDTO.password)
 
         val user = User(
@@ -66,6 +84,11 @@ object UserController {
         }
     }
 
+    /**
+     * Deletes a user by their user ID and sets the HTTP response status code.
+     *
+     * @param ctx The context for handling the HTTP request and response.
+     */
     fun deleteUser(ctx: Context) {
         if (userDao.delete(ctx.pathParam("user-id").toInt()) != 0)
             ctx.status(204)
@@ -73,6 +96,11 @@ object UserController {
             ctx.status(404)
     }
 
+    /**
+     * Updates a user's information by their user ID and sets the HTTP response status code.
+     *
+     * @param ctx The context for handling the HTTP request and response.
+     */
     fun updateUser(ctx: Context) {
         val foundUserDto : UserDTO = jsonToObject(ctx.body())
         val passwordHash = hashPassword(foundUserDto.password)

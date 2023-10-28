@@ -18,6 +18,8 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/User'
+        404:
+          description: No users in database
       tags:
         - Users
     post:
@@ -28,7 +30,7 @@ paths:
             schema:
               $ref: '#/components/schemas/User'
       responses:
-        200:
+        201:
           description: The user has been created
       tags:
         - Users
@@ -57,7 +59,7 @@ paths:
             schema:
               $ref: '#/components/schemas/User'
       responses:
-        200:
+        204:
           description: The user has been updated/modified
         404:
           description: User not found
@@ -68,7 +70,7 @@ paths:
         - $ref: '#/components/parameters/UserIdPath'
       description: This deletes a specific user in the app
       responses:
-        200:
+        204:
           description: The user has been deleted
         404:
           description: User not found
@@ -103,7 +105,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/Activity'
         404:
-          description: User not found
+          description: No activities for user found
       tags:
         - Users
     delete:
@@ -111,7 +113,7 @@ paths:
         - $ref: '#/components/parameters/UserIdPath'
       description: This deletes all activities associated with a user
       responses:
-        200:
+        204:
           description: All activities associated with the user are deleted
         404:
           description: User not found
@@ -142,7 +144,7 @@ paths:
             schema:
               $ref: '#/components/schemas/Activity'
       responses:
-        200:
+        204:
           description: The activity has been updated/modified
         404:
           description: Activity with Id not found
@@ -155,6 +157,8 @@ paths:
       responses:
         200:
           description: Activity has been deleted
+        404:
+          description: Activity with Id not found
       tags:
         - Activities
   /api/activities:
@@ -168,6 +172,8 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Activity'
+        404:
+          description: No activities in database
       tags:
         - Activities
     post:
@@ -178,7 +184,7 @@ paths:
             schema:
               $ref: '#/components/schemas/Activity'
       responses:
-        200:
+        201:
           description: The activity is created
       tags:
         - Activities

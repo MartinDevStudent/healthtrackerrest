@@ -9,6 +9,11 @@ val validName = "Test User 1"
 val validEmail = "testuser1@test.com"
 val validPassword = "password"
 
+var validDescription = "Test Description"
+var validDuration = 100.0
+var validCalories = 150
+var validStarted = DateTime("2020-06-10T05:59:27.258Z")
+
 val users = arrayListOf<User>(
     User(name = "Alice Wonderland", email = "alice@wonderland.com", id = 1, level = "user", passwordHash = "111111111"),
     User(name = "Bob Cat", email = "bob@cat.ie", id = 2, level = "user", passwordHash = "111111111"),
