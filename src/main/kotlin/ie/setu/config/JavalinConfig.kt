@@ -7,7 +7,10 @@ import ie.setu.controllers.MealController
 import ie.setu.utils.authentication.JwtProvider
 import io.javalin.Javalin
 import io.javalin.apibuilder.ApiBuilder.*
+import io.javalin.json.JavalinJackson
+import io.javalin.vue.VueComponent
 import javalinjwt.JWTAccessManager
+import jsonObjectMapper
 
 class JavalinConfig {
     /**
@@ -17,11 +20,15 @@ class JavalinConfig {
      */
     fun startJavalinService(): Javalin {
 
-        val app = Javalin.create {
+        val app = Javalin.create{
             it.accessManager(JWTAccessManager("level", rolesMapping, Roles.ANYONE))
+            //added this jsonMapper for our integration tests - serialise objects to json
+            it.jsonMapper(JavalinJackson(jsonObjectMapper()))
+            it.staticFiles.enableWebjars()
+            it.vue.vueAppName = "app" // only required for Vue 3, is defined in layout.html
         }.apply {
-            exception(Exception::class.java)  { e, _ -> e.printStackTrace() }
-            error(404) { ctx -> ctx.json("404 - Not Found") }
+            exception(Exception::class.java) { e, _ -> e.printStackTrace() }
+            error(404) { ctx -> ctx.json("404 : Not Found") }
         }.start(getRemoteAssignedPort())
 
         app.before(JwtProvider.decodeHandler)
@@ -88,6 +95,18 @@ class JavalinConfig {
                     get(UserController::getUserByEmail, Roles.ANYONE)
                 }
             }
+
+            // The @routeComponent that we added in layout.html earlier will be replaced
+            // by the String inside the VueComponent. This means a call to / will load
+            // the layout and display our <home-page> component.
+            get("/", VueComponent("<home-page></home-page>"), Roles.ANYONE)
+            get("/users", VueComponent("<user-overview></user-overview>"), Roles.ANYONE)
+            get("/users/{user-id}", VueComponent("<user-profile></user-profile>"), Roles.ANYONE)
+            get("/users/{user-id}/activities", VueComponent("<user-activity-overview></user-activity-overview>"), Roles.ANYONE)
+
+
+
+
         }
     }
 }
