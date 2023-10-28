@@ -11,6 +11,11 @@ import io.javalin.http.Context
 object AuthenticationController {
     private val userDao = UserDAO()
 
+    /**
+     * Handles user login and issues a JSON Web Token (JWT) upon successful authentication.
+     *
+     * @param ctx The context for handling the HTTP request and response.
+     */
     fun login(ctx: Context) {
         val mapper = jacksonObjectMapper()
         val userDTO = mapper.readValue<UserDTO>(ctx.body())
@@ -32,6 +37,11 @@ object AuthenticationController {
         }
     }
 
+    /**
+     * Validates a user's JWT and returns a greeting message.
+     *
+     * @param ctx The context for handling the HTTP request and response.
+     */
     fun validate(ctx: Context) {
         println("test")
         val decodedJWT = decodeJWT(ctx)

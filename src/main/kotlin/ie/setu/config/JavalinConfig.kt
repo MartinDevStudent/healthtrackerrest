@@ -9,9 +9,12 @@ import io.javalin.Javalin
 import io.javalin.apibuilder.ApiBuilder.*
 import javalinjwt.JWTAccessManager
 
-
-
 class JavalinConfig {
+    /**
+     * Starts the Javalin service with JWT-based authentication and registers routes.
+     *
+     * @return The Javalin instance representing the running service.
+     */
     fun startJavalinService(): Javalin {
 
         val app = Javalin.create {
@@ -28,6 +31,11 @@ class JavalinConfig {
         return app
     }
 
+    /**
+     * Gets the assigned port for the Javalin service, falling back to a default port if not set.
+     *
+     * @return The port number to use.
+     */
     private fun getRemoteAssignedPort(): Int {
         val remotePort = System.getenv("PORT")
         return if (remotePort != null) {
@@ -35,14 +43,20 @@ class JavalinConfig {
         } else 7000
     }
 
+    /**
+     * Registers API routes for various endpoints in the Javalin application.
+     *
+     * @param app The Javalin instance to register the routes with.
+     */
     private fun registerRoutes(app: Javalin) {
         app.routes {
             path("/api/activities") {
                 get(ActivityController::getAllActivities, Roles.ANYONE)
                 post(ActivityController::addActivity, Roles.ANYONE)
                 path("{activity-id}") {
-                    get(ActivityController::getActivityActivityId, Roles.ANYONE) // TODO
-                    delete(ActivityController::deleteActivity, Roles.ANYONE) // TODO
+                    get(ActivityController::getActivityByActivityId, Roles.ANYONE)
+                    delete(ActivityController::deleteActivity, Roles.ANYONE)
+                    patch(ActivityController::updateActivity, Roles.ANYONE)
                 }
             }
             path("/api/authentication") {
