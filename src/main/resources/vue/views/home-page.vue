@@ -21,6 +21,26 @@
         </div>
       </div>
     </div>
+    <div class="row">
+      <div class="col">
+        <div class="card">
+          <h5 class="card-header">Registered Meals</h5>
+          <div class="card-body">
+            <h5 class="card-title">{{meals.length}} meals</h5>
+            <a href="/meals" class="btn btn-primary">More Details...</a>
+          </div>
+        </div>
+      </div>
+        <div class="col">
+          <div class="card">
+            <h5 class="card-header">Registered Ingredients</h5>
+            <div class="card-body">
+              <h5 class="card-title">{{ingredients.length}} ingredients</h5>
+              <a href="/ingredients" class="btn btn-primary">More Details...</a>
+            </div>
+          </div>
+        </div>
+    </div>
   </app-layout>
 </template>
 
@@ -29,8 +49,9 @@ app.component('home-page',
     {
       template: "#home-page",
       data: () => ({
+        activities: [],
+        meals: [],
         users: [],
-        activities: []
       }),
       created() {
         axios.get("/api/users")
@@ -39,6 +60,9 @@ app.component('home-page',
         axios.get("/api/activities")
             .then(res => this.activities = res.data)
             .catch(() => alert("Error while fetching activities"));
+        axios.get("/api/meals")
+            .then(res => this.meals = res.data)
+            .catch(() => alert("Error while fetching meals"));
       }
     });
 </script>

@@ -2,7 +2,7 @@ package ie.setu.infrastructure
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
-import ie.setu.domain.FoodItem
+import ie.setu.domain.IngredientApiDTO
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
@@ -17,7 +17,7 @@ object NutrientHttpClient {
      * @param mealName The name of the meal to query for food items.
      * @return An array of FoodItem objects representing food items related to the specified meal name.
      */
-    fun get(mealName: String): Array<FoodItem> {
+    fun get(mealName: String): Array<IngredientApiDTO> {
         // Format the query string by replacing spaces with "%20"
         val formattedQueryString = mealName.replace(" ", "%20")
 
@@ -35,7 +35,7 @@ object NutrientHttpClient {
         val response = client.send(request, BodyHandlers.ofString())
 
         // Deserialize the response body into an array of FoodItem objects
-        val meals = mapper.readValue<Array<FoodItem>>(response.body())
+        val meals = mapper.readValue<Array<IngredientApiDTO>>(response.body())
 
         return meals
     }

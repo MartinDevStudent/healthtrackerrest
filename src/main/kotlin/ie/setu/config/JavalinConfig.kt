@@ -1,9 +1,6 @@
 package ie.setu.config
 
-import ie.setu.controllers.ActivityController
-import ie.setu.controllers.AuthenticationController
-import ie.setu.controllers.UserController
-import ie.setu.controllers.MealController
+import ie.setu.controllers.*
 import ie.setu.utils.authentication.JwtProvider
 import io.javalin.Javalin
 import io.javalin.apibuilder.ApiBuilder.*
@@ -57,7 +54,7 @@ class JavalinConfig {
      */
     private fun registerRoutes(app: Javalin) {
         app.routes {
-            path("/api/activities") {
+            path("api/activities") {
                 get(ActivityController::getAllActivities, Roles.ANYONE)
                 post(ActivityController::addActivity, Roles.ANYONE)
                 path("{activity-id}") {
@@ -66,20 +63,29 @@ class JavalinConfig {
                     patch(ActivityController::updateActivity, Roles.ANYONE)
                 }
             }
-            path("/api/authentication") {
+            path("api/authentication") {
                 post(AuthenticationController::login, Roles.ANYONE)
-                path("/validate") {
+                path("validate") {
                     get(AuthenticationController::validate, Roles.USER)
                 }
             }
-            path("/api/meals") {
+            path("api/ingredients") {
+                get(IngredientController::getAllIngredients, Roles.ANYONE)
+                path("{ingredient-id}") {
+                    get(IngredientController::getIngredientByIngredientId, Roles.ANYONE)
+                }
+            }
+            path("api/meals") {
                 get(MealController::getAllMeals, Roles.ANYONE)
                 post(MealController::addMeal, Roles.ANYONE)
                 path("{meal-id}") {
-                    get(MealController::getMealById, Roles.ANYONE)
+                    get(MealController::getMealByMealId, Roles.ANYONE)
+                    path("ingredients") {
+                        get(MealController::getIngredientsByMealId, Roles.ANYONE)
+                    }
                 }
             }
-            path("/api/users") {
+            path("api/users") {
                 get(UserController::getAllUsers, Roles.ANYONE)
                 post(UserController::addUser, Roles.ANYONE)
                 path("{user-id}") {
@@ -91,22 +97,35 @@ class JavalinConfig {
                         delete(ActivityController::deleteActivitiesByUserId, Roles.ANYONE) // TODO
                     }
                 }
-                path("/email/{email}") {
+                path("email/{email}") {
                     get(UserController::getUserByEmail, Roles.ANYONE)
                 }
             }
 
-            // The @routeComponent that we added in layout.html earlier will be replaced
-            // by the String inside the VueComponent. This means a call to / will load
-            // the layout and display our <home-page> component.
-            get("/", VueComponent("<home-page></home-page>"), Roles.ANYONE)
-            get("/users", VueComponent("<user-overview></user-overview>"), Roles.ANYONE)
-            get("/users/{user-id}", VueComponent("<user-profile></user-profile>"), Roles.ANYONE)
-            get("/users/{user-id}/activities", VueComponent("<user-activity-overview></user-activity-overview>"), Roles.ANYONE)
+            get(VueComponent("<home-page></home-page>"), Roles.ANYONE)
+            path ("activities") {
+                get(VueComponent("<activity-overview></activity-overview>"), Roles.ANYONE)
+                get("{activity-id}", VueComponent("<activity-profile></activity-profile>"), Roles.ANYONE)
+            }
+            path ("ingredients") {
+                get(VueComponent("<ingredient-overview></ingredient-overview>"), Roles.ANYONE)
+                get("{ingredient-id}", VueComponent( "<ingredient-profile></ingredient-profile>"), Roles.ANYONE)
+            }
 
-
-
-
+            path ("meals") {
+                get(VueComponent("<meal-overview></meal-overview>"), Roles.ANYONE)
+                path ("{meal-id}") {
+                    get(VueComponent("<meal-profile></meal-profile>"), Roles.ANYONE)
+                    get("ingredients", VueComponent("<meal-ingredient-overview></meal-ingredient-overview>"), Roles.ANYONE)
+                }
+            }
+            path ("users") {
+                get(VueComponent("<user-overview></user-overview>"), Roles.ANYONE)
+                path ("{user-id}") {
+                    get(VueComponent("<user-profile></user-profile>"), Roles.ANYONE)
+                    get("activities", VueComponent("<user-activity-overview></user-activity-overview>"), Roles.ANYONE)
+                }
+            }
         }
     }
 }

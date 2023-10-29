@@ -1,5 +1,6 @@
 package ie.setu.domain
 
-data class MealRequest(
+data class Meal(
+    val id: Int,
     val name: String
 )
