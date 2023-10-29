@@ -111,6 +111,36 @@ paths:
           description: Not authorized
       tags:
         - Authentication
+  /api/ingredients/:
+    get:
+      responses:
+        200:
+          description: This is a list of the ingredients in the app
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Ingredient'
+        404:
+          description: No ingredients in database
+      tags:
+        - Ingredients
+  /api/meals/{ingredient-id}:
+    get:
+      parameters:
+        - $ref: '#/components/parameters/IngredientIdPath'
+      responses:
+        200:
+          description: This is a specific ingredient in the app
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ingredient'
+        404:
+          description: Ingredient not found
+      tags:
+        - Ingredients
   /api/meals/:
     get:
       responses:
@@ -311,6 +341,14 @@ components:
       schema:
         type: string
         example: joe@soap.com
+    IngredientIdPath:
+      in: path
+      name: ingredient-id
+      description: Ingredient Id path parameter
+      required: true
+      schema:
+        type: integer
+        example: 3232
     MealIdPath:
       in: path
       name: meal-id
