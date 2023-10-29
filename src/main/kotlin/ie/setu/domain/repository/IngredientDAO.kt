@@ -12,6 +12,14 @@ import kotlin.collections.ArrayList
 
 class IngredientDAO {
 
+    /**
+     * Retrieves a list of all ingredients stored in the system's database.
+     *
+     * This method queries the system's database to retrieve a list of all ingredients that have been
+     * stored. It maps the database result rows to Ingredient objects and returns them as an ArrayList.
+     *
+     * @return An ArrayList containing all the ingredients stored in the system's database.
+     */
     fun getAll(): ArrayList<Ingredient>  {
         val ingredientsList: ArrayList<Ingredient> = arrayListOf()
         transaction {
@@ -21,6 +29,16 @@ class IngredientDAO {
         return ingredientsList
     }
 
+    /**
+     * Retrieves an ingredient by its unique identifier (ingredient ID).
+     *
+     * This method queries the system's database to retrieve a specific ingredient based on its unique
+     * identifier (ingredient ID). If an ingredient with the specified ID is found in the system, it is
+     * returned as an Ingredient object. If no matching ingredient is found, the method returns null.
+     *
+     * @param id The unique identifier (ingredient ID) of the ingredient to retrieve.
+     * @return The Ingredient object if found, or null if no matching ingredient is found.
+     */
     fun findByIngredientId(id: Int): Ingredient? {
         return transaction {
             Ingredients

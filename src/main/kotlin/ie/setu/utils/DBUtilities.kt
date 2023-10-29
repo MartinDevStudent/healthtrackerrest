@@ -25,6 +25,16 @@ fun mapToActivity(it: ResultRow) = Activity(
     userId = it[Activities.userId]
 )
 
+/**
+ * Maps a database result row to an Ingredient object.
+ *
+ * This function is used to map the columns of a database result row to an Ingredient object. It
+ * extracts the attributes (id, name, calories, etc.) from the result row and constructs an
+ * Ingredient object with these values.
+ *
+ * @param it The database result row containing the ingredient information.
+ * @return An Ingredient object constructed from the data in the result row.
+ */
 fun mapToIngredient(it: ResultRow) = Ingredient(
     id = it[Ingredients.id],
     name = it[Ingredients.name],
