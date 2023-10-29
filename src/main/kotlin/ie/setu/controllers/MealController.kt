@@ -66,7 +66,7 @@ object MealController {
      */
     fun addMeal(ctx: Context) {
         val mapper = jacksonObjectMapper()
-        var meal = mapper.readValue<Meal>(ctx.body())
+        val meal = mapper.readValue<Meal>(ctx.body())
 
         val existingMeal = mealDao.findByMealName(meal.name)
 
