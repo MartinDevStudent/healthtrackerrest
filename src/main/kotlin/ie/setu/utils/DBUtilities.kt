@@ -1,8 +1,10 @@
 package ie.setu.utils
 
 import ie.setu.domain.Activity
+import ie.setu.domain.Meal
 import ie.setu.domain.User
 import ie.setu.domain.db.Activities
+import ie.setu.domain.db.Meals
 import ie.setu.domain.db.Users
 import org.jetbrains.exposed.sql.ResultRow
 
@@ -33,4 +35,18 @@ fun mapToActivity(it: ResultRow) = Activity(
     started = it[Activities.started],
     calories = it[Activities.calories],
     userId = it[Activities.userId]
+)
+
+/**
+ * Maps a database result row to a Meal object.
+ *
+ * This function is used to map the columns of a database result row to a Meal object. It extracts
+ * the 'id' and 'name' attributes from the result row and constructs a Meal object with these values.
+ *
+ * @param it The database result row containing the meal information.
+ * @return A Meal object constructed from the data in the result row.
+ */
+fun mapToMeal(it: ResultRow) = Meal(
+    id = it[Meals.id],
+    name = it[Meals.name],
 )

@@ -80,6 +80,7 @@ class JavalinConfig {
                 post(MealController::addMeal, Roles.ANYONE)
                 path("{meal-id}") {
                     get(MealController::getMealByMealId, Roles.ANYONE)
+                    delete(MealController::deleteMeal, Roles.ANYONE)
                     path("ingredients") {
                         get(MealController::getIngredientsByMealId, Roles.ANYONE)
                     }
