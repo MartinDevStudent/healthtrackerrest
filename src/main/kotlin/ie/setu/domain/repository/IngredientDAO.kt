@@ -2,107 +2,55 @@ package ie.setu.domain.repository
 
 import ie.setu.domain.Ingredient
 import ie.setu.domain.IngredientApiDTO
+import ie.setu.domain.db.Ingredients
+import ie.setu.utils.mapToIngredient
+import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.selectAll
+import org.jetbrains.exposed.sql.transactions.transaction
 import kotlin.collections.ArrayList
 
 class IngredientDAO {
-    private val ingredients = arrayListOf(
-        Ingredient(
-            id = 1,
-            name = "burger",
-            calories = 237.7,
-            servingSizeG = 100.0,
-            fatTotalG = 11.5,
-            fatSaturatedG = 4.7,
-            proteinG = 15.2,
-            sodiumMg = 356,
-            potassiumMg = 137,
-            cholesterolMg = 53,
-            carbohydratesTotalG = 18.1,
-            fiberG = 0.0,
-            sugarG = 0.0,
-            mealId = 1
-        ),
-        Ingredient(
-            id = 2,
-            name = "fries",
-            calories = 317.7,
-            servingSizeG = 100.0,
-            fatTotalG = 14.8,
-            fatSaturatedG = 2.3,
-            proteinG = 3.4,
-            sodiumMg = 212,
-            potassiumMg = 124,
-            cholesterolMg = 0,
-            carbohydratesTotalG = 41.1,
-            fiberG = 3.8,
-            sugarG = 0.3,
-            mealId = 1
-        ),
-        Ingredient(
-            id = 3,
-            name = "salmon",
-            calories = 208.7,
-            servingSizeG = 100.0,
-            fatTotalG = 12.1,
-            fatSaturatedG = 2.4,
-            proteinG = 22.0,
-            sodiumMg = 61,
-            potassiumMg = 253,
-            cholesterolMg = 63,
-            carbohydratesTotalG = 0.0,
-            fiberG = 0.0,
-            sugarG = 0.0,
-            mealId = 2
-        ),
-        Ingredient(
-            id = 4,
-            name = "salad",
-            calories = 23.6,
-            servingSizeG = 100.0,
-            fatTotalG = 0.2,
-            fatSaturatedG = 0.0,
-            proteinG = 1.5,
-            sodiumMg = 36,
-            potassiumMg = 32,
-            cholesterolMg = 0,
-            carbohydratesTotalG = 4.9,
-            fiberG = 1.9,
-            sugarG = 2.2,
-            mealId = 2
-        )
-    )
 
     fun getAll(): ArrayList<Ingredient>  {
-        return ingredients
+        val ingredientsList: ArrayList<Ingredient> = arrayListOf()
+        transaction {
+            Ingredients.selectAll().map {
+                ingredientsList.add(mapToIngredient(it)) }
+        }
+        return ingredientsList
     }
 
-    fun findById(id: Int): Ingredient? {
-        return ingredients.find { it.id == id }
+    fun findByIngredientId(id: Int): Ingredient? {
+        return transaction {
+            Ingredients
+                .select() { Ingredients.id eq id }
+                .map{ mapToIngredient(it) }
+                .firstOrNull()
+        }
     }
 
-    fun findByMealId(mealId: Int): List<Ingredient> {
-        return ingredients.filter { it.mealId == mealId }
+    fun findByMealId(mealId: Int): ArrayList<Ingredient> {
+        return arrayListOf()
+        //return ingredients.filter { it.mealId == mealId }
     }
 
     fun save (mealId: Int, dto: IngredientApiDTO) {
-        val id = ingredients.last().id + 1
-        ingredients.add(
-            Ingredient(
-                id = id,
-                name = dto.name,
-                calories = dto.calories,
-                servingSizeG = dto.servingSizeG,
-                fatTotalG = dto.fatTotalG,
-                fatSaturatedG = dto.fatSaturatedG,
-                proteinG = dto.proteinG,
-                sodiumMg = dto.sodiumMg,
-                potassiumMg = dto.potassiumMg,
-                cholesterolMg = dto.cholesterolMg,
-                carbohydratesTotalG = dto.carbohydratesTotalG,
-                fiberG = dto.fiberG,
-                sugarG = dto.sugarG,
-                mealId = mealId
-            )
-        )
+        return transaction {
+            Ingredients.insert {
+                it[name] = dto.name
+                it[calories] = dto.calories
+                it[servingSizeG] = dto.servingSizeG
+                it[fatTotalG] = dto.fatTotalG
+                it[fatSaturatedG] = dto.fatSaturatedG
+                it[proteinG] = dto.proteinG
+                it[sodiumMg] = dto.sodiumMg
+                it[potassiumMg] = dto.potassiumMg
+                it[cholesterolMg] = dto.cholesterolMg
+                it[carbohydratesTotalG] = dto.carbohydratesTotalG
+                it[fiberG] = dto.fiberG
+                it[sugarG] = dto.sugarG
+            } get Ingredients.id
+        }
     }
 }

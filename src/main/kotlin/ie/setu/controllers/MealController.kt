@@ -7,7 +7,6 @@ import ie.setu.domain.repository.IngredientDAO
 import ie.setu.domain.repository.MealDAO
 import ie.setu.infrastructure.NutrientHttpClient
 import io.javalin.http.Context
-import mapObjectWithDateToJson
 
 object MealController {
     private val mealDao = MealDAO()
@@ -46,7 +45,7 @@ object MealController {
     fun getIngredientsByMealId(ctx: Context) {
         val ingredients = ingredientDao.findByMealId(ctx.pathParam("meal-id").toInt())
         if (ingredients.isNotEmpty()) {
-            ctx.json(mapObjectWithDateToJson(ingredients))
+            ctx.json(ingredients)
             ctx.status(200)
         }
         else {
@@ -67,12 +66,28 @@ object MealController {
      */
     fun addMeal(ctx: Context) {
         val mapper = jacksonObjectMapper()
-        val meal = mapper.readValue<Meal>(ctx.body())
-        val ingredientDTOs = NutrientHttpClient.get(meal.name)
+        var meal = mapper.readValue<Meal>(ctx.body())
 
-        if (ingredientDTOs.isNotEmpty()) {
-            val mealId = mealDao.save(meal)
-            ingredientDTOs.forEach { ingredientDao.save(mealId, it) }
+        val existingMeal = mealDao.findByMealName(meal.name)
+
+        if (existingMeal != null) {
+            ctx.status(409)
+            ctx.result("Meal already exists in database")
+        }
+        else {
+            val ingredientDTOs = NutrientHttpClient.get(meal.name)
+
+            if (ingredientDTOs.isNotEmpty()) {
+                val mealId = mealDao.save(meal)
+                meal.id = mealId
+
+                ingredientDTOs.forEach { ingredientDao.save(mealId, it) }
+                ctx.json(meal)
+                ctx.status(201)
+            }
+            else {
+                ctx.status(400)
+            }
         }
     }
 

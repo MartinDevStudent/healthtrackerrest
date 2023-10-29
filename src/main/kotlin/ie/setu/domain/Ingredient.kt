@@ -14,5 +14,4 @@ data class Ingredient(
     val carbohydratesTotalG: Double,
     val fiberG: Double,
     val sugarG: Double,
-    val mealId: Int,
-)
+    )

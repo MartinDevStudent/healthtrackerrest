@@ -48,6 +48,15 @@ class MealDAO {
         }
     }
 
+    fun findByMealName(name: String): Meal? {
+        return transaction {
+            Meals
+                .select() { Meals.name eq name}
+                .map{ mapToMeal(it) }
+                .firstOrNull()
+        }
+    }
+
     /**
      * Saves a new meal to the system's database.
      *
