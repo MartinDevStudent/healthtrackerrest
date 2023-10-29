@@ -1,31 +1,85 @@
 package ie.setu.domain.repository
 
 import ie.setu.domain.Meal
+import ie.setu.domain.db.Meals
+import ie.setu.utils.mapToMeal
+import org.jetbrains.exposed.sql.deleteWhere
+import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.selectAll
+import org.jetbrains.exposed.sql.transactions.transaction
 import kotlin.collections.ArrayList
 
 class MealDAO {
-    private val meals = arrayListOf<Meal>(
-        Meal(
-            id = 1,
-            name = "Burger and fries",
-        ),
-        Meal(
-            id = 2,
-            name = "Salmon and salad",
-        )
-    )
 
+    /**
+     * Retrieves a list of all meals stored in the system's database.
+     *
+     * This method queries the system's database to retrieve a list of all meals that have been stored.
+     * It maps the database result rows to Meal objects and returns them as an ArrayList.
+     *
+     * @return An ArrayList containing all the meals stored in the system's database.
+     */
     fun getAll(): ArrayList<Meal>  {
-        return meals
+        val mealsList: ArrayList<Meal> = arrayListOf()
+        transaction {
+            Meals.selectAll().map {
+                mealsList.add(mapToMeal(it)) }
+        }
+        return mealsList
     }
 
-    fun findById(id: Int): Meal? {
-        return meals.find { it.id == id }
+    /**
+     * Retrieves a meal by its unique identifier (meal ID).
+     *
+     * This method queries the system's database to retrieve a specific meal based on its unique
+     * identifier (meal ID). If a meal with the specified ID is found in the system, it is returned as a
+     * Meal object. If no meal matches the provided ID, the method returns null.
+     *
+     * @param id The unique identifier (meal ID) of the meal to retrieve.
+     * @return The Meal object if found, or null if no matching meal is found.
+     */
+    fun findByMealId(id: Int): Meal? {
+        return transaction {
+            Meals
+                .select() { Meals.id eq id}
+                .map{ mapToMeal(it) }
+                .firstOrNull()
+        }
     }
 
-    fun save (mealName: String): Int {
-        val id = meals.last().id + 1
-        meals.add(Meal(id, mealName))
-        return id
+    /**
+     * Saves a new meal to the system's database.
+     *
+     * This method is used to add a new meal to the system by inserting its name into the database.
+     * It returns the unique identifier (meal ID) assigned to the newly added meal.
+     *
+     * @param meal The Meal object to be saved, containing the meal's name.
+     * @return The unique identifier (meal ID) assigned to the newly added meal.
+     */
+    fun save (meal: Meal): Int {
+        return transaction {
+            Meals.insert {
+                it[name] = meal.name
+            } get Meals.id
+        }
+    }
+
+    /**
+     * Deletes a meal from the system's database by its unique identifier (meal ID).
+     *
+     * This method is used to remove a meal from the system's database based on its unique identifier
+     * (meal ID). It returns the number of records deleted, which should be 1 if a meal with the
+     * specified ID was successfully deleted, or 0 if no matching meal was found.
+     *
+     * @param id The unique identifier (meal ID) of the meal to be deleted.
+     * @return The number of records deleted (1 if successful, 0 if no matching meal is found).
+     */
+    fun delete(id: Int): Int {
+        return transaction{
+            Meals.deleteWhere{
+                Meals.id eq id
+            }
+        }
     }
 }

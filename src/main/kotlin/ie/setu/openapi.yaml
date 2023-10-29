@@ -7,118 +7,6 @@ info:
     name: Martin Lorimer
     email: martin.lorimer@gmail.com
 paths:
-  /api/users:
-    get:
-      responses:
-        200:
-          description: This is a list of the users in the app
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/User'
-        404:
-          description: No users in database
-      tags:
-        - Users
-    post:
-      description: Add a user to the app
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/User'
-      responses:
-        201:
-          description: The user has been created
-      tags:
-        - Users
-  /api/users/{user-id}:
-    get:
-      parameters:
-        - $ref: '#/components/parameters/UserIdPath'
-      responses:
-        200:
-          description: This is a specific user in the app
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'
-        404:
-          description: User not found
-      tags:
-        - Users
-    patch:
-      parameters:
-        - $ref: '#/components/parameters/UserIdPath'
-      description: This updates/modifies a specific user
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/User'
-      responses:
-        204:
-          description: The user has been updated/modified
-        404:
-          description: User not found
-      tags:
-        - Users
-    delete:
-      parameters:
-        - $ref: '#/components/parameters/UserIdPath'
-      description: This deletes a specific user in the app
-      responses:
-        204:
-          description: The user has been deleted
-        404:
-          description: User not found
-      tags:
-        - Users
-  /api/users/email/{email}:
-    get:
-      parameters:
-        - $ref: '#/components/parameters/EmailPath'
-      responses:
-        200:
-          description: This is a user associated with an email address
-          content:
-            application/json:
-              schema:
-                  $ref: '#/components/schemas/User'
-        404:
-          description: User associated with email address not found
-      tags:
-        - Users
-  /api/users/{user-id}/activities:
-    get:
-      parameters:
-        - $ref: '#/components/parameters/UserIdPath'
-      responses:
-        200:
-          description: This is a list of activities associated with the user
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Activity'
-        404:
-          description: No activities for user found
-      tags:
-        - Users
-    delete:
-      parameters:
-        - $ref: '#/components/parameters/UserIdPath'
-      description: This deletes all activities associated with a user
-      responses:
-        204:
-          description: All activities associated with the user are deleted
-        404:
-          description: User not found
-      tags:
-        - Users
   /api/activities/{activity-id}:
     get:
       parameters:
@@ -223,6 +111,188 @@ paths:
           description: Not authorized
       tags:
         - Authentication
+  /api/meals/:
+    get:
+      responses:
+        200:
+          description: This is a list of the meals in the app
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Meal'
+        404:
+          description: No meals in database
+      tags:
+        - Meals
+    post:
+      description: Add a meal to the app
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MealDTO'
+      responses:
+        201:
+          description: The meal has been created
+      tags:
+        - Meals
+  /api/meals/{meal-id}:
+    get:
+      parameters:
+        - $ref: '#/components/parameters/MealIdPath'
+      responses:
+        200:
+          description: This is a specific meal in the app
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Meal'
+        404:
+          description: Meal not found
+      tags:
+        - Meals
+    delete:
+      parameters:
+        - $ref: '#/components/parameters/MealIdPath'
+      description: This deletes a specific meal in the app
+      responses:
+        204:
+          description: The meal has been deleted
+        404:
+          description: Meal not found
+      tags:
+        - Meals
+  /api/meals/{meal-id}/ingredients:
+    get:
+      parameters:
+        - $ref: '#/components/parameters/MealIdPath'
+      responses:
+        200:
+          description: This is a list of the ingredients associated with a specific meal in the app
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Ingredient'
+        404:
+          description: Meal not found
+      tags:
+        - Meals
+  /api/users:
+    get:
+      responses:
+        200:
+          description: This is a list of the users in the app
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+        404:
+          description: No users in database
+      tags:
+        - Users
+    post:
+      description: Add a user to the app
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        201:
+          description: The user has been created
+      tags:
+        - Users
+  /api/users/{user-id}:
+    get:
+      parameters:
+        - $ref: '#/components/parameters/UserIdPath'
+      responses:
+        200:
+          description: This is a specific user in the app
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        404:
+          description: User not found
+      tags:
+        - Users
+    patch:
+      parameters:
+        - $ref: '#/components/parameters/UserIdPath'
+      description: This updates/modifies a specific user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        204:
+          description: The user has been updated/modified
+        404:
+          description: User not found
+      tags:
+        - Users
+    delete:
+      parameters:
+        - $ref: '#/components/parameters/UserIdPath'
+      description: This deletes a specific user in the app
+      responses:
+        204:
+          description: The user has been deleted
+        404:
+          description: User not found
+      tags:
+        - Users
+  /api/users/email/{email}:
+    get:
+      parameters:
+        - $ref: '#/components/parameters/EmailPath'
+      responses:
+        200:
+          description: This is a user associated with an email address
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        404:
+          description: User associated with email address not found
+      tags:
+        - Users
+  /api/users/{user-id}/activities:
+    get:
+      parameters:
+        - $ref: '#/components/parameters/UserIdPath'
+      responses:
+        200:
+          description: This is a list of activities associated with the user
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Activity'
+        404:
+          description: No activities for user found
+      tags:
+        - Users
+    delete:
+      parameters:
+        - $ref: '#/components/parameters/UserIdPath'
+      description: This deletes all activities associated with a user
+      responses:
+        204:
+          description: All activities associated with the user are deleted
+        404:
+          description: User not found
+      tags:
+        - Users
 components:
   parameters:
     ActivityIdPath:
@@ -241,6 +311,14 @@ components:
       schema:
         type: string
         example: joe@soap.com
+    MealIdPath:
+      in: path
+      name: meal-id
+      description: Meal Id path parameter
+      required: true
+      schema:
+        type: integer
+        example: 3232
     UserIdPath:
       in: path
       name: user-id
@@ -250,6 +328,82 @@ components:
         type: integer
         example: 3232
   schemas:
+    Activity:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 3232
+        name:
+          type: string
+          example: Exercise
+    Ingredient:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        name:
+          type: string
+        calories:
+          type: number
+          format: double
+          example: 1.1
+        servingSizeG:
+          type: number
+          format: double
+          example: 1.1
+        fatTotalG:
+          type: number
+          format: double
+          example: 1.1
+        fatSaturatedG:
+          type: number
+          format: double
+          example: 1.1
+        proteinG:
+          type: number
+          format: double
+          example: 1.1
+        sodiumMg:
+          type: integer
+          format: int32
+        potassiumMg:
+          type: integer
+          format: int32
+        cholesterolMg:
+          type: integer
+          format: int32
+        carbohydratesTotalG:
+          type: number
+          format: double
+          example: 1.1
+        fiberG:
+          type: number
+          format: double
+          example: 1.1
+        sugarG:
+          type: number
+          format: double
+          example: 1.1
+        mealId:
+          type: integer
+          format: int32
+    Meal:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 3232
+        name:
+          type: string
+          example: Salmon salad
+    MealDTO:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Salmon salad
     User:
       type: object
       properties:
@@ -274,12 +428,3 @@ components:
         password:
           type: string
           example: password
-    Activity:
-      type: object
-      properties:
-        id:
-          type: integer
-          example: 3232
-        name:
-          type: string
-          example: Exercise
