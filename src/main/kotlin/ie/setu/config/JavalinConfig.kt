@@ -95,12 +95,15 @@ class JavalinConfig {
                     patch(UserController::updateUser, Roles.ANYONE)
                     path("activities"){
                         get(ActivityController::getActivitiesByUserId, Roles.ANYONE)
-                        delete(ActivityController::deleteActivitiesByUserId, Roles.ANYONE) // TODO
+                        delete(ActivityController::deleteActivitiesByUserId, Roles.ANYONE)
                     }
                     path("meals"){
                         get(MealController::getMealsByUserId, Roles.ANYONE)
                         post(MealController::addUserMeal, Roles.ANYONE)
-                        delete(MealController::deleteMealsByUserId, Roles.ANYONE) // TODO
+                        delete(MealController::deleteUserMealsByUserId, Roles.ANYONE)
+                        path("{meal-id}"){
+                            delete(MealController::deleteUserMealByMealId, Roles.ANYONE)
+                        }
                     }
                 }
                 path("email/{email}") {

@@ -366,6 +366,20 @@ paths:
           description: No meals associated with user to delete
       tags:
         - Users
+  /api/users/{user-id}/meals/{meal-id}:
+    delete:
+      parameters:
+        - $ref: '#/components/parameters/UserIdPath'
+        - $ref: '#/components/parameters/MealIdPath'
+      description: This deletes a specific meal that has been associated with a user
+      responses:
+        204:
+          description: Meals associated with the user is deleted
+        404:
+          description: No meal or user found for specified ids
+      tags:
+        - Users
+
 components:
   parameters:
     ActivityIdPath:

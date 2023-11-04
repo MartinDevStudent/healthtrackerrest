@@ -7,10 +7,7 @@ import ie.setu.domain.db.Users
 import ie.setu.domain.db.UsersMeals
 import ie.setu.utils.mapToMeal
 import org.jetbrains.exposed.dao.EntityID
-import org.jetbrains.exposed.sql.deleteWhere
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.select
-import org.jetbrains.exposed.sql.selectAll
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import kotlin.collections.ArrayList
 
@@ -146,6 +143,21 @@ class MealDAO {
         return transaction{
             UsersMeals.deleteWhere{
                 UsersMeals.user eq id
+            }
+        }
+    }
+
+    /**
+     * Deletes the association between a user and a specific meal by their respective IDs from the database.
+     *
+     * @param userId The ID of the user from whom the meal association is to be deleted.
+     * @param mealId The ID of the meal to be disassociated from the user.
+     * @return The number of meal associations that were deleted.
+     */
+    fun deleteUserMealByMealId(userId: Int, mealId: Int): Int {
+        return transaction{
+            UsersMeals.deleteWhere{
+                UsersMeals.user eq userId and (UsersMeals.meal eq mealId)
             }
         }
     }

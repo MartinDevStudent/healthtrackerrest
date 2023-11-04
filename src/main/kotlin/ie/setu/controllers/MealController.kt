@@ -6,7 +6,6 @@ import ie.setu.domain.Meal
 import ie.setu.domain.MealDto
 import ie.setu.domain.repository.IngredientDAO
 import ie.setu.domain.repository.MealDAO
-import ie.setu.domain.repository.UserDAO
 import ie.setu.infrastructure.NutrientHttpClient
 import io.javalin.http.Context
 
@@ -173,8 +172,23 @@ object MealController {
      *
      * @param ctx The Javalin context object representing the HTTP request and response.
      */
-    fun deleteMealsByUserId(ctx: Context) {
+    fun deleteUserMealsByUserId(ctx: Context) {
         if (mealDao.deleteByUserId(ctx.pathParam("user-id").toInt()) != 0)
+            ctx.status(204)
+        else
+            ctx.status(404)
+    }
+
+    /**
+     * Deletes the association between a specific user and a meal by their respective IDs.
+     *
+     * @param ctx The Javalin context object representing the HTTP request and response.
+     */
+    fun deleteUserMealByMealId(ctx: Context) {
+        val userId = ctx.pathParam("user-id").toInt()
+        val mealId = ctx.pathParam("meal-id").toInt()
+
+        if (mealDao.deleteUserMealByMealId(userId, mealId) != 0)
             ctx.status(204)
         else
             ctx.status(404)
