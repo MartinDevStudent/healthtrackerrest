@@ -4,7 +4,6 @@ import ie.setu.domain.Ingredient
 import ie.setu.domain.IngredientApiDTO
 import ie.setu.domain.db.Ingredients
 import ie.setu.utils.mapToIngredient
-import org.jetbrains.exposed.dao.EntityID
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.selectAll
