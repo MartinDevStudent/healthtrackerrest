@@ -3,14 +3,15 @@ package ie.setu.controllers
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import ie.setu.domain.Meal
+import ie.setu.domain.MealDto
 import ie.setu.domain.repository.IngredientDAO
 import ie.setu.domain.repository.MealDAO
 import ie.setu.infrastructure.NutrientHttpClient
 import io.javalin.http.Context
 
 object MealController {
-    private val mealDao = MealDAO()
     private val ingredientDao = IngredientDAO()
+    private val mealDao = MealDAO()
 
     /**
      * Retrieves and returns a list of all meals as JSON.
@@ -30,6 +31,26 @@ object MealController {
         val meal = mealDao.findByMealId(ctx.pathParam("meal-id").toInt())
         if (meal != null) {
             ctx.json(meal)
+            ctx.status(200)
+        }
+        else {
+            ctx.status(404)
+        }
+    }
+
+    /**
+     * Retrieves a list of meals associated with a specific user ID and sends it as a JSON response.
+     *
+     * @param ctx The Javalin context object representing the HTTP request and response.
+     */
+    fun getMealsByUserId(ctx: Context) {
+        val meals = mealDao.findByUserId(ctx.pathParam("user-id").toInt())
+        if (meals.count() != 0) {
+            ctx.json(meals)
+            ctx.status(200)
+        }
+        else {
+            ctx.status(404)
         }
     }
 
@@ -66,22 +87,24 @@ object MealController {
      */
     fun addMeal(ctx: Context) {
         val mapper = jacksonObjectMapper()
-        val meal = mapper.readValue<Meal>(ctx.body())
+        val mealDto = mapper.readValue<MealDto>(ctx.body())
 
-        val existingMeal = mealDao.findByMealName(meal.name)
+        var meal = mealDao.findByMealName(mealDto.name)
 
-        if (existingMeal != null) {
+        if (meal != null) {
             ctx.status(409)
             ctx.result("Meal already exists in database")
         }
         else {
-            val ingredientDTOs = NutrientHttpClient.get(meal.name)
+            val ingredientDTOs = NutrientHttpClient.get(mealDto.name)
 
             if (ingredientDTOs.isNotEmpty()) {
-                val mealId = mealDao.save(meal)
-                meal.id = mealId
+                meal = Meal(
+                    id = mealDao.save(mealDto).value,
+                    name = mealDto.name,
+                )
 
-                ingredientDTOs.forEach { ingredientDao.save(mealId, it) }
+                ingredientDTOs.forEach { ingredientDao.save(meal.id, it) }
                 ctx.json(meal)
                 ctx.status(201)
             }
@@ -89,6 +112,42 @@ object MealController {
                 ctx.status(400)
             }
         }
+    }
+
+    /**
+     * Adds a meal to a user's profile and associates it with the specified user ID.
+     *
+     * @param ctx The Javalin context object representing the HTTP request and response.
+     * @throws NumberFormatException If the "user-id" path parameter cannot be converted to an integer.
+     */
+    fun addUserMeal(ctx: Context) {
+        val userId = ctx.pathParam("user-id").toInt()
+        val mapper = jacksonObjectMapper()
+        val mealDto = mapper.readValue<MealDto>(ctx.body())
+
+        var meal = mealDao.findByMealName(mealDto.name)
+
+        if (meal == null)  {
+            val ingredientDTOs = NutrientHttpClient.get(mealDto.name)
+
+            if (ingredientDTOs.isNotEmpty()) {
+                meal = Meal(
+                    id = mealDao.save(mealDto).value,
+                    name = mealDto.name,
+                )
+
+                ingredientDTOs.forEach { ingredientDao.save(meal.id, it) }
+                mealDao.saveUserMeal(userId, meal.id)
+            }
+            else {
+                ctx.status(400)
+            }
+        }
+        else {
+            mealDao.saveUserMeal(userId, meal.id)
+        }
+
+        ctx.status(201)
     }
 
     /**
@@ -103,6 +162,33 @@ object MealController {
      */
     fun deleteMeal(ctx: Context) {
         if (mealDao.delete(ctx.pathParam("meal-id").toInt()) != 0)
+            ctx.status(204)
+        else
+            ctx.status(404)
+    }
+
+    /**
+     * Deletes all meals associated with a specific user ID and updates the HTTP response status.
+     *
+     * @param ctx The Javalin context object representing the HTTP request and response.
+     */
+    fun deleteUserMealsByUserId(ctx: Context) {
+        if (mealDao.deleteByUserId(ctx.pathParam("user-id").toInt()) != 0)
+            ctx.status(204)
+        else
+            ctx.status(404)
+    }
+
+    /**
+     * Deletes the association between a specific user and a meal by their respective IDs.
+     *
+     * @param ctx The Javalin context object representing the HTTP request and response.
+     */
+    fun deleteUserMealByMealId(ctx: Context) {
+        val userId = ctx.pathParam("user-id").toInt()
+        val mealId = ctx.pathParam("meal-id").toInt()
+
+        if (mealDao.deleteUserMealByMealId(userId, mealId) != 0)
             ctx.status(204)
         else
             ctx.status(404)

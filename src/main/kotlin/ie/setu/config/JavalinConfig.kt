@@ -19,7 +19,7 @@ class JavalinConfig {
 
         val app = Javalin.create{
             it.accessManager(JWTAccessManager("level", rolesMapping, Roles.ANYONE))
-            //added this jsonMapper for our integration tests - serialise objects to json
+            // Added this jsonMapper for our integration tests - serialise objects to json
             it.jsonMapper(JavalinJackson(jsonObjectMapper()))
             it.staticFiles.enableWebjars()
             it.vue.vueAppName = "app" // only required for Vue 3, is defined in layout.html
@@ -95,7 +95,15 @@ class JavalinConfig {
                     patch(UserController::updateUser, Roles.ANYONE)
                     path("activities"){
                         get(ActivityController::getActivitiesByUserId, Roles.ANYONE)
-                        delete(ActivityController::deleteActivitiesByUserId, Roles.ANYONE) // TODO
+                        delete(ActivityController::deleteActivitiesByUserId, Roles.ANYONE)
+                    }
+                    path("meals"){
+                        get(MealController::getMealsByUserId, Roles.ANYONE)
+                        post(MealController::addUserMeal, Roles.ANYONE)
+                        delete(MealController::deleteUserMealsByUserId, Roles.ANYONE)
+                        path("{meal-id}"){
+                            delete(MealController::deleteUserMealByMealId, Roles.ANYONE)
+                        }
                     }
                 }
                 path("email/{email}") {

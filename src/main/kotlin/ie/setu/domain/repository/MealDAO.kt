@@ -1,12 +1,13 @@
 package ie.setu.domain.repository
 
 import ie.setu.domain.Meal
+import ie.setu.domain.MealDto
 import ie.setu.domain.db.Meals
+import ie.setu.domain.db.Users
+import ie.setu.domain.db.UsersMeals
 import ie.setu.utils.mapToMeal
-import org.jetbrains.exposed.sql.deleteWhere
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.select
-import org.jetbrains.exposed.sql.selectAll
+import org.jetbrains.exposed.dao.EntityID
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import kotlin.collections.ArrayList
 
@@ -48,6 +49,12 @@ class MealDAO {
         }
     }
 
+    /**
+     * Retrieves a meal by its name from the database.
+     *
+     * @param name The name of the meal to search for.
+     * @return A [Meal] object if a meal with the specified name is found, or null if not found.
+     */
     fun findByMealName(name: String): Meal? {
         return transaction {
             Meals
@@ -55,6 +62,24 @@ class MealDAO {
                 .map{ mapToMeal(it) }
                 .firstOrNull()
         }
+    }
+
+    /**
+     * Retrieves a list of meals associated with a specific user ID from the database.
+     *
+     * @param id The user ID for which meals are to be retrieved.
+     * @return An [ArrayList] of [Meal] objects associated with the specified user, or an empty list if none are found.
+     */
+    fun findByUserId(id: Int): ArrayList<Meal> {
+        val mealsList: ArrayList<Meal> = arrayListOf()
+        transaction {
+            Meals.innerJoin(UsersMeals)
+                .slice(Meals.columns)
+                .select { UsersMeals.user eq id }
+                .map { mealsList.add(mapToMeal(it)) }
+        }
+
+        return mealsList
     }
 
     /**
@@ -66,11 +91,27 @@ class MealDAO {
      * @param meal The Meal object to be saved, containing the meal's name.
      * @return The unique identifier (meal ID) assigned to the newly added meal.
      */
-    fun save (meal: Meal): Int {
+    fun save (meal: MealDto): EntityID<Int> {
         return transaction {
             Meals.insert {
                 it[name] = meal.name
             } get Meals.id
+        }
+    }
+
+    /**
+     * Associates a user with a specific meal and saves this association in the database.
+     *
+     * @param userID The ID of the user to associate with the meal.
+     * @param mealId The ID of the meal to associate with the user.
+     * @return The ID of the newly created UsersMeals association record.
+     */
+    fun saveUserMeal(userID: Int, mealId: Int): Int {
+        return transaction {
+            UsersMeals.insert {
+                it[user] = EntityID(userID, Users)
+                it[meal] = EntityID(mealId, Meals)
+            } get UsersMeals.id
         }
     }
 
@@ -88,6 +129,35 @@ class MealDAO {
         return transaction{
             Meals.deleteWhere{
                 Meals.id eq id
+            }
+        }
+    }
+
+    /**
+     * Deletes all meal associations for a specific user by their user ID from the database.
+     *
+     * @param id The ID of the user for whom meal associations are to be deleted.
+     * @return The number of meal associations that were deleted.
+     */
+    fun deleteByUserId(id: Int): Int {
+        return transaction{
+            UsersMeals.deleteWhere{
+                UsersMeals.user eq id
+            }
+        }
+    }
+
+    /**
+     * Deletes the association between a user and a specific meal by their respective IDs from the database.
+     *
+     * @param userId The ID of the user from whom the meal association is to be deleted.
+     * @param mealId The ID of the meal to be disassociated from the user.
+     * @return The number of meal associations that were deleted.
+     */
+    fun deleteUserMealByMealId(userId: Int, mealId: Int): Int {
+        return transaction{
+            UsersMeals.deleteWhere{
+                UsersMeals.user eq userId and (UsersMeals.meal eq mealId)
             }
         }
     }

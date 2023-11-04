@@ -1,8 +1,9 @@
 package ie.setu.domain.repository
 
 import ie.setu.domain.User
-import ie.setu.domain.db.Users
+import ie.setu.domain.db.*
 import ie.setu.utils.mapToUser
+import org.jetbrains.exposed.dao.EntityID
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import kotlin.collections.ArrayList
@@ -61,7 +62,7 @@ class UserDAO {
      * @param user The User object to be added to the database.
      * @return The ID of the newly created user in the database, or null if the insertion fails.
      */
-    fun save(user: User): Int? {
+    fun save(user: User): EntityID<Int> {
         return transaction {
             Users.insert {
                 it[name] = user.name

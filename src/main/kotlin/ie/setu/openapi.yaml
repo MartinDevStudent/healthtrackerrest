@@ -166,6 +166,8 @@ paths:
       responses:
         201:
           description: The meal has been created
+        400:
+          description: Invalid meal name
       tags:
         - Meals
   /api/meals/{meal-id}:
@@ -323,6 +325,61 @@ paths:
           description: User not found
       tags:
         - Users
+  /api/users/{user-id}/meals:
+    get:
+      parameters:
+        - $ref: '#/components/parameters/UserIdPath'
+      responses:
+        200:
+          description: This is all meals associated with a user
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+        404:
+          description: No meals found for user with specified id
+    post:
+      parameters:
+        - $ref: '#/components/parameters/UserIdPath'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MealDTO'
+      responses:
+        201:
+          description: Add a meal to a user in the app
+        400:
+          description: Invalid meal name
+      tags:
+        - Users
+    delete:
+      parameters:
+        - $ref: '#/components/parameters/UserIdPath'
+      description: This deletes all meals associated with a user
+      responses:
+        204:
+          description: All meals associated with the user are deleted
+        404:
+          description: No meals associated with user to delete
+      tags:
+        - Users
+  /api/users/{user-id}/meals/{meal-id}:
+    delete:
+      parameters:
+        - $ref: '#/components/parameters/UserIdPath'
+        - $ref: '#/components/parameters/MealIdPath'
+      description: This deletes a specific meal that has been associated with a user
+      responses:
+        204:
+          description: Meals associated with the user is deleted
+        404:
+          description: No meal or user found for specified ids
+      tags:
+        - Users
+
 components:
   parameters:
     ActivityIdPath:
