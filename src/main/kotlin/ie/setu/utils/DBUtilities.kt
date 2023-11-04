@@ -2,7 +2,6 @@ package ie.setu.utils
 
 import ie.setu.domain.*
 import ie.setu.domain.db.*
-import ie.setu.domain.repository.RecommendedDailyAllowancesDAO
 import org.jetbrains.exposed.sql.ResultRow
 
 /**
