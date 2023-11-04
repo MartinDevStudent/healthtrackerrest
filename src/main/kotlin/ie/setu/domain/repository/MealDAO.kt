@@ -92,12 +92,12 @@ class MealDAO {
      * @param meal The Meal object to be saved, containing the meal's name.
      * @return The unique identifier (meal ID) assigned to the newly added meal.
      */
-    fun save (meal: MealDto): EntityID<Int> {
+    fun save (meal: MealDto): Int {
         return transaction {
             Meals.insert {
                 it[name] = meal.name
             } get Meals.id
-        }
+        }.value
     }
 
     /**

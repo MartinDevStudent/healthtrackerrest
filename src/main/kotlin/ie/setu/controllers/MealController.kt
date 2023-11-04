@@ -100,7 +100,7 @@ object MealController {
 
             if (ingredientDTOs.isNotEmpty()) {
                 meal = Meal(
-                    id = mealDao.save(mealDto).value,
+                    id = mealDao.save(mealDto),
                     name = mealDto.name,
                 )
 
@@ -136,7 +136,7 @@ object MealController {
 
             if (ingredientDTOs.isNotEmpty()) {
                 meal = Meal(
-                    id = mealDao.save(mealDto).value,
+                    id = mealDao.save(mealDto),
                     name = mealDto.name,
                 )
 

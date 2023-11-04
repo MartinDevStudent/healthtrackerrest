@@ -75,7 +75,7 @@ class IngredientDAO {
      * @return The ID of the ingredient, whether it was inserted as a new record or retrieved from the database.
      */
     fun save(dto: IngredientApiDTO): Int {
-        var ingredientRow = transaction {
+        val ingredientRow = transaction {
             Ingredients
                 .select {
                     (Ingredients.name eq dto.name) and (Ingredients.servingSizeG eq dto.servingSizeG)

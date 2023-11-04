@@ -1,7 +1,6 @@
 package ie.setu.domain.db
 
 import org.jetbrains.exposed.dao.IntIdTable
-import org.jetbrains.exposed.sql.Table
 
 // SRP - Responsibility is to manage one activity.
 //       Database wise, this is the table object.
