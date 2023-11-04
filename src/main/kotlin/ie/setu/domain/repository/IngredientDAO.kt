@@ -50,11 +50,30 @@ class IngredientDAO {
         }
     }
 
-    fun findByMealId(mealId: Int): ArrayList<Ingredient> {
-        return arrayListOf()
-        //return ingredients.filter { it.mealId == mealId }
+    /**
+     * Retrieves a list of ingredients associated with a specific meal ID from the database.
+     *
+     * @param id The ID of the meal for which ingredients are to be retrieved.
+     * @return An [ArrayList] of [Ingredient] objects associated with the specified meal, or an empty list if none are found.
+     */
+    fun findByMealId(id: Int): ArrayList<Ingredient> {
+        val ingredientsList: ArrayList<Ingredient> = arrayListOf()
+        transaction {
+            Ingredients.innerJoin(MealsIngredients)
+                .slice(Ingredients.columns)
+                .select { MealsIngredients.meal eq id }
+                .map { ingredientsList.add(mapToIngredient(it)) }
+        }
+
+        return ingredientsList
     }
 
+    /**
+     * Saves an ingredient to the database based on the provided [IngredientApiDTO] or retrieves it if it already exists.
+     *
+     * @param dto The [IngredientApiDTO] representing the ingredient's data to be saved or retrieved.
+     * @return The ID of the ingredient, whether it was inserted as a new record or retrieved from the database.
+     */
     fun save(dto: IngredientApiDTO): Int {
         var ingredientRow = transaction {
             Ingredients
@@ -86,6 +105,12 @@ class IngredientDAO {
         }
     }
 
+    /**
+     * Associates an ingredient with a meal by their respective IDs and saves this association in the database.
+     *
+     * @param ingredientId The ID of the ingredient to be associated with the meal.
+     * @param mealId The ID of the meal to which the ingredient is to be associated.
+     */
     fun associateIngredientWithMeal(ingredientId: Int, mealId: Int) {
         return transaction {
             MealsIngredients.insert {

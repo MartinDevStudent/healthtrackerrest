@@ -379,7 +379,6 @@ paths:
           description: No meal or user found for specified ids
       tags:
         - Users
-
 components:
   parameters:
     ActivityIdPath:

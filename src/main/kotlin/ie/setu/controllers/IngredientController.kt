@@ -18,12 +18,12 @@ object IngredientController {
     fun getAllIngredients(ctx: Context) {
         val ingredients =  ingredientDao.getAll()
         if (ingredients.size != 0) {
+            ctx.json(ingredients)
             ctx.status(200)
         }
         else {
             ctx.status(404)
         }
-        ctx.json(ingredients)
     }
 
     /**
