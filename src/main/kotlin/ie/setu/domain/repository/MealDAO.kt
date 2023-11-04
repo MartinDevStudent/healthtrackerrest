@@ -3,6 +3,7 @@ package ie.setu.domain.repository
 import ie.setu.domain.Meal
 import ie.setu.domain.MealDto
 import ie.setu.domain.db.Meals
+import ie.setu.domain.db.MealsIngredients
 import ie.setu.domain.db.Users
 import ie.setu.domain.db.UsersMeals
 import ie.setu.utils.mapToMeal
@@ -106,7 +107,7 @@ class MealDAO {
      * @param mealId The ID of the meal to associate with the user.
      * @return The ID of the newly created UsersMeals association record.
      */
-    fun saveUserMeal(userID: Int, mealId: Int): Int {
+    fun associateMealWithUser(userID: Int, mealId: Int): Int {
         return transaction {
             UsersMeals.insert {
                 it[user] = EntityID(userID, Users)
@@ -127,6 +128,9 @@ class MealDAO {
      */
     fun delete(id: Int): Int {
         return transaction{
+            MealsIngredients.deleteWhere {
+                MealsIngredients.meal eq id
+            }
             Meals.deleteWhere{
                 Meals.id eq id
             }

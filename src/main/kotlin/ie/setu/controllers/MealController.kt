@@ -104,7 +104,11 @@ object MealController {
                     name = mealDto.name,
                 )
 
-                ingredientDTOs.forEach { ingredientDao.save(meal.id, it) }
+                ingredientDTOs.forEach {
+                    val ingredientId = ingredientDao.save(it)
+                    ingredientDao.associateIngredientWithMeal(ingredientId, meal.id)
+                }
+
                 ctx.json(meal)
                 ctx.status(201)
             }
@@ -136,15 +140,18 @@ object MealController {
                     name = mealDto.name,
                 )
 
-                ingredientDTOs.forEach { ingredientDao.save(meal.id, it) }
-                mealDao.saveUserMeal(userId, meal.id)
+                ingredientDTOs.forEach {
+                    val ingredientId = ingredientDao.save(it)
+                    ingredientDao.associateIngredientWithMeal(ingredientId, meal.id)
+                }
+                mealDao.associateMealWithUser(userId, meal.id)
             }
             else {
                 ctx.status(400)
             }
         }
         else {
-            mealDao.saveUserMeal(userId, meal.id)
+            mealDao.associateMealWithUser(userId, meal.id)
         }
 
         ctx.status(201)

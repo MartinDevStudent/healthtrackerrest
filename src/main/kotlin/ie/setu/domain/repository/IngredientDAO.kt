@@ -2,8 +2,10 @@ package ie.setu.domain.repository
 
 import ie.setu.domain.Ingredient
 import ie.setu.domain.IngredientApiDTO
-import ie.setu.domain.db.Ingredients
+import ie.setu.domain.db.*
 import ie.setu.utils.mapToIngredient
+import org.jetbrains.exposed.dao.EntityID
+import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.selectAll
@@ -53,23 +55,43 @@ class IngredientDAO {
         //return ingredients.filter { it.mealId == mealId }
     }
 
-    // TODO: Add insert to junction table
-    fun save (mealId: Int, dto: IngredientApiDTO) {
+    fun save(dto: IngredientApiDTO): Int {
+        var ingredientRow = transaction {
+            Ingredients
+                .select {
+                    (Ingredients.name eq dto.name) and (Ingredients.servingSizeG eq dto.servingSizeG)
+                }.singleOrNull()
+        }
+
+        if (ingredientRow == null) {
+            return transaction {
+                Ingredients.insert {
+                    it[name] = dto.name
+                    it[calories] = dto.calories
+                    it[servingSizeG] = dto.servingSizeG
+                    it[fatTotalG] = dto.fatTotalG
+                    it[fatSaturatedG] = dto.fatSaturatedG
+                    it[proteinG] = dto.proteinG
+                    it[sodiumMg] = dto.sodiumMg
+                    it[potassiumMg] = dto.potassiumMg
+                    it[cholesterolMg] = dto.cholesterolMg
+                    it[carbohydratesTotalG] = dto.carbohydratesTotalG
+                    it[fiberG] = dto.fiberG
+                    it[sugarG] = dto.sugarG
+                } get Ingredients.id
+            }.value
+        }
+        else {
+            return mapToIngredient(ingredientRow).id
+        }
+    }
+
+    fun associateIngredientWithMeal(ingredientId: Int, mealId: Int) {
         return transaction {
-            Ingredients.insert {
-                it[name] = dto.name
-                it[calories] = dto.calories
-                it[servingSizeG] = dto.servingSizeG
-                it[fatTotalG] = dto.fatTotalG
-                it[fatSaturatedG] = dto.fatSaturatedG
-                it[proteinG] = dto.proteinG
-                it[sodiumMg] = dto.sodiumMg
-                it[potassiumMg] = dto.potassiumMg
-                it[cholesterolMg] = dto.cholesterolMg
-                it[carbohydratesTotalG] = dto.carbohydratesTotalG
-                it[fiberG] = dto.fiberG
-                it[sugarG] = dto.sugarG
-            } get Ingredients.id
+            MealsIngredients.insert {
+                it[ingredient] = EntityID(ingredientId, Ingredients)
+                it[meal] = EntityID(mealId, Meals)
+            } get MealsIngredients.id
         }
     }
 }
