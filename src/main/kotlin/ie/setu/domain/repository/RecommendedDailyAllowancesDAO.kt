@@ -7,6 +7,11 @@ import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 
 class RecommendedDailyAllowancesDAO {
+    /**
+     * Retrieves a recommended daily allowance (RDA) from the database, or null if none are found.
+     *
+     * @return A [RecommendedDailyAllowance] object representing the RDA if found, or null if no RDAs exist.
+     */
     fun getAll(): RecommendedDailyAllowance?  {
         return transaction {
             RecommendedDailyAllowances

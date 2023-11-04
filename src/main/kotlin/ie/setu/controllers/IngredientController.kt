@@ -49,6 +49,11 @@ object IngredientController {
         }
     }
 
+    /**
+     * Retrieves a list of recommended daily allowances (RDAs) and sends it as a JSON response.
+     *
+     * @param ctx The Javalin context object representing the HTTP request and response.
+     */
     fun getRecommendedDailyAllowances(ctx: Context) {
         val recommendedDailyAllowances = recommendedDailyAllowancesDao.getAll()
         if (recommendedDailyAllowances != null) {

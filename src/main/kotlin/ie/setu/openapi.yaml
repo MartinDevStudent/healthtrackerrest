@@ -126,6 +126,20 @@ paths:
           description: No ingredients in database
       tags:
         - Ingredients
+  /api/ingredients/rda:
+    get:
+      responses:
+        200:
+          description: This is the recommended daily allowances for the nutrients in an ingredient
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/RecommendedDailyAllowances'
+        404:
+          description: No recommended daily allowances in database
+      tags:
+        - Ingredients
   /api/meals/{ingredient-id}:
     get:
       parameters:
@@ -480,9 +494,6 @@ components:
           type: number
           format: double
           example: 1.1
-        mealId:
-          type: integer
-          format: int32
     Meal:
       type: object
       properties:
@@ -498,6 +509,50 @@ components:
         name:
           type: string
           example: Salmon salad
+    RecommendedDailyAllowances:
+      type: object
+      properties:
+        calories:
+          type: number
+          format: double
+          example: 1.1
+        servingSizeG:
+          type: number
+          format: double
+          example: 1.1
+        fatTotalG:
+          type: number
+          format: double
+          example: 1.1
+        fatSaturatedG:
+          type: number
+          format: double
+          example: 1.1
+        proteinG:
+          type: number
+          format: double
+          example: 1.1
+        sodiumMg:
+          type: integer
+          format: int32
+        potassiumMg:
+          type: integer
+          format: int32
+        cholesterolMg:
+          type: integer
+          format: int32
+        carbohydratesTotalG:
+          type: number
+          format: double
+          example: 1.1
+        fiberG:
+          type: number
+          format: double
+          example: 1.1
+        sugarG:
+          type: number
+          format: double
+          example: 1.1
     User:
       type: object
       properties:

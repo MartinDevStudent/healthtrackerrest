@@ -46,6 +46,13 @@ fun mapToIngredient(it: ResultRow) = Ingredient(
     sugarG = it[Ingredients.sugarG],
 )
 
+
+/**
+ * Maps a database query result row to a [RecommendedDailyAllowance] object.
+ *
+ * @param it The [ResultRow] containing data retrieved from the database.
+ * @return A [RecommendedDailyAllowance] object created from the database query result.
+ */
 fun mapToRecommendedDailyAllowance(it: ResultRow) = RecommendedDailyAllowance(
     calories = it[RecommendedDailyAllowances.calories],
     fatTotalG = it[RecommendedDailyAllowances.fatTotalG],
