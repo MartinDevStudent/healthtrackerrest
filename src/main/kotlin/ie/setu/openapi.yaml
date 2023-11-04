@@ -166,6 +166,8 @@ paths:
       responses:
         201:
           description: The meal has been created
+        400:
+          description: Invalid meal name
       tags:
         - Meals
   /api/meals/{meal-id}:
@@ -321,6 +323,36 @@ paths:
           description: All activities associated with the user are deleted
         404:
           description: User not found
+      tags:
+        - Users
+  /api/users/{user-id}/meals:
+    get:
+      parameters:
+        - $ref: '#/components/parameters/UserIdPath'
+      responses:
+        200:
+          description: This is all meals associated with a user
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+        404:
+          description: No meals found for user with specified id
+    post:
+      parameters:
+        - $ref: '#/components/parameters/UserIdPath'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MealDTO'
+      responses:
+        201:
+          description: Add a meal to a user in the app
+        400:
+          description: Invalid meal name
       tags:
         - Users
 components:

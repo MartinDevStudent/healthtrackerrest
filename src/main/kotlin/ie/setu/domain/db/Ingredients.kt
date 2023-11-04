@@ -19,20 +19,4 @@ object Ingredients : Table("ingredients") {
     val carbohydratesTotalG = double("carbohydrates_total_g")
     val fiberG = double("fiber_g")
     val sugarG = double("sugar_g")
-
-
-
-
-
-
-
 }
-
-//object Activities : Table("activities") {
-//    val id = integer("id").autoIncrement().primaryKey()
-//    val description = varchar("description", 100)
-//    val duration = double("duration")
-//    val calories = integer("calories")
-//    val started = datetime("started")
-//    val userId = integer("user_id").references(Users.id, onDelete = ReferenceOption.CASCADE)
-//}

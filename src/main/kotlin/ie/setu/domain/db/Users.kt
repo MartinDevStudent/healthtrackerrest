@@ -1,9 +1,11 @@
 package ie.setu.domain.db
 
-import org.jetbrains.exposed.sql.Table
+import org.jetbrains.exposed.dao.IntIdTable
 
-object Users : Table("users") {
-    val id = integer("id").autoIncrement().primaryKey()
+// SRP - Responsibility is to manage one activity.
+//       Database wise, this is the table object.
+
+object Users : IntIdTable("users") {
     val name = varchar("name",100)
     val email = varchar("email", 255)
     val level = varchar("level", 100)

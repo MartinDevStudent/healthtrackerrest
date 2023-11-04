@@ -61,7 +61,7 @@ fun mapToIngredient(it: ResultRow) = Ingredient(
  * @return A Meal object constructed from the data in the result row.
  */
 fun mapToMeal(it: ResultRow) = Meal(
-    id = it[Meals.id],
+    id = it[Meals.id].value,
     name = it[Meals.name],
 )
 
@@ -72,7 +72,7 @@ fun mapToMeal(it: ResultRow) = Meal(
  * @return A User object populated with data from the ResultRow.
  */
 fun mapToUser(it: ResultRow) = User(
-    id = it[Users.id],
+    id = it[Users.id].value,
     name = it[Users.name],
     email = it[Users.email],
     level = it[Users.level],
