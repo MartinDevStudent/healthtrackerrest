@@ -1,12 +1,12 @@
 package ie.setu.domain.db
 
+import org.jetbrains.exposed.dao.IntIdTable
 import org.jetbrains.exposed.sql.Table
 
 // SRP - Responsibility is to manage one activity.
 //       Database wise, this is the table object.
 
-object Ingredients : Table("ingredients") {
-    val id = integer("id").autoIncrement().primaryKey()
+object Ingredients : IntIdTable("ingredients") {
     val name = varchar("name", 100)
     val calories = double("calories")
     val servingSizeG = double("serving_size_g")

@@ -36,7 +36,7 @@ fun mapToActivity(it: ResultRow) = Activity(
  * @return An Ingredient object constructed from the data in the result row.
  */
 fun mapToIngredient(it: ResultRow) = Ingredient(
-    id = it[Ingredients.id],
+    id = it[Ingredients.id].value,
     name = it[Ingredients.name],
     calories = it[Ingredients.calories],
     servingSizeG = it[Ingredients.servingSizeG],
