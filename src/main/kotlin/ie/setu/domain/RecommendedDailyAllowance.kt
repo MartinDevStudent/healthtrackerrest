@@ -1,10 +1,7 @@
 package ie.setu.domain
 
-data class Ingredient(
-    val id: Int,
-    val name: String,
+data class RecommendedDailyAllowance(
     val calories: Double,
-    val servingSizeG: Double,
     val fatTotalG: Double,
     val fatSaturatedG: Double,
     val proteinG: Double,
@@ -14,4 +11,4 @@ data class Ingredient(
     val carbohydratesTotalG: Double,
     val fiberG: Double,
     val sugarG: Double,
-)
+    )

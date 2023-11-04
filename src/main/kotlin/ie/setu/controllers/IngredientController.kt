@@ -1,10 +1,13 @@
 package ie.setu.controllers
 
 import ie.setu.domain.repository.IngredientDAO
+import ie.setu.domain.repository.RecommendedDailyAllowancesDAO
 import io.javalin.http.Context
 
 object IngredientController {
     private val ingredientDao = IngredientDAO()
+    private val recommendedDailyAllowancesDao = RecommendedDailyAllowancesDAO()
+
 
     /**
      * Retrieves a list of all ingredients and sends them as a response in JSON format.
@@ -39,6 +42,22 @@ object IngredientController {
         val ingredient = ingredientDao.findByIngredientId(ctx.pathParam("ingredient-id").toInt())
         if (ingredient != null) {
             ctx.json(ingredient)
+            ctx.status(200)
+        }
+        else {
+            ctx.status(404)
+        }
+    }
+
+    /**
+     * Retrieves a list of recommended daily allowances (RDAs) and sends it as a JSON response.
+     *
+     * @param ctx The Javalin context object representing the HTTP request and response.
+     */
+    fun getRecommendedDailyAllowances(ctx: Context) {
+        val recommendedDailyAllowances = recommendedDailyAllowancesDao.getAll()
+        if (recommendedDailyAllowances != null) {
+            ctx.json(recommendedDailyAllowances)
             ctx.status(200)
         }
         else {

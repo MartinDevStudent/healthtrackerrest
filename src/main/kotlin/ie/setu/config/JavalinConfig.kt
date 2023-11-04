@@ -71,6 +71,9 @@ class JavalinConfig {
             }
             path("api/ingredients") {
                 get(IngredientController::getAllIngredients, Roles.ANYONE)
+                path("rda") {
+                    get(IngredientController::getRecommendedDailyAllowances, Roles.ANYONE)
+                }
                 path("{ingredient-id}") {
                     get(IngredientController::getIngredientByIngredientId, Roles.ANYONE)
                 }

@@ -1,13 +1,7 @@
 package ie.setu.utils
 
-import ie.setu.domain.Activity
-import ie.setu.domain.Ingredient
-import ie.setu.domain.Meal
-import ie.setu.domain.User
-import ie.setu.domain.db.Activities
-import ie.setu.domain.db.Ingredients
-import ie.setu.domain.db.Meals
-import ie.setu.domain.db.Users
+import ie.setu.domain.*
+import ie.setu.domain.db.*
 import org.jetbrains.exposed.sql.ResultRow
 
 /**
@@ -49,6 +43,26 @@ fun mapToIngredient(it: ResultRow) = Ingredient(
     carbohydratesTotalG = it[Ingredients.carbohydratesTotalG],
     fiberG = it[Ingredients.fiberG] ,
     sugarG = it[Ingredients.sugarG],
+)
+
+
+/**
+ * Maps a database query result row to a [RecommendedDailyAllowance] object.
+ *
+ * @param it The [ResultRow] containing data retrieved from the database.
+ * @return A [RecommendedDailyAllowance] object created from the database query result.
+ */
+fun mapToRecommendedDailyAllowance(it: ResultRow) = RecommendedDailyAllowance(
+    calories = it[RecommendedDailyAllowances.calories],
+    fatTotalG = it[RecommendedDailyAllowances.fatTotalG],
+    fatSaturatedG = it[RecommendedDailyAllowances.fatSaturatedG] ,
+    proteinG = it[RecommendedDailyAllowances.proteinG] ,
+    sodiumMg = it[RecommendedDailyAllowances.sodiumMg] ,
+    potassiumMg = it[RecommendedDailyAllowances.potassiumMg] ,
+    cholesterolMg = it[RecommendedDailyAllowances.cholesterolMg] ,
+    carbohydratesTotalG = it[RecommendedDailyAllowances.carbohydratesTotalG],
+    fiberG = it[RecommendedDailyAllowances.fiberG] ,
+    sugarG = it[RecommendedDailyAllowances.sugarG],
 )
 
 /**
