@@ -62,7 +62,7 @@ class UserDAO {
      * @param user The User object to be added to the database.
      * @return The ID of the newly created user in the database, or null if the insertion fails.
      */
-    fun save(user: User): EntityID<Int> {
+    fun save(user: User): Int {
         return transaction {
             Users.insert {
                 it[name] = user.name
@@ -70,7 +70,7 @@ class UserDAO {
                 it[level] = user.level
                 it[passwordHash] = user.passwordHash!!
             } get Users.id
-        }
+        }.value
     }
 
     /**

@@ -2,8 +2,10 @@ package ie.setu.domain.repository
 
 import ie.setu.domain.Ingredient
 import ie.setu.domain.IngredientApiDTO
-import ie.setu.domain.db.Ingredients
+import ie.setu.domain.db.*
 import ie.setu.utils.mapToIngredient
+import org.jetbrains.exposed.dao.EntityID
+import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.selectAll
@@ -48,28 +50,73 @@ class IngredientDAO {
         }
     }
 
-    fun findByMealId(mealId: Int): ArrayList<Ingredient> {
-        return arrayListOf()
-        //return ingredients.filter { it.mealId == mealId }
+    /**
+     * Retrieves a list of ingredients associated with a specific meal ID from the database.
+     *
+     * @param id The ID of the meal for which ingredients are to be retrieved.
+     * @return An [ArrayList] of [Ingredient] objects associated with the specified meal, or an empty list if none are found.
+     */
+    fun findByMealId(id: Int): ArrayList<Ingredient> {
+        val ingredientsList: ArrayList<Ingredient> = arrayListOf()
+        transaction {
+            Ingredients.innerJoin(MealsIngredients)
+                .slice(Ingredients.columns)
+                .select { MealsIngredients.meal eq id }
+                .map { ingredientsList.add(mapToIngredient(it)) }
+        }
+
+        return ingredientsList
     }
 
-    // TODO: Add insert to junction table
-    fun save (mealId: Int, dto: IngredientApiDTO) {
+    /**
+     * Saves an ingredient to the database based on the provided [IngredientApiDTO] or retrieves it if it already exists.
+     *
+     * @param dto The [IngredientApiDTO] representing the ingredient's data to be saved or retrieved.
+     * @return The ID of the ingredient, whether it was inserted as a new record or retrieved from the database.
+     */
+    fun save(dto: IngredientApiDTO): Int {
+        val ingredientRow = transaction {
+            Ingredients
+                .select {
+                    (Ingredients.name eq dto.name) and (Ingredients.servingSizeG eq dto.servingSizeG)
+                }.singleOrNull()
+        }
+
+        if (ingredientRow == null) {
+            return transaction {
+                Ingredients.insert {
+                    it[name] = dto.name
+                    it[calories] = dto.calories
+                    it[servingSizeG] = dto.servingSizeG
+                    it[fatTotalG] = dto.fatTotalG
+                    it[fatSaturatedG] = dto.fatSaturatedG
+                    it[proteinG] = dto.proteinG
+                    it[sodiumMg] = dto.sodiumMg
+                    it[potassiumMg] = dto.potassiumMg
+                    it[cholesterolMg] = dto.cholesterolMg
+                    it[carbohydratesTotalG] = dto.carbohydratesTotalG
+                    it[fiberG] = dto.fiberG
+                    it[sugarG] = dto.sugarG
+                } get Ingredients.id
+            }.value
+        }
+        else {
+            return mapToIngredient(ingredientRow).id
+        }
+    }
+
+    /**
+     * Associates an ingredient with a meal by their respective IDs and saves this association in the database.
+     *
+     * @param ingredientId The ID of the ingredient to be associated with the meal.
+     * @param mealId The ID of the meal to which the ingredient is to be associated.
+     */
+    fun associateIngredientWithMeal(ingredientId: Int, mealId: Int) {
         return transaction {
-            Ingredients.insert {
-                it[name] = dto.name
-                it[calories] = dto.calories
-                it[servingSizeG] = dto.servingSizeG
-                it[fatTotalG] = dto.fatTotalG
-                it[fatSaturatedG] = dto.fatSaturatedG
-                it[proteinG] = dto.proteinG
-                it[sodiumMg] = dto.sodiumMg
-                it[potassiumMg] = dto.potassiumMg
-                it[cholesterolMg] = dto.cholesterolMg
-                it[carbohydratesTotalG] = dto.carbohydratesTotalG
-                it[fiberG] = dto.fiberG
-                it[sugarG] = dto.sugarG
-            } get Ingredients.id
+            MealsIngredients.insert {
+                it[ingredient] = EntityID(ingredientId, Ingredients)
+                it[meal] = EntityID(mealId, Meals)
+            } get MealsIngredients.id
         }
     }
 }
