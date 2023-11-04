@@ -167,4 +167,16 @@ object MealController {
         else
             ctx.status(404)
     }
+
+    /**
+     * Deletes all meals associated with a specific user ID and updates the HTTP response status.
+     *
+     * @param ctx The Javalin context object representing the HTTP request and response.
+     */
+    fun deleteMealsByUserId(ctx: Context) {
+        if (mealDao.deleteByUserId(ctx.pathParam("user-id").toInt()) != 0)
+            ctx.status(204)
+        else
+            ctx.status(404)
+    }
 }

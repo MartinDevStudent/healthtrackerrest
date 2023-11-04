@@ -135,4 +135,18 @@ class MealDAO {
             }
         }
     }
+
+    /**
+     * Deletes all meal associations for a specific user by their user ID from the database.
+     *
+     * @param id The ID of the user for whom meal associations are to be deleted.
+     * @return The number of meal associations that were deleted.
+     */
+    fun deleteByUserId(id: Int): Int {
+        return transaction{
+            UsersMeals.deleteWhere{
+                UsersMeals.user eq id
+            }
+        }
+    }
 }

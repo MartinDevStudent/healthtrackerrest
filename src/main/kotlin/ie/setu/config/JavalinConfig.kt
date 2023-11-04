@@ -100,7 +100,7 @@ class JavalinConfig {
                     path("meals"){
                         get(MealController::getMealsByUserId, Roles.ANYONE)
                         post(MealController::addUserMeal, Roles.ANYONE)
-                        delete(ActivityController::deleteActivitiesByUserId, Roles.ANYONE) // TODO
+                        delete(MealController::deleteMealsByUserId, Roles.ANYONE) // TODO
                     }
                 }
                 path("email/{email}") {

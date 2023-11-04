@@ -355,6 +355,17 @@ paths:
           description: Invalid meal name
       tags:
         - Users
+    delete:
+      parameters:
+        - $ref: '#/components/parameters/UserIdPath'
+      description: This deletes all meals associated with a user
+      responses:
+        204:
+          description: All meals associated with the user are deleted
+        404:
+          description: No meals associated with user to delete
+      tags:
+        - Users
 components:
   parameters:
     ActivityIdPath:
