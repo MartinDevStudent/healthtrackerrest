@@ -67,6 +67,7 @@ class UserDAOTest {
                 assertEquals(null, userDAO.findById(4))
             }
         }
+
         @Test
         fun `get all users over empty table returns none`() {
             transaction {

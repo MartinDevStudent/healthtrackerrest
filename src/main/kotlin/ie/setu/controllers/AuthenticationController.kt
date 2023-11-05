@@ -23,7 +23,7 @@ object AuthenticationController {
         val user = userDao.findByEmail(userDTO.email)
 
         if (user == null) {
-            ctx.status(401)
+                ctx.status(401)
         }
 
         val isCorrectPassword = isCorrectPassword(userDTO.password, user!!.passwordHash!!)
@@ -31,6 +31,7 @@ object AuthenticationController {
         if (isCorrectPassword) {
             val token = JwtProvider.provider.generateToken(user)
             ctx.json(JwtResponse(token))
+            ctx.status(200)
         }
         else {
             ctx.status(401)
@@ -43,8 +44,13 @@ object AuthenticationController {
      * @param ctx The context for handling the HTTP request and response.
      */
     fun validate(ctx: Context) {
-        println("test")
-        val decodedJWT = decodeJWT(ctx)
-        ctx.result("Hi " + decodedJWT.getClaim("name").asString())
+        try {
+            val decodedJWT = decodeJWT(ctx)
+            ctx.result("Hi " + decodedJWT.getClaim("name").asString())
+            ctx.status(200)
+        }
+        catch (e: Exception) {
+            ctx.status(401)
+        }
     }
 }

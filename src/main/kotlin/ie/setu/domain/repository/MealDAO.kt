@@ -1,7 +1,6 @@
 package ie.setu.domain.repository
 
 import ie.setu.domain.Meal
-import ie.setu.domain.MealDto
 import ie.setu.domain.db.Meals
 import ie.setu.domain.db.MealsIngredients
 import ie.setu.domain.db.Users
@@ -92,7 +91,7 @@ class MealDAO {
      * @param meal The Meal object to be saved, containing the meal's name.
      * @return The unique identifier (meal ID) assigned to the newly added meal.
      */
-    fun save (meal: MealDto): Int {
+    fun save (meal: Meal): Int {
         return transaction {
             Meals.insert {
                 it[name] = meal.name

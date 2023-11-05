@@ -55,7 +55,7 @@ object IngredientController {
      * @param ctx The Javalin context object representing the HTTP request and response.
      */
     fun getRecommendedDailyAllowances(ctx: Context) {
-        val recommendedDailyAllowances = recommendedDailyAllowancesDao.getAll()
+        val recommendedDailyAllowances = recommendedDailyAllowancesDao.get()
         if (recommendedDailyAllowances != null) {
             ctx.json(recommendedDailyAllowances)
             ctx.status(200)

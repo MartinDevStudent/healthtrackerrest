@@ -52,6 +52,7 @@ app.component('home-page',
         activities: [],
         meals: [],
         users: [],
+        ingredients: [],
       }),
       created() {
         axios.get("/api/users")
@@ -62,6 +63,9 @@ app.component('home-page',
             .catch(() => alert("Error while fetching activities"));
         axios.get("/api/meals")
             .then(res => this.meals = res.data)
+            .catch(() => alert("Error while fetching meals"));
+        axios.get("/api/ingredients")
+            .then(res => this.ingredients = res.data)
             .catch(() => alert("Error while fetching meals"));
       }
     });

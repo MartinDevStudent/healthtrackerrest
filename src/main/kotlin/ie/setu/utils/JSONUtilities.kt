@@ -37,10 +37,6 @@ inline fun <reified T: Any> jsonToObject(json: String) : T
     .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
     .readValue<T>(json)
 
-inline fun <reified T: Any>  jsonNodeToObject(jsonNode : HttpResponse<JsonNode>) : T {
-    return jsonToObject<T>(jsonNode.body.toString())
-}
-
 fun jsonObjectMapper(): ObjectMapper
         = ObjectMapper()
     .registerModule(JavaTimeModule())

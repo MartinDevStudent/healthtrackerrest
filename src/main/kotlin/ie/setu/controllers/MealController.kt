@@ -3,7 +3,6 @@ package ie.setu.controllers
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import ie.setu.domain.Meal
-import ie.setu.domain.MealDto
 import ie.setu.domain.repository.IngredientDAO
 import ie.setu.domain.repository.MealDAO
 import ie.setu.infrastructure.NutrientHttpClient
@@ -19,7 +18,14 @@ object MealController {
      * @param ctx The context for handling the HTTP request and response.
      */
     fun getAllMeals(ctx: Context) {
-        ctx.json(mealDao.getAll())
+        val meals = mealDao.getAll()
+        if (meals.count() > 0) {
+            ctx.json(meals)
+            ctx.status(200)
+        }
+        else {
+            ctx.status(404)
+        }
     }
 
     /**
@@ -87,7 +93,7 @@ object MealController {
      */
     fun addMeal(ctx: Context) {
         val mapper = jacksonObjectMapper()
-        val mealDto = mapper.readValue<MealDto>(ctx.body())
+        val mealDto = mapper.readValue<Meal>(ctx.body())
 
         var meal = mealDao.findByMealName(mealDto.name)
 
@@ -96,15 +102,15 @@ object MealController {
             ctx.result("Meal already exists in database")
         }
         else {
-            val ingredientDTOs = NutrientHttpClient.get(mealDto.name)
+            val ingredients = NutrientHttpClient.get(mealDto.name)
 
-            if (ingredientDTOs.isNotEmpty()) {
+            if (ingredients.isNotEmpty()) {
                 meal = Meal(
                     id = mealDao.save(mealDto),
                     name = mealDto.name,
                 )
 
-                ingredientDTOs.forEach {
+                ingredients.forEach {
                     val ingredientId = ingredientDao.save(it)
                     ingredientDao.associateIngredientWithMeal(ingredientId, meal.id)
                 }
@@ -127,7 +133,7 @@ object MealController {
     fun addUserMeal(ctx: Context) {
         val userId = ctx.pathParam("user-id").toInt()
         val mapper = jacksonObjectMapper()
-        val mealDto = mapper.readValue<MealDto>(ctx.body())
+        val mealDto = mapper.readValue<Meal>(ctx.body())
 
         var meal = mealDao.findByMealName(mealDto.name)
 
@@ -145,6 +151,8 @@ object MealController {
                     ingredientDao.associateIngredientWithMeal(ingredientId, meal.id)
                 }
                 mealDao.associateMealWithUser(userId, meal.id)
+                ctx.json(meal)
+                ctx.status(201)
             }
             else {
                 ctx.status(400)
@@ -152,9 +160,9 @@ object MealController {
         }
         else {
             mealDao.associateMealWithUser(userId, meal.id)
+            ctx.json(meal)
+            ctx.status(201)
         }
-
-        ctx.status(201)
     }
 
     /**
