@@ -114,7 +114,7 @@ class JavalinConfig {
                 }
             }
 
-            get(VueComponent("<home-page></home-page>"), Roles.ANYONE)
+            get(VueComponent( "<home-page></home-page>"), Roles.ANYONE)
             path ("activities") {
                 get(VueComponent("<activity-overview></activity-overview>"), Roles.ANYONE)
                 get("{activity-id}", VueComponent("<activity-profile></activity-profile>"), Roles.ANYONE)

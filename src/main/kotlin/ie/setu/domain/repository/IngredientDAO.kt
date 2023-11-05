@@ -69,34 +69,34 @@ class IngredientDAO {
     }
 
     /**
-     * Saves an ingredient to the database based on the provided [IngredientApiDTO] or retrieves it if it already exists.
+     * Saves an ingredient to the database based on the provided [Ingredient] or retrieves it if it already exists.
      *
-     * @param dto The [IngredientApiDTO] representing the ingredient's data to be saved or retrieved.
+     * @param ingredient The [Ingredient] representing the ingredient's data to be saved or retrieved.
      * @return The ID of the ingredient, whether it was inserted as a new record or retrieved from the database.
      */
-    fun save(dto: IngredientApiDTO): Int {
+    fun save(ingredient: Ingredient): Int {
         val ingredientRow = transaction {
             Ingredients
                 .select {
-                    (Ingredients.name eq dto.name) and (Ingredients.servingSizeG eq dto.servingSizeG)
+                    (Ingredients.name eq ingredient.name) and (Ingredients.servingSizeG eq ingredient.servingSizeG)
                 }.singleOrNull()
         }
 
         if (ingredientRow == null) {
             return transaction {
                 Ingredients.insert {
-                    it[name] = dto.name
-                    it[calories] = dto.calories
-                    it[servingSizeG] = dto.servingSizeG
-                    it[fatTotalG] = dto.fatTotalG
-                    it[fatSaturatedG] = dto.fatSaturatedG
-                    it[proteinG] = dto.proteinG
-                    it[sodiumMg] = dto.sodiumMg
-                    it[potassiumMg] = dto.potassiumMg
-                    it[cholesterolMg] = dto.cholesterolMg
-                    it[carbohydratesTotalG] = dto.carbohydratesTotalG
-                    it[fiberG] = dto.fiberG
-                    it[sugarG] = dto.sugarG
+                    it[name] = ingredient.name
+                    it[calories] = ingredient.calories
+                    it[servingSizeG] = ingredient.servingSizeG
+                    it[fatTotalG] = ingredient.fatTotalG
+                    it[fatSaturatedG] = ingredient.fatSaturatedG
+                    it[proteinG] = ingredient.proteinG
+                    it[sodiumMg] = ingredient.sodiumMg
+                    it[potassiumMg] = ingredient.potassiumMg
+                    it[cholesterolMg] = ingredient.cholesterolMg
+                    it[carbohydratesTotalG] = ingredient.carbohydratesTotalG
+                    it[fiberG] = ingredient.fiberG
+                    it[sugarG] = ingredient.sugarG
                 } get Ingredients.id
             }.value
         }

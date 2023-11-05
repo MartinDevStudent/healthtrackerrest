@@ -1,6 +1,7 @@
 package ie.setu.utils
 
 import ie.setu.domain.*
+import ie.setu.domain.RecommendedDailyAllowance
 import ie.setu.domain.db.*
 import org.jetbrains.exposed.sql.ResultRow
 

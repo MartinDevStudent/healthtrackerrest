@@ -44,6 +44,13 @@
             <version>${junit.platform.version}</version>
             <scope>test</scope>
         </dependency>
+        <!-- hamcrest-core (JUnit helper methods -->
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-library</artifactId>
+            <version>1.3</version>
+            <scope>test</scope>
+        </dependency>
         <!-- Adding Javalin Dependency -->
         <dependency>
             <groupId>io.javalin</groupId>

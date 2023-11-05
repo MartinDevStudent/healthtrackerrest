@@ -2,11 +2,8 @@ package ie.setu.controllers
 
 import io.javalin.http.Context
 import ie.setu.domain.Activity
-import ie.setu.domain.User
-import ie.setu.domain.UserDTO
 import ie.setu.domain.repository.ActivityDAO
 import ie.setu.domain.repository.UserDAO
-import ie.setu.utils.authentication.hashPassword
 import jsonToObject
 import mapObjectWithDateToJson
 

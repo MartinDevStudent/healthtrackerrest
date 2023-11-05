@@ -68,7 +68,8 @@ class UserControllerTest {
             assertEquals(200, retrieveResponse.status)
 
             //After - restore the db to previous state by deleting the added user
-            deleteUser(addedUser.id)
+            val deleteUserResponse = deleteUser(addedUser.id)
+            assertEquals(204, deleteUserResponse.status)
         }
 
         @Test
@@ -83,7 +84,8 @@ class UserControllerTest {
 
             //After - restore the db to previous state by deleting the added user
             val retrievedUser : User = jsonToObject(retrieveResponse.body.toString())
-            deleteUser(retrievedUser.id)
+            val deleteUserResponse = deleteUser(retrievedUser.id)
+            assertEquals(204, deleteUserResponse.status)
         }
     }
 
@@ -108,8 +110,8 @@ class UserControllerTest {
             assertEquals("user", retrievedUser.level)
 
             //After - restore the db to previous state by deleting the added user
-            val deleteResponse = deleteUser(retrievedUser.id)
-            assertEquals(204, deleteResponse.status)
+            val deleteUserResponse = deleteUser(retrievedUser.id)
+            assertEquals(204, deleteUserResponse.status)
         }
     }
 
@@ -134,7 +136,8 @@ class UserControllerTest {
             assertEquals(updatedEmail, updatedUser.email)
 
             //After - restore the db to previous state by deleting the added user
-            deleteUser(addedUser.id)
+            val deleteUserResponse = deleteUser(addedUser.id)
+            assertEquals(204, deleteUserResponse.status)
         }
 
         @Test
@@ -173,14 +176,14 @@ class UserControllerTest {
     }
 
     //helper function to add a test user to the database
-    private fun addUser (name: String, email: String, password: String): HttpResponse<JsonNode> {
+    public fun addUser (name: String, email: String, password: String): HttpResponse<JsonNode> {
         return Unirest.post(origin + "/api/users")
             .body("{\"name\":\"$name\", \"email\":\"$email\", \"password\":\"$password\"}")
             .asJson()
     }
 
     //helper function to delete a test user from the database
-    private fun deleteUser (id: Int): HttpResponse<String> {
+    private fun deleteUser(id: Int): HttpResponse<String> {
         return Unirest.delete(origin + "/api/users/$id").asString()
     }
 

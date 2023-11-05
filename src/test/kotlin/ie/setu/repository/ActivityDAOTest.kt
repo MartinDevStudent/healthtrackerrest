@@ -80,7 +80,7 @@ class ActivityDAOTest {
         fun `get all activities from empty table returns none`() {
             transaction {
 
-                //Arrange - create and setup userDAO object
+                //Arrange - create and setup activityDAO object
                 SchemaUtils.create(Activities)
                 val activityDAO = ActivityDAO()
 
@@ -88,8 +88,6 @@ class ActivityDAOTest {
                 assertEquals(0, activityDAO.getAll().size)
             }
         }
-
-
 
         @Test
         fun `get activities by user id that doesn't exist, results in empty array`() {

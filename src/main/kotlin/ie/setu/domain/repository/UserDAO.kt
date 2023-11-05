@@ -3,7 +3,6 @@ package ie.setu.domain.repository
 import ie.setu.domain.User
 import ie.setu.domain.db.*
 import ie.setu.utils.mapToUser
-import org.jetbrains.exposed.dao.EntityID
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import kotlin.collections.ArrayList
