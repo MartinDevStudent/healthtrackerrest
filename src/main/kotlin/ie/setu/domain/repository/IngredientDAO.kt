@@ -1,8 +1,9 @@
 package ie.setu.domain.repository
 
 import ie.setu.domain.Ingredient
-import ie.setu.domain.IngredientApiDTO
-import ie.setu.domain.db.*
+import ie.setu.domain.db.Ingredients
+import ie.setu.domain.db.Meals
+import ie.setu.domain.db.MealsIngredients
 import ie.setu.utils.mapToIngredient
 import org.jetbrains.exposed.dao.EntityID
 import org.jetbrains.exposed.sql.and
@@ -13,7 +14,6 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import kotlin.collections.ArrayList
 
 class IngredientDAO {
-
     /**
      * Retrieves a list of all ingredients stored in the system's database.
      *
@@ -22,11 +22,12 @@ class IngredientDAO {
      *
      * @return An ArrayList containing all the ingredients stored in the system's database.
      */
-    fun getAll(): ArrayList<Ingredient>  {
+    fun getAll(): ArrayList<Ingredient> {
         val ingredientsList: ArrayList<Ingredient> = arrayListOf()
         transaction {
             Ingredients.selectAll().map {
-                ingredientsList.add(mapToIngredient(it)) }
+                ingredientsList.add(mapToIngredient(it))
+            }
         }
         return ingredientsList
     }
@@ -44,8 +45,8 @@ class IngredientDAO {
     fun findByIngredientId(id: Int): Ingredient? {
         return transaction {
             Ingredients
-                .select() { Ingredients.id eq id }
-                .map{ mapToIngredient(it) }
+                .select { Ingredients.id eq id }
+                .map { mapToIngredient(it) }
                 .firstOrNull()
         }
     }
@@ -75,12 +76,13 @@ class IngredientDAO {
      * @return The ID of the ingredient, whether it was inserted as a new record or retrieved from the database.
      */
     fun save(ingredient: Ingredient): Int {
-        val ingredientRow = transaction {
-            Ingredients
-                .select {
-                    (Ingredients.name eq ingredient.name) and (Ingredients.servingSizeG eq ingredient.servingSizeG)
-                }.singleOrNull()
-        }
+        val ingredientRow =
+            transaction {
+                Ingredients
+                    .select {
+                        (Ingredients.name eq ingredient.name) and (Ingredients.servingSizeG eq ingredient.servingSizeG)
+                    }.singleOrNull()
+            }
 
         if (ingredientRow == null) {
             return transaction {
@@ -99,8 +101,7 @@ class IngredientDAO {
                     it[sugarG] = ingredient.sugarG
                 } get Ingredients.id
             }.value
-        }
-        else {
+        } else {
             return mapToIngredient(ingredientRow).id
         }
     }
@@ -111,7 +112,10 @@ class IngredientDAO {
      * @param ingredientId The ID of the ingredient to be associated with the meal.
      * @param mealId The ID of the meal to which the ingredient is to be associated.
      */
-    fun associateIngredientWithMeal(ingredientId: Int, mealId: Int) {
+    fun associateIngredientWithMeal(
+        ingredientId: Int,
+        mealId: Int,
+    ) {
         return transaction {
             MealsIngredients.insert {
                 it[ingredient] = EntityID(ingredientId, Ingredients)

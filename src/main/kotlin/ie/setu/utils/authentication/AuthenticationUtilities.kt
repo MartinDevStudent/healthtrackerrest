@@ -24,7 +24,7 @@ fun hashPassword(password: String): String {
  */
 fun isCorrectPassword(
     password: String,
-    passwordHash: String
+    passwordHash: String,
 ): Boolean {
     val result = BCrypt.verifyer().verify(password.toCharArray(), passwordHash)
     return result.verified

@@ -1,21 +1,24 @@
 package ie.setu.domain.repository
 
 import ie.setu.domain.User
-import ie.setu.domain.db.*
+import ie.setu.domain.db.Users
 import ie.setu.utils.mapToUser
-import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.deleteWhere
+import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.lowerCase
+import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
+import org.jetbrains.exposed.sql.update
 import kotlin.collections.ArrayList
 
-
 class UserDAO {
-
     /**
      * Retrieves and returns a list of all users from the database.
      *
      * @return An ArrayList of User objects representing all users in the database.
      */
-    fun getAll(): ArrayList<User>{
+    fun getAll(): ArrayList<User> {
         val userList: ArrayList<User> = arrayListOf()
         transaction {
             Users.selectAll().map {
@@ -33,9 +36,10 @@ class UserDAO {
      */
     fun findById(id: Int): User? {
         return transaction {
-            Users.select() {
-                Users.id eq id}
-                .map{mapToUser(it)}
+            Users.select {
+                Users.id eq id
+            }
+                .map { mapToUser(it) }
                 .firstOrNull()
         }
     }
@@ -48,9 +52,10 @@ class UserDAO {
      */
     fun findByEmail(email: String): User? {
         return transaction {
-            Users.select() {
-                Users.email.lowerCase() eq email.lowercase()}
-                .map{mapToUser(it)}
+            Users.select {
+                Users.email.lowerCase() eq email.lowercase()
+            }
+                .map { mapToUser(it) }
                 .firstOrNull()
         }
     }
@@ -79,8 +84,8 @@ class UserDAO {
      * @return The number of rows affected (0 or 1) indicating the success of deletion.
      */
     fun delete(id: Int): Int {
-        return transaction{
-            Users.deleteWhere{
+        return transaction {
+            Users.deleteWhere {
                 Users.id eq id
             }
         }
@@ -93,10 +98,14 @@ class UserDAO {
      * @param user The updated User object with new data.
      * @return The number of rows affected (0 or 1) indicating the success of the update.
      */
-    fun update(id: Int, user: User): Int {
+    fun update(
+        id: Int,
+        user: User,
+    ): Int {
         return transaction {
-            Users.update ({
-                Users.id eq id}) {
+            Users.update({
+                Users.id eq id
+            }) {
                 it[name] = user.name
                 it[email] = user.email
             }

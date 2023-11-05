@@ -2,10 +2,13 @@ package ie.setu.domain.repository
 
 import ie.setu.domain.Activity
 import ie.setu.domain.db.Activities
-import ie.setu.domain.db.Users
 import ie.setu.utils.mapToActivity
-import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.deleteWhere
+import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
+import org.jetbrains.exposed.sql.update
 
 class ActivityDAO {
     /**
@@ -17,7 +20,8 @@ class ActivityDAO {
         val activitiesList: ArrayList<Activity> = arrayListOf()
         transaction {
             Activities.selectAll().map {
-                activitiesList.add(mapToActivity(it)) }
+                activitiesList.add(mapToActivity(it))
+            }
         }
         return activitiesList
     }
@@ -28,11 +32,11 @@ class ActivityDAO {
      * @param id The unique ID of the activity to find.
      * @return An Activity object representing the found activity, or null if not found.
      */
-    fun findByActivityId(id: Int): Activity?{
+    fun findByActivityId(id: Int): Activity? {
         return transaction {
             Activities
-                .select() { Activities.id eq id}
-                .map{mapToActivity(it)}
+                .select { Activities.id eq id }
+                .map { mapToActivity(it) }
                 .firstOrNull()
         }
     }
@@ -43,11 +47,11 @@ class ActivityDAO {
      * @param userId The ID of the user whose activities are to be retrieved.
      * @return A list of Activity objects representing the user's activities.
      */
-    fun findByUserId(userId: Int): List<Activity>{
+    fun findByUserId(userId: Int): List<Activity> {
         return transaction {
             Activities
-                .select {Activities.userId eq userId}
-                .map {mapToActivity(it)}
+                .select { Activities.userId eq userId }
+                .map { mapToActivity(it) }
         }
     }
 
@@ -76,8 +80,8 @@ class ActivityDAO {
      * @return The number of rows affected (0 or 1) indicating the success of deletion.
      */
     fun delete(id: Int): Int {
-        return transaction{
-            Activities.deleteWhere{
+        return transaction {
+            Activities.deleteWhere {
                 Activities.id eq id
             }
         }
@@ -90,8 +94,8 @@ class ActivityDAO {
      * @return The number of rows affected, indicating the success of deletion.
      */
     fun deleteByUserId(userId: Int): Int {
-        return transaction{
-            Activities.deleteWhere{
+        return transaction {
+            Activities.deleteWhere {
                 Activities.userId eq userId
             }
         }
@@ -104,10 +108,14 @@ class ActivityDAO {
      * @param activity The updated Activity object with new data.
      * @return The number of rows affected (0 or 1) indicating the success of the update.
      */
-    fun update(id: Int, activity: Activity): Int {
+    fun update(
+        id: Int,
+        activity: Activity,
+    ): Int {
         return transaction {
-            Activities.update ({
-                Activities.id eq id}) {
+            Activities.update({
+                Activities.id eq id
+            }) {
                 it[description] = activity.description
                 it[duration] = activity.duration
                 it[started] = activity.started

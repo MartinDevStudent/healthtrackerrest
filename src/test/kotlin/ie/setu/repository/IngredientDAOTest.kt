@@ -6,7 +6,9 @@ import ie.setu.domain.db.Meals
 import ie.setu.domain.db.MealsIngredients
 import ie.setu.domain.repository.IngredientDAO
 import ie.setu.domain.repository.MealDAO
-import ie.setu.helpers.*
+import ie.setu.helpers.ingredients
+import ie.setu.helpers.meals
+import ie.setu.helpers.nonExistingMealId
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -15,7 +17,7 @@ import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
-//retrieving some test data from Fixtures
+// retrieving some test data from Fixtures
 val ingredients1 = ingredients[0]
 val ingredients2 = ingredients[1]
 val ingredients3 = ingredients[2]
@@ -28,8 +30,7 @@ val meal3 = meals[2]
 
 class IngredientDAOTest {
     companion object {
-
-        //Make a connection to a local, in memory H2 database.
+        // Make a connection to a local, in memory H2 database.
         @BeforeAll
         @JvmStatic
         internal fun setupInMemoryDatabaseConnection() {
@@ -42,12 +43,11 @@ class IngredientDAOTest {
         @Test
         fun `getting all ingredients from a populated table returns all rows`() {
             transaction {
-
-                //Arrange - create and populate table with three users
+                // Arrange - create and populate table with three users
                 populateMealTable()
                 val ingredientDAO = populateIngredientTable()
 
-                //Act & Assert
+                // Act & Assert
                 assertEquals(3, ingredientDAO.getAll().size)
             }
         }
@@ -55,12 +55,11 @@ class IngredientDAOTest {
         @Test
         fun `get ingredient by id that doesn't exist, results in no ingredient returned`() {
             transaction {
-
-                //Arrange - create and populate table with three ingredients
+                // Arrange - create and populate table with three ingredients
                 populateMealTable()
                 val ingredientDAO = populateIngredientTable()
 
-                //Act & Assert
+                // Act & Assert
                 assertEquals(null, ingredientDAO.findByIngredientId(4))
             }
         }
@@ -68,12 +67,11 @@ class IngredientDAOTest {
         @Test
         fun `get all ingredients over empty table returns none`() {
             transaction {
-
                 // Arrange - create and setup mealDAO object
                 SchemaUtils.create(Ingredients)
                 val ingredientDAO = IngredientDAO()
 
-                //Act & Assert
+                // Act & Assert
                 assertEquals(0, ingredientDAO.getAll().size)
             }
         }
@@ -81,12 +79,11 @@ class IngredientDAOTest {
         @Test
         fun `get ingredients by meal id that doesn't exist, results in no empty array returned`() {
             transaction {
-
                 // Arrange - create and populate table with three ingredients
                 populateMealTable()
                 val ingredientDAO = populateIngredientTable()
 
-                //Act & Assert
+                // Act & Assert
                 assertEquals(ArrayList<Ingredient>(), ingredientDAO.findByMealId(nonExistingMealId))
             }
         }
@@ -94,12 +91,11 @@ class IngredientDAOTest {
         @Test
         fun `get ingredients by meal id that exists, results in correct ingredients returned`() {
             transaction {
-
                 // Arrange - create and populate table with three ingredients
                 populateMealTable()
                 val ingredientDAO = populateIngredientTable()
 
-                //Act & Assert
+                // Act & Assert
                 assertEquals(arrayListOf(ingredient1), ingredientDAO.findByMealId(meal1.id))
             }
         }
@@ -110,12 +106,11 @@ class IngredientDAOTest {
         @Test
         fun `multiple ingredients added to table can be retrieved successfully`() {
             transaction {
-
                 // Arrange - create and populate table with three ingredients
                 populateMealTable()
                 val ingredientDAO = populateIngredientTable()
 
-                //Act & Assert
+                // Act & Assert
                 assertEquals(3, ingredientDAO.getAll().size)
                 assertEquals(ingredients1, ingredientDAO.findByIngredientId(ingredients1.id))
                 assertEquals(ingredients2, ingredientDAO.findByIngredientId(ingredients2.id))
@@ -139,9 +134,9 @@ class IngredientDAOTest {
         ingredientDAO.save(ingredients1)
         ingredientDAO.save(ingredients2)
         ingredientDAO.save(ingredients3)
-        ingredientDAO.associateIngredientWithMeal(ingredients1.id,meal1.id)
-        ingredientDAO.associateIngredientWithMeal(ingredients2.id,meal2.id)
-        ingredientDAO.associateIngredientWithMeal(ingredients3.id,meal3.id)
+        ingredientDAO.associateIngredientWithMeal(ingredients1.id, meal1.id)
+        ingredientDAO.associateIngredientWithMeal(ingredients2.id, meal2.id)
+        ingredientDAO.associateIngredientWithMeal(ingredients3.id, meal3.id)
         return ingredientDAO
     }
 }

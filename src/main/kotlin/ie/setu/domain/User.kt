@@ -5,5 +5,5 @@ data class User(
     var name: String,
     var email: String,
     var level: String,
-    var passwordHash: String?
+    var passwordHash: String?,
 )

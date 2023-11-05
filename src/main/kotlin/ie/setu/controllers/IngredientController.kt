@@ -8,7 +8,6 @@ object IngredientController {
     private val ingredientDao = IngredientDAO()
     private val recommendedDailyAllowancesDao = RecommendedDailyAllowancesDAO()
 
-
     /**
      * Retrieves a list of all ingredients and sends them as a response in JSON format.
      *
@@ -19,12 +18,11 @@ object IngredientController {
      * @param ctx The context object containing request and response information.
      */
     fun getAllIngredients(ctx: Context) {
-        val ingredients =  ingredientDao.getAll()
+        val ingredients = ingredientDao.getAll()
         if (ingredients.size != 0) {
             ctx.json(ingredients)
             ctx.status(200)
-        }
-        else {
+        } else {
             ctx.status(404)
         }
     }
@@ -43,8 +41,7 @@ object IngredientController {
         if (ingredient != null) {
             ctx.json(ingredient)
             ctx.status(200)
-        }
-        else {
+        } else {
             ctx.status(404)
         }
     }
@@ -59,8 +56,7 @@ object IngredientController {
         if (recommendedDailyAllowances != null) {
             ctx.json(recommendedDailyAllowances)
             ctx.status(200)
-        }
-        else {
+        } else {
             ctx.status(404)
         }
     }

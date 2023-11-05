@@ -7,12 +7,15 @@ import ie.setu.domain.db.Users
 import ie.setu.domain.db.UsersMeals
 import ie.setu.utils.mapToMeal
 import org.jetbrains.exposed.dao.EntityID
-import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.and
+import org.jetbrains.exposed.sql.deleteWhere
+import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 import kotlin.collections.ArrayList
 
 class MealDAO {
-
     /**
      * Retrieves a list of all meals stored in the system's database.
      *
@@ -21,11 +24,12 @@ class MealDAO {
      *
      * @return An ArrayList containing all the meals stored in the system's database.
      */
-    fun getAll(): ArrayList<Meal>  {
+    fun getAll(): ArrayList<Meal> {
         val mealsList: ArrayList<Meal> = arrayListOf()
         transaction {
             Meals.selectAll().map {
-                mealsList.add(mapToMeal(it)) }
+                mealsList.add(mapToMeal(it))
+            }
         }
         return mealsList
     }
@@ -43,8 +47,8 @@ class MealDAO {
     fun findByMealId(id: Int): Meal? {
         return transaction {
             Meals
-                .select() { Meals.id eq id}
-                .map{ mapToMeal(it) }
+                .select { Meals.id eq id }
+                .map { mapToMeal(it) }
                 .firstOrNull()
         }
     }
@@ -58,8 +62,8 @@ class MealDAO {
     fun findByMealName(name: String): Meal? {
         return transaction {
             Meals
-                .select() { Meals.name eq name}
-                .map{ mapToMeal(it) }
+                .select { Meals.name eq name }
+                .map { mapToMeal(it) }
                 .firstOrNull()
         }
     }
@@ -91,7 +95,7 @@ class MealDAO {
      * @param meal The Meal object to be saved, containing the meal's name.
      * @return The unique identifier (meal ID) assigned to the newly added meal.
      */
-    fun save (meal: Meal): Int {
+    fun save(meal: Meal): Int {
         return transaction {
             Meals.insert {
                 it[name] = meal.name
@@ -106,7 +110,10 @@ class MealDAO {
      * @param mealId The ID of the meal to associate with the user.
      * @return The ID of the newly created UsersMeals association record.
      */
-    fun associateMealWithUser(userID: Int, mealId: Int): Int {
+    fun associateMealWithUser(
+        userID: Int,
+        mealId: Int,
+    ): Int {
         return transaction {
             UsersMeals.insert {
                 it[user] = EntityID(userID, Users)
@@ -126,11 +133,11 @@ class MealDAO {
      * @return The number of records deleted (1 if successful, 0 if no matching meal is found).
      */
     fun delete(id: Int): Int {
-        return transaction{
+        return transaction {
             MealsIngredients.deleteWhere {
                 MealsIngredients.meal eq id
             }
-            Meals.deleteWhere{
+            Meals.deleteWhere {
                 Meals.id eq id
             }
         }
@@ -143,8 +150,8 @@ class MealDAO {
      * @return The number of meal associations that were deleted.
      */
     fun deleteByUserId(id: Int): Int {
-        return transaction{
-            UsersMeals.deleteWhere{
+        return transaction {
+            UsersMeals.deleteWhere {
                 UsersMeals.user eq id
             }
         }
@@ -157,9 +164,12 @@ class MealDAO {
      * @param mealId The ID of the meal to be disassociated from the user.
      * @return The number of meal associations that were deleted.
      */
-    fun deleteUserMealByMealId(userId: Int, mealId: Int): Int {
-        return transaction{
-            UsersMeals.deleteWhere{
+    fun deleteUserMealByMealId(
+        userId: Int,
+        mealId: Int,
+    ): Int {
+        return transaction {
+            UsersMeals.deleteWhere {
                 UsersMeals.user eq userId and (UsersMeals.meal eq mealId)
             }
         }

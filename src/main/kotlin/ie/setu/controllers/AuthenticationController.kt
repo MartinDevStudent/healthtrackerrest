@@ -4,9 +4,11 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import ie.setu.domain.UserDTO
 import ie.setu.domain.repository.UserDAO
-import ie.setu.utils.authentication.*
+import ie.setu.utils.authentication.JwtProvider
+import ie.setu.utils.authentication.JwtResponse
+import ie.setu.utils.authentication.decodeJWT
+import ie.setu.utils.authentication.isCorrectPassword
 import io.javalin.http.Context
-
 
 object AuthenticationController {
     private val userDao = UserDAO()
@@ -23,7 +25,7 @@ object AuthenticationController {
         val user = userDao.findByEmail(userDTO.email)
 
         if (user == null) {
-                ctx.status(401)
+            ctx.status(401)
         }
 
         val isCorrectPassword = isCorrectPassword(userDTO.password, user!!.passwordHash!!)
@@ -32,8 +34,7 @@ object AuthenticationController {
             val token = JwtProvider.provider.generateToken(user)
             ctx.json(JwtResponse(token))
             ctx.status(200)
-        }
-        else {
+        } else {
             ctx.status(401)
         }
     }
@@ -48,8 +49,7 @@ object AuthenticationController {
             val decodedJWT = decodeJWT(ctx)
             ctx.result("Hi " + decodedJWT.getClaim("name").asString())
             ctx.status(200)
-        }
-        catch (e: Exception) {
+        } catch (e: Exception) {
             ctx.status(401)
         }
     }

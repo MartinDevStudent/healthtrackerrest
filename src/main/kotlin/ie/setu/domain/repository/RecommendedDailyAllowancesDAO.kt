@@ -1,7 +1,7 @@
 package ie.setu.domain.repository
 
 import ie.setu.domain.RecommendedDailyAllowance
-import ie.setu.domain.db.*
+import ie.setu.domain.db.RecommendedDailyAllowances
 import ie.setu.utils.mapToRecommendedDailyAllowance
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.selectAll
@@ -13,11 +13,11 @@ class RecommendedDailyAllowancesDAO {
      *
      * @return A [RecommendedDailyAllowance] object representing the RDA if found, or null if no RDAs exist.
      */
-    fun get(): RecommendedDailyAllowance?  {
+    fun get(): RecommendedDailyAllowance? {
         return transaction {
             RecommendedDailyAllowances
                 .selectAll()
-                .map{ mapToRecommendedDailyAllowance(it) }
+                .map { mapToRecommendedDailyAllowance(it) }
                 .firstOrNull()
         }
     }

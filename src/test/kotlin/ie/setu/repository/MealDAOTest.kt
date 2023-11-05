@@ -1,6 +1,9 @@
 package ie.setu.repository
 
-import ie.setu.domain.db.*
+import ie.setu.domain.db.Meals
+import ie.setu.domain.db.MealsIngredients
+import ie.setu.domain.db.Users
+import ie.setu.domain.db.UsersMeals
 import ie.setu.domain.repository.MealDAO
 import ie.setu.domain.repository.UserDAO
 import ie.setu.helpers.meals
@@ -15,7 +18,7 @@ import org.junit.jupiter.api.Test
 import kotlin.test.assertNotEquals
 
 class MealDAOTest {
-    //retrieving some test data from Fixtures
+    // retrieving some test data from Fixtures
     private val user1 = users[0]
     private val user2 = users[1]
     private val user3 = users[2]
@@ -24,8 +27,7 @@ class MealDAOTest {
     private val meal3 = meals[2]
 
     companion object {
-
-        //Make a connection to a local, in memory H2 database.
+        // Make a connection to a local, in memory H2 database.
         @BeforeAll
         @JvmStatic
         internal fun setupInMemoryDatabaseConnection() {
@@ -35,27 +37,25 @@ class MealDAOTest {
 
     @Nested
     inner class ReadMeals {
-
         @Test
         fun `get all meals from empty table returns none`() {
             transaction {
-
-                //Arrange - create and setup userDAO object
+                // Arrange - create and setup userDAO object
                 SchemaUtils.create(Meals)
                 val mealDAO = MealDAO()
 
-                //Act & Assert
+                // Act & Assert
                 assertEquals(0, mealDAO.getAll().size)
             }
         }
+
         @Test
         fun `getting all meals from a populated table returns all rows`() {
             transaction {
-
-                //Arrange - create and populate user and activity tables
+                // Arrange - create and populate user and activity tables
                 val mealDAO = populateMealsTable()
 
-                //Act & Assert
+                // Act & Assert
                 assertEquals(3, mealDAO.getAll().size)
             }
         }
@@ -63,11 +63,10 @@ class MealDAOTest {
         @Test
         fun `get meal by id that doesn't exist, results in no meal returned`() {
             transaction {
-
-                //Arrange - create and populate meal table
+                // Arrange - create and populate meal table
                 val mealDAO = populateMealsTable()
 
-                //Act & Assert
+                // Act & Assert
                 assertEquals(null, mealDAO.findByMealId(4))
             }
         }
@@ -75,11 +74,10 @@ class MealDAOTest {
         @Test
         fun `get meal by id that exists, results in the correct meal returned`() {
             transaction {
-
-                //Arrange - create and populate meal table
+                // Arrange - create and populate meal table
                 val mealDAO = populateMealsTable()
 
-                //Act & Assert
+                // Act & Assert
                 assertEquals(meal2, mealDAO.findByMealId(2))
             }
         }
@@ -87,11 +85,10 @@ class MealDAOTest {
         @Test
         fun `get meal by name that doesn't exists, results in null`() {
             transaction {
-
-                //Arrange - create and populate meal table
+                // Arrange - create and populate meal table
                 val mealDAO = populateMealsTable()
 
-                //Act & Assert
+                // Act & Assert
                 assertEquals(null, mealDAO.findByMealName(meals[3].name))
             }
         }
@@ -99,13 +96,12 @@ class MealDAOTest {
         @Test
         fun `get meals by user id that doesn't exists, results in empty array`() {
             transaction {
-
-                //Arrange - create and populate meal and user stable
+                // Arrange - create and populate meal and user stable
                 val mealDAO = populateMealsTable()
                 populateUsersTable()
                 populateUsersMealsTable()
 
-                //Assert list is empty
+                // Assert list is empty
                 assertEquals(0, mealDAO.findByUserId(-1).size)
             }
         }
@@ -113,13 +109,12 @@ class MealDAOTest {
         @Test
         fun `get meals by user id that exists, results in array with correct meals`() {
             transaction {
-
-                //Arrange - create and populate meal, user and user meals table
+                // Arrange - create and populate meal, user and user meals table
                 val mealDAO = populateMealsTable()
                 populateUsersTable()
                 populateUsersMealsTable()
 
-                //Assert list is empty
+                // Assert list is empty
                 assertEquals(2, mealDAO.findByUserId(user1.id).size)
             }
         }
@@ -130,11 +125,10 @@ class MealDAOTest {
         @Test
         fun `multiple meals added to table can be retrieved successfully`() {
             transaction {
-
-                //Arrange - create and populate table with three meals
+                // Arrange - create and populate table with three meals
                 val mealDAO = populateMealsTable()
 
-                //Act & Assert
+                // Act & Assert
                 assertEquals(3, mealDAO.getAll().size)
                 assertEquals(meal1, mealDAO.findByMealId(meal1.id))
                 assertEquals(meal2, mealDAO.findByMealId(meal2.id))
@@ -145,15 +139,14 @@ class MealDAOTest {
         @Test
         fun `multiple meals associated with a user can be retrieved successfully`() {
             transaction {
-
-                //Arrange - create and populate users and meals tables
+                // Arrange - create and populate users and meals tables
                 populateUsersTable()
                 val mealDAO = populateMealsTable()
 
-                //Act - associate meals with user
+                // Act - associate meals with user
                 populateUsersMealsTable()
 
-                //Assert - meals are associated with user
+                // Assert - meals are associated with user
                 assertEquals(2, mealDAO.findByUserId(user1.id).size)
                 assertEquals(meal1, mealDAO.findByUserId(user1.id)[0])
                 assertEquals(meal2, mealDAO.findByUserId(user1.id)[1])
@@ -166,11 +159,10 @@ class MealDAOTest {
         @Test
         fun `deleting a non-existent meal in table results in no deletion`() {
             transaction {
-
-                //Arrange - create and populate meal table
+                // Arrange - create and populate meal table
                 val mealDAO = populateMealsTable()
 
-                //Act & Assert
+                // Act & Assert
                 assertEquals(3, mealDAO.getAll().size)
                 mealDAO.delete(4)
                 assertEquals(3, mealDAO.getAll().size)
@@ -180,11 +172,10 @@ class MealDAOTest {
         @Test
         fun `deleting an existing meal in table results in meal being deleted`() {
             transaction {
-
-                //Arrange - create and populate meal table
+                // Arrange - create and populate meal table
                 val mealDAO = populateMealsTable()
 
-                //Act & Assert
+                // Act & Assert
                 assertEquals(3, mealDAO.getAll().size)
                 mealDAO.delete(meal3.id)
                 assertEquals(2, mealDAO.getAll().size)
@@ -194,13 +185,12 @@ class MealDAOTest {
         @Test
         fun `deleting meal of a non-existent user in table results in no deletion`() {
             transaction {
-
-                //Arrange - create and populate user and activity tables
+                // Arrange - create and populate user and activity tables
                 val mealDAO = populateMealsTable()
                 populateUsersTable()
                 populateUsersMealsTable()
 
-                //Act & Assert
+                // Act & Assert
                 assertEquals(3, mealDAO.getAll().size)
                 mealDAO.deleteByUserId(4)
                 assertEquals(3, mealDAO.getAll().size)
@@ -210,13 +200,12 @@ class MealDAOTest {
         @Test
         fun `deleting meal associations of an existing user in table results in meal associations being deleted`() {
             transaction {
-
-                //Arrange - create and populate user/ activity tables and associate meals with user
+                // Arrange - create and populate user/ activity tables and associate meals with user
                 val mealDAO = populateMealsTable()
                 populateUsersTable()
                 populateUsersMealsTable()
 
-                //Act & Assert
+                // Act & Assert
                 assertEquals(2, mealDAO.findByUserId(user1.id).size)
                 mealDAO.deleteByUserId(user1.id)
                 assertEquals(0, mealDAO.findByUserId(user1.id).size)
@@ -226,13 +215,12 @@ class MealDAOTest {
         @Test
         fun `deleting meal associations of an existing user in table does not delete the meals`() {
             transaction {
-
-                //Arrange - create and populate user/ activity tables and associate meals with user
+                // Arrange - create and populate user/ activity tables and associate meals with user
                 val mealDAO = populateMealsTable()
                 populateUsersTable()
                 populateUsersMealsTable()
 
-                //Act & Assert
+                // Act & Assert
                 assertEquals(3, mealDAO.getAll().size)
                 mealDAO.deleteByUserId(user1.id)
                 assertEquals(3, mealDAO.getAll().size)
@@ -242,15 +230,14 @@ class MealDAOTest {
         @Test
         fun `deleting meals association of a non-existent meal id results in no deletion`() {
             transaction {
-
-                //Arrange - create and populate user/ activity tables and associate meals with user
+                // Arrange - create and populate user/ activity tables and associate meals with user
                 val mealDAO = populateMealsTable()
                 populateUsersTable()
                 populateUsersMealsTable()
 
-                //Act & Assert
+                // Act & Assert
                 assertEquals(2, mealDAO.findByUserId(user1.id).size)
-                mealDAO.deleteUserMealByMealId(user1.id,4)
+                mealDAO.deleteUserMealByMealId(user1.id, 4)
                 assertEquals(2, mealDAO.findByUserId(user1.id).size)
             }
         }
@@ -258,13 +245,12 @@ class MealDAOTest {
         @Test
         fun `deleting meal association of a user in table results in meal association being deleted`() {
             transaction {
-
-                //Arrange - create and populate user/ activity tables and associate meals with user
+                // Arrange - create and populate user/ activity tables and associate meals with user
                 val mealDAO = populateMealsTable()
                 populateUsersTable()
                 populateUsersMealsTable()
 
-                //Act & Assert
+                // Act & Assert
                 assertEquals(2, mealDAO.findByUserId(user1.id).size)
                 mealDAO.deleteUserMealByMealId(user1.id, meal1.id)
                 assertEquals(1, mealDAO.findByUserId(user1.id).size)

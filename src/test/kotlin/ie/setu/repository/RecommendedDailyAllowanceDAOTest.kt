@@ -12,10 +12,8 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
 class RecommendedDailyAllowanceDAOTest {
-
     companion object {
-
-        //Make a connection to a local, in memory H2 database.
+        // Make a connection to a local, in memory H2 database.
         @BeforeAll
         @JvmStatic
         internal fun setupInMemoryDatabaseConnection() {
@@ -28,11 +26,10 @@ class RecommendedDailyAllowanceDAOTest {
         @Test
         fun `getting recommended daily allowance from a populated table returns correct result`() {
             transaction {
-
-                //Arrange - create and populate recommended daily allowancess tables
+                // Arrange - create and populate recommended daily allowancess tables
                 val recommendedDailyAllowancesDAO = populateRecommendedDailyAllowancesTable()
 
-                //Act & Assert
+                // Act & Assert
                 assertEquals(recommendedDailyAllowance, recommendedDailyAllowancesDAO.get())
             }
         }
@@ -40,12 +37,11 @@ class RecommendedDailyAllowanceDAOTest {
         @Test
         fun `get recommended daily allowance from empty table returns null`() {
             transaction {
-
-                //Arrange - create and setup activityDAO object
+                // Arrange - create and setup activityDAO object
                 SchemaUtils.create(RecommendedDailyAllowances)
                 val recommendedDailyAllowancesDAO = RecommendedDailyAllowancesDAO()
 
-                //Act & Assert
+                // Act & Assert
                 assertEquals(null, recommendedDailyAllowancesDAO.get())
             }
         }
