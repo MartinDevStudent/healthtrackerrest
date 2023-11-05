@@ -49,22 +49,21 @@ object NutrientHttpClient {
             .build()
     }
 
-    private fun mapIngredientApiDtoToIngredient(dto: IngredientApiDTO): Ingredient
-    {
+    private fun mapIngredientApiDtoToIngredient(dto: IngredientApiDTO): Ingredient {
         return Ingredient(
             id = -1,
             name = dto.name,
-            calories =  dto.calories,
-            servingSizeG =  dto.servingSizeG,
-            fatTotalG =  dto.fatTotalG,
-            fatSaturatedG =  dto.fatSaturatedG,
-            proteinG =  dto.proteinG,
-            sodiumMg =  dto.sodiumMg,
-            potassiumMg =  dto.potassiumMg,
-            cholesterolMg =  dto.cholesterolMg,
-            carbohydratesTotalG =  dto.carbohydratesTotalG,
-            fiberG =  dto.fiberG,
-            sugarG =  dto.sugarG,
+            calories = dto.calories,
+            servingSizeG = dto.servingSizeG,
+            fatTotalG = dto.fatTotalG,
+            fatSaturatedG = dto.fatSaturatedG,
+            proteinG = dto.proteinG,
+            sodiumMg = dto.sodiumMg,
+            potassiumMg = dto.potassiumMg,
+            cholesterolMg = dto.cholesterolMg,
+            carbohydratesTotalG = dto.carbohydratesTotalG,
+            fiberG = dto.fiberG,
+            sugarG = dto.sugarG,
         )
     }
 }

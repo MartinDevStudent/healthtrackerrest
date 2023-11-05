@@ -1,9 +1,17 @@
 package ie.setu.config
 
-import ie.setu.controllers.*
+import ie.setu.controllers.ActivityController
+import ie.setu.controllers.AuthenticationController
+import ie.setu.controllers.IngredientController
+import ie.setu.controllers.MealController
+import ie.setu.controllers.UserController
 import ie.setu.utils.authentication.JwtProvider
 import io.javalin.Javalin
-import io.javalin.apibuilder.ApiBuilder.*
+import io.javalin.apibuilder.ApiBuilder.delete
+import io.javalin.apibuilder.ApiBuilder.get
+import io.javalin.apibuilder.ApiBuilder.patch
+import io.javalin.apibuilder.ApiBuilder.path
+import io.javalin.apibuilder.ApiBuilder.post
 import io.javalin.json.JavalinJackson
 import io.javalin.vue.VueComponent
 import javalinjwt.JWTAccessManager
@@ -16,17 +24,17 @@ class JavalinConfig {
      * @return The Javalin instance representing the running service.
      */
     fun startJavalinService(): Javalin {
-
-        val app = Javalin.create{
-            it.accessManager(JWTAccessManager("level", rolesMapping, Roles.ANYONE))
-            // Added this jsonMapper for our integration tests - serialise objects to json
-            it.jsonMapper(JavalinJackson(jsonObjectMapper()))
-            it.staticFiles.enableWebjars()
-            it.vue.vueAppName = "app" // only required for Vue 3, is defined in layout.html
-        }.apply {
-            exception(Exception::class.java) { e, _ -> e.printStackTrace() }
-            error(404) { ctx -> ctx.json("404 : Not Found") }
-        }.start(getRemoteAssignedPort())
+        val app =
+            Javalin.create {
+                it.accessManager(JWTAccessManager("level", rolesMapping, Roles.ANYONE))
+                // Added this jsonMapper for our integration tests - serialise objects to json
+                it.jsonMapper(JavalinJackson(jsonObjectMapper()))
+                it.staticFiles.enableWebjars()
+                it.vue.vueAppName = "app" // only required for Vue 3, is defined in layout.html
+            }.apply {
+                exception(Exception::class.java) { e, _ -> e.printStackTrace() }
+                error(404) { ctx -> ctx.json("404 : Not Found") }
+            }.start(getRemoteAssignedPort())
 
         app.before(JwtProvider.decodeHandler)
 
@@ -44,7 +52,9 @@ class JavalinConfig {
         val remotePort = System.getenv("PORT")
         return if (remotePort != null) {
             Integer.parseInt(remotePort)
-        } else 7000
+        } else {
+            7000
+        }
     }
 
     /**
@@ -96,15 +106,15 @@ class JavalinConfig {
                     get(UserController::getUserByUserId, Roles.ANYONE)
                     delete(UserController::deleteUser, Roles.ANYONE)
                     patch(UserController::updateUser, Roles.ANYONE)
-                    path("activities"){
+                    path("activities") {
                         get(ActivityController::getActivitiesByUserId, Roles.ANYONE)
                         delete(ActivityController::deleteActivitiesByUserId, Roles.ANYONE)
                     }
-                    path("meals"){
+                    path("meals") {
                         get(MealController::getMealsByUserId, Roles.ANYONE)
                         post(MealController::addUserMeal, Roles.ANYONE)
                         delete(MealController::deleteUserMealsByUserId, Roles.ANYONE)
-                        path("{meal-id}"){
+                        path("{meal-id}") {
                             delete(MealController::deleteUserMealByMealId, Roles.ANYONE)
                         }
                     }
@@ -114,26 +124,26 @@ class JavalinConfig {
                 }
             }
 
-            get(VueComponent( "<home-page></home-page>"), Roles.ANYONE)
-            path ("activities") {
+            get(VueComponent("<home-page></home-page>"), Roles.ANYONE)
+            path("activities") {
                 get(VueComponent("<activity-overview></activity-overview>"), Roles.ANYONE)
                 get("{activity-id}", VueComponent("<activity-profile></activity-profile>"), Roles.ANYONE)
             }
-            path ("ingredients") {
+            path("ingredients") {
                 get(VueComponent("<ingredient-overview></ingredient-overview>"), Roles.ANYONE)
-                get("{ingredient-id}", VueComponent( "<ingredient-profile></ingredient-profile>"), Roles.ANYONE)
+                get("{ingredient-id}", VueComponent("<ingredient-profile></ingredient-profile>"), Roles.ANYONE)
             }
 
-            path ("meals") {
+            path("meals") {
                 get(VueComponent("<meal-overview></meal-overview>"), Roles.ANYONE)
-                path ("{meal-id}") {
+                path("{meal-id}") {
                     get(VueComponent("<meal-profile></meal-profile>"), Roles.ANYONE)
                     get("ingredients", VueComponent("<meal-ingredient-overview></meal-ingredient-overview>"), Roles.ANYONE)
                 }
             }
-            path ("users") {
+            path("users") {
                 get(VueComponent("<user-overview></user-overview>"), Roles.ANYONE)
-                path ("{user-id}") {
+                path("{user-id}") {
                     get(VueComponent("<user-profile></user-profile>"), Roles.ANYONE)
                     get("activities", VueComponent("<user-activity-overview></user-activity-overview>"), Roles.ANYONE)
                 }

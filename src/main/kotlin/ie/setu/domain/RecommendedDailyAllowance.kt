@@ -11,4 +11,4 @@ data class RecommendedDailyAllowance(
     val carbohydratesTotalG: Double,
     val fiberG: Double,
     val sugarG: Double,
-    )
+)

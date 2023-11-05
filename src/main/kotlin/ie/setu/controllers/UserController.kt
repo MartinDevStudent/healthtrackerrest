@@ -1,14 +1,13 @@
 package ie.setu.controllers
 
-import io.javalin.http.Context
 import ie.setu.domain.User
 import ie.setu.domain.UserDTO
 import ie.setu.domain.repository.UserDAO
 import ie.setu.utils.authentication.hashPassword
+import io.javalin.http.Context
 import jsonToObject
 
 object UserController {
-
     private val userDao = UserDAO()
 
     /**
@@ -20,8 +19,7 @@ object UserController {
         val users = userDao.getAll()
         if (users.size != 0) {
             ctx.status(200)
-        }
-        else {
+        } else {
             ctx.status(404)
         }
         ctx.json(users)
@@ -37,8 +35,7 @@ object UserController {
         if (user != null) {
             ctx.json(user)
             ctx.status(200)
-        }
-        else {
+        } else {
             ctx.status(404)
         }
     }
@@ -53,8 +50,7 @@ object UserController {
         if (user != null) {
             ctx.json(user)
             ctx.status(200)
-        }
-        else {
+        } else {
             ctx.status(404)
         }
     }
@@ -68,13 +64,14 @@ object UserController {
         val userDTO: UserDTO = jsonToObject(ctx.body())
         val passwordHash = hashPassword(userDTO.password)
 
-        val user = User(
-            id = -1,
-            name = userDTO.name,
-            email =  userDTO.email,
-            level = "user",
-            passwordHash = passwordHash,
-        )
+        val user =
+            User(
+                id = -1,
+                name = userDTO.name,
+                email = userDTO.email,
+                level = "user",
+                passwordHash = passwordHash,
+            )
 
         val userId = userDao.save(user)
         if (userId != null) {
@@ -90,10 +87,11 @@ object UserController {
      * @param ctx The context for handling the HTTP request and response.
      */
     fun deleteUser(ctx: Context) {
-        if (userDao.delete(ctx.pathParam("user-id").toInt()) != 0)
+        if (userDao.delete(ctx.pathParam("user-id").toInt()) != 0) {
             ctx.status(204)
-        else
+        } else {
             ctx.status(404)
+        }
     }
 
     /**
@@ -102,20 +100,22 @@ object UserController {
      * @param ctx The context for handling the HTTP request and response.
      */
     fun updateUser(ctx: Context) {
-        val foundUserDto : UserDTO = jsonToObject(ctx.body())
+        val foundUserDto: UserDTO = jsonToObject(ctx.body())
         val passwordHash = hashPassword(foundUserDto.password)
 
-        val foundUser = User(
-            id = -1,
-            name = foundUserDto.name,
-            email =  foundUserDto.email,
-            level = "user",
-            passwordHash = passwordHash,
-        )
+        val foundUser =
+            User(
+                id = -1,
+                name = foundUserDto.name,
+                email = foundUserDto.email,
+                level = "user",
+                passwordHash = passwordHash,
+            )
 
-        if ((userDao.update(id = ctx.pathParam("user-id").toInt(), user=foundUser)) != 0)
+        if ((userDao.update(id = ctx.pathParam("user-id").toInt(), user = foundUser)) != 0) {
             ctx.status(204)
-        else
+        } else {
             ctx.status(404)
+        }
     }
 }

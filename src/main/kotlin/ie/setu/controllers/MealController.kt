@@ -22,8 +22,7 @@ object MealController {
         if (meals.count() > 0) {
             ctx.json(meals)
             ctx.status(200)
-        }
-        else {
+        } else {
             ctx.status(404)
         }
     }
@@ -38,8 +37,7 @@ object MealController {
         if (meal != null) {
             ctx.json(meal)
             ctx.status(200)
-        }
-        else {
+        } else {
             ctx.status(404)
         }
     }
@@ -54,8 +52,7 @@ object MealController {
         if (meals.count() != 0) {
             ctx.json(meals)
             ctx.status(200)
-        }
-        else {
+        } else {
             ctx.status(404)
         }
     }
@@ -74,8 +71,7 @@ object MealController {
         if (ingredients.isNotEmpty()) {
             ctx.json(ingredients)
             ctx.status(200)
-        }
-        else {
+        } else {
             ctx.status(404)
         }
     }
@@ -100,15 +96,15 @@ object MealController {
         if (meal != null) {
             ctx.status(409)
             ctx.result("Meal already exists in database")
-        }
-        else {
+        } else {
             val ingredients = NutrientHttpClient.get(mealDto.name)
 
             if (ingredients.isNotEmpty()) {
-                meal = Meal(
-                    id = mealDao.save(mealDto),
-                    name = mealDto.name,
-                )
+                meal =
+                    Meal(
+                        id = mealDao.save(mealDto),
+                        name = mealDto.name,
+                    )
 
                 ingredients.forEach {
                     val ingredientId = ingredientDao.save(it)
@@ -117,8 +113,7 @@ object MealController {
 
                 ctx.json(meal)
                 ctx.status(201)
-            }
-            else {
+            } else {
                 ctx.status(400)
             }
         }
@@ -137,14 +132,15 @@ object MealController {
 
         var meal = mealDao.findByMealName(mealDto.name)
 
-        if (meal == null)  {
+        if (meal == null) {
             val ingredientDTOs = NutrientHttpClient.get(mealDto.name)
 
             if (ingredientDTOs.isNotEmpty()) {
-                meal = Meal(
-                    id = mealDao.save(mealDto),
-                    name = mealDto.name,
-                )
+                meal =
+                    Meal(
+                        id = mealDao.save(mealDto),
+                        name = mealDto.name,
+                    )
 
                 ingredientDTOs.forEach {
                     val ingredientId = ingredientDao.save(it)
@@ -153,12 +149,10 @@ object MealController {
                 mealDao.associateMealWithUser(userId, meal.id)
                 ctx.json(meal)
                 ctx.status(201)
-            }
-            else {
+            } else {
                 ctx.status(400)
             }
-        }
-        else {
+        } else {
             mealDao.associateMealWithUser(userId, meal.id)
             ctx.json(meal)
             ctx.status(201)
@@ -176,10 +170,11 @@ object MealController {
      * @param ctx The context object containing the meal ID as a path parameter.
      */
     fun deleteMeal(ctx: Context) {
-        if (mealDao.delete(ctx.pathParam("meal-id").toInt()) != 0)
+        if (mealDao.delete(ctx.pathParam("meal-id").toInt()) != 0) {
             ctx.status(204)
-        else
+        } else {
             ctx.status(404)
+        }
     }
 
     /**
@@ -188,10 +183,11 @@ object MealController {
      * @param ctx The Javalin context object representing the HTTP request and response.
      */
     fun deleteUserMealsByUserId(ctx: Context) {
-        if (mealDao.deleteByUserId(ctx.pathParam("user-id").toInt()) != 0)
+        if (mealDao.deleteByUserId(ctx.pathParam("user-id").toInt()) != 0) {
             ctx.status(204)
-        else
+        } else {
             ctx.status(404)
+        }
     }
 
     /**
@@ -203,9 +199,10 @@ object MealController {
         val userId = ctx.pathParam("user-id").toInt()
         val mealId = ctx.pathParam("meal-id").toInt()
 
-        if (mealDao.deleteUserMealByMealId(userId, mealId) != 0)
+        if (mealDao.deleteUserMealByMealId(userId, mealId) != 0) {
             ctx.status(204)
-        else
+        } else {
             ctx.status(404)
+        }
     }
 }
