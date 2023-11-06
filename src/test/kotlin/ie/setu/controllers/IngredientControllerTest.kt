@@ -25,7 +25,7 @@ class IngredientControllerTest {
     inner class ReadIngredients {
         @Test
         fun `get all ingredients from the database returns 200 or 404 response`() {
-            val response = Unirest.get(origin + "/api/ingredients/").asString()
+            val response = Unirest.get("$origin/api/ingredients/").asString()
             if (response.status == 200) {
                 val retrievedIngredients: ArrayList<Ingredient> = jsonToObject(response.body.toString())
                 assertNotEquals(0, retrievedIngredients.size)
@@ -102,28 +102,28 @@ class IngredientControllerTest {
 
     // helper function to retrieve a test ingredient from the database by id
     private fun retrieveIngredientById(id: Int): HttpResponse<String> {
-        return Unirest.get(origin + "/api/ingredients/$id").asString()
+        return Unirest.get("$origin/api/ingredients/$id").asString()
     }
 
     // helper function to retrieve ingredients from the database by meal id
     private fun retrieveIngredientByMealId(id: Int): HttpResponse<String> {
-        return Unirest.get(origin + "/api/meals/$id/ingredients").asString()
+        return Unirest.get("$origin/api/meals/$id/ingredients").asString()
     }
 
     // helper function to retrieve recommended daily allowances from the database
     private fun retrieveRecommendedDailyAllowances(): HttpResponse<String> {
-        return Unirest.get(origin + "/api/ingredients/rda").asString()
+        return Unirest.get("$origin/api/ingredients/rda").asString()
     }
 
     // helper function to add a test meal to the database
     private fun addMeal(name: String): HttpResponse<JsonNode> {
-        return Unirest.post(origin + "/api/meals")
+        return Unirest.post("$origin/api/meals")
             .body("{\"name\":\"$name\"}")
             .asJson()
     }
 
     // helper function to delete a test meal from the database
     private fun deleteMeal(id: Int): HttpResponse<String> {
-        return Unirest.delete(origin + "/api/meals/$id").asString()
+        return Unirest.delete("$origin/api/meals/$id").asString()
     }
 }

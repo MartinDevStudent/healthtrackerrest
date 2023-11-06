@@ -27,7 +27,7 @@ class UserControllerTest {
     inner class ReadUsers {
         @Test
         fun `get all users from the database returns 200 or 404 response`() {
-            val response = Unirest.get(origin + "/api/users/").asString()
+            val response = Unirest.get("$origin/api/users/").asString()
             if (response.status == 200) {
                 val retrievedUsers: ArrayList<User> = jsonToObject(response.body.toString())
                 assertNotEquals(0, retrievedUsers.size)
@@ -171,29 +171,29 @@ class UserControllerTest {
     }
 
     // helper function to add a test user to the database
-    public fun addUser(
+    private fun addUser(
         name: String,
         email: String,
         password: String,
     ): HttpResponse<JsonNode> {
-        return Unirest.post(origin + "/api/users")
+        return Unirest.post("$origin/api/users")
             .body("{\"name\":\"$name\", \"email\":\"$email\", \"password\":\"$password\"}")
             .asJson()
     }
 
     // helper function to delete a test user from the database
     private fun deleteUser(id: Int): HttpResponse<String> {
-        return Unirest.delete(origin + "/api/users/$id").asString()
+        return Unirest.delete("$origin/api/users/$id").asString()
     }
 
     // helper function to retrieve a test user from the database by email
     private fun retrieveUserByEmail(email: String): HttpResponse<String> {
-        return Unirest.get(origin + "/api/users/email/$email").asString()
+        return Unirest.get("$origin/api/users/email/$email").asString()
     }
 
     // helper function to retrieve a test user from the database by id
     private fun retrieveUserById(id: Int): HttpResponse<String> {
-        return Unirest.get(origin + "/api/users/$id").asString()
+        return Unirest.get("$origin/api/users/$id").asString()
     }
 
     // helper function to add a test user to the database
@@ -203,7 +203,7 @@ class UserControllerTest {
         email: String,
         password: String,
     ): HttpResponse<JsonNode> {
-        return Unirest.patch(origin + "/api/users/$id")
+        return Unirest.patch("$origin/api/users/$id")
             .body("{\"name\":\"$name\", \"email\":\"$email\", \"password\":\"$password\"}")
             .asJson()
     }

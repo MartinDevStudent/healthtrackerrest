@@ -29,7 +29,7 @@ class MealControllerTest {
     inner class ReadMeals {
         @Test
         fun `get all meals from the database returns 200 or 404 response`() {
-            val response = Unirest.get(origin + "/api/meals/").asString()
+            val response = Unirest.get("$origin/api/meals/").asString()
             if (response.status == 200) {
                 val retrievedMeals: ArrayList<Meal> = jsonToObject(response.body.toString())
                 assertNotEquals(0, retrievedMeals.size)
@@ -269,17 +269,17 @@ class MealControllerTest {
 
     // helper function to retrieve a test meal from the database by meal id
     private fun retrieveMealById(id: Int): HttpResponse<String> {
-        return Unirest.get(origin + "/api/meals/$id").asString()
+        return Unirest.get("$origin/api/meals/$id").asString()
     }
 
     // helper function to retrieve a test meal from the database by meal id
     private fun retrieveMealByUserId(id: Int): HttpResponse<String> {
-        return Unirest.get(origin + "/api/users/$id/meals").asString()
+        return Unirest.get("$origin/api/users/$id/meals").asString()
     }
 
     // helper function to add a test meal to the database
     private fun addMeal(name: String): HttpResponse<JsonNode> {
-        return Unirest.post(origin + "/api/meals")
+        return Unirest.post("$origin/api/meals")
             .body("{\"name\":\"$name\"}")
             .asJson()
     }
@@ -289,19 +289,19 @@ class MealControllerTest {
         name: String,
         userId: Int,
     ): HttpResponse<JsonNode> {
-        return Unirest.post(origin + "/api/users/$userId/meals")
+        return Unirest.post("$origin/api/users/$userId/meals")
             .body("{\"name\":\"$name\"}")
             .asJson()
     }
 
     // helper function to delete a test meal from the database
     private fun deleteMeal(id: Int): HttpResponse<String> {
-        return Unirest.delete(origin + "/api/meals/$id").asString()
+        return Unirest.delete("$origin/api/meals/$id").asString()
     }
 
     // helper function to delete all meals associated with a user from the database
     private fun deleteMealsByUserId(id: Int): HttpResponse<String> {
-        return Unirest.delete(origin + "/api/users/$id/meals").asString()
+        return Unirest.delete("$origin/api/users/$id/meals").asString()
     }
 
     // helper function to delete a meal associated with a user from the database
@@ -309,7 +309,7 @@ class MealControllerTest {
         userId: Int,
         mealId: Int,
     ): HttpResponse<String> {
-        return Unirest.delete(origin + "/api/users/$userId/meals/$mealId").asString()
+        return Unirest.delete("$origin/api/users/$userId/meals/$mealId").asString()
     }
 
     // helper function to add a test user to the database
@@ -318,13 +318,13 @@ class MealControllerTest {
         email: String,
         password: String,
     ): HttpResponse<JsonNode> {
-        return Unirest.post(origin + "/api/users")
+        return Unirest.post("$origin/api/users")
             .body("{\"name\":\"$name\", \"email\":\"$email\", \"password\":\"$password\"}")
             .asJson()
     }
 
     // helper function to delete a test user from the database
     private fun deleteUser(id: Int): HttpResponse<String> {
-        return Unirest.delete(origin + "/api/users/$id").asString()
+        return Unirest.delete("$origin/api/users/$id").asString()
     }
 }

@@ -19,7 +19,7 @@ object MealController {
      */
     fun getAllMeals(ctx: Context) {
         val meals = mealDao.getAll()
-        if (meals.count() > 0) {
+        if (meals.isNotEmpty()) {
             ctx.json(meals)
             ctx.status(200)
         } else {
@@ -49,7 +49,7 @@ object MealController {
      */
     fun getMealsByUserId(ctx: Context) {
         val meals = mealDao.findByUserId(ctx.pathParam("user-id").toInt())
-        if (meals.count() != 0) {
+        if (meals.isNotEmpty()) {
             ctx.json(meals)
             ctx.status(200)
         } else {
