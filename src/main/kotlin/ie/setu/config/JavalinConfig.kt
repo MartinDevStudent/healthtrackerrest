@@ -59,8 +59,8 @@ class JavalinConfig {
         }
     }
 
-    private fun currentUser(ctx : Context): String? {
-        if (ctx.basicAuthCredentials() != null) return decodeJWT(ctx).getClaim("name").asString() else return null
+    private fun currentUser(ctx: Context): String? {
+        return if (ctx.basicAuthCredentials() != null) decodeJWT(ctx).getClaim("name").asString() else null
     }
 
     /**
