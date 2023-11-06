@@ -6,12 +6,14 @@ import ie.setu.controllers.IngredientController
 import ie.setu.controllers.MealController
 import ie.setu.controllers.UserController
 import ie.setu.utils.authentication.JwtProvider
+import ie.setu.utils.authentication.decodeJWT
 import io.javalin.Javalin
 import io.javalin.apibuilder.ApiBuilder.delete
 import io.javalin.apibuilder.ApiBuilder.get
 import io.javalin.apibuilder.ApiBuilder.patch
 import io.javalin.apibuilder.ApiBuilder.path
 import io.javalin.apibuilder.ApiBuilder.post
+import io.javalin.http.Context
 import io.javalin.json.JavalinJackson
 import io.javalin.vue.VueComponent
 import javalinjwt.JWTAccessManager
@@ -21,21 +23,21 @@ class JavalinConfig {
     /**
      * Starts the Javalin service with JWT-based authentication and registers routes.
      *
-     * @return The Javalin instance representing the running service.
+     * @return The Javalin instance representing the r  unning service.
      */
     fun startJavalinService(): Javalin {
         val app =
-            Javalin.create {
-                it.accessManager(JWTAccessManager("level", rolesMapping, Roles.ANYONE))
+            Javalin.create { config ->
+                config.accessManager(JWTAccessManager("level", rolesMapping, Roles.ANYONE))
                 // Added this jsonMapper for our integration tests - serialise objects to json
-                it.jsonMapper(JavalinJackson(jsonObjectMapper()))
-                it.staticFiles.enableWebjars()
-                it.vue.vueAppName = "app" // only required for Vue 3, is defined in layout.html
+                config.jsonMapper(JavalinJackson(jsonObjectMapper()))
+                config.staticFiles.enableWebjars()
+                config.vue.vueAppName = "app" // only required for Vue 3, is defined in layout.html
+                config.vue.stateFunction = { ctx -> mapOf("user" to currentUser(ctx)) }
             }.apply {
                 exception(Exception::class.java) { e, _ -> e.printStackTrace() }
                 error(404) { ctx -> ctx.json("404 : Not Found") }
             }.start(getRemoteAssignedPort())
-
         app.before(JwtProvider.decodeHandler)
 
         registerRoutes(app)
@@ -57,6 +59,10 @@ class JavalinConfig {
         }
     }
 
+    private fun currentUser(ctx: Context): String? {
+        return if (ctx.basicAuthCredentials() != null) decodeJWT(ctx).getClaim("name").asString() else null
+    }
+
     /**
      * Registers API routes for various endpoints in the Javalin application.
      *
@@ -73,7 +79,7 @@ class JavalinConfig {
                     patch(ActivityController::updateActivity, Roles.ANYONE)
                 }
             }
-            path("api/authentication") {
+            path("api/login") {
                 post(AuthenticationController::login, Roles.ANYONE)
                 path("validate") {
                     get(AuthenticationController::validate, Roles.USER)
@@ -132,6 +138,9 @@ class JavalinConfig {
             path("ingredients") {
                 get(VueComponent("<ingredient-overview></ingredient-overview>"), Roles.ANYONE)
                 get("{ingredient-id}", VueComponent("<ingredient-profile></ingredient-profile>"), Roles.ANYONE)
+            }
+            path("login") {
+                get(VueComponent("<login-page></login-page>"), Roles.ANYONE)
             }
 
             path("meals") {

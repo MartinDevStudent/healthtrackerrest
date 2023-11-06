@@ -40,6 +40,7 @@
             </div>
           </div>
         </div>
+        <p>{{ $javalin.state.user }}</p>
     </div>
   </app-layout>
 </template>

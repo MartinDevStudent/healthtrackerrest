@@ -2,7 +2,7 @@ package ie.setu.controllers
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
-import ie.setu.domain.UserDTO
+import ie.setu.domain.UserLoginDTO
 import ie.setu.domain.repository.UserDAO
 import ie.setu.utils.authentication.JwtProvider
 import ie.setu.utils.authentication.JwtResponse
@@ -20,15 +20,15 @@ object AuthenticationController {
      */
     fun login(ctx: Context) {
         val mapper = jacksonObjectMapper()
-        val userDTO = mapper.readValue<UserDTO>(ctx.body())
+        val userLoginDTO = mapper.readValue<UserLoginDTO>(ctx.body())
 
-        val user = userDao.findByEmail(userDTO.email)
+        val user = userDao.findByEmail(userLoginDTO.email)
 
         if (user == null) {
             ctx.status(401)
         }
 
-        val isCorrectPassword = isCorrectPassword(userDTO.password, user!!.passwordHash!!)
+        val isCorrectPassword = isCorrectPassword(userLoginDTO.password, user!!.passwordHash!!)
 
         if (isCorrectPassword) {
             val token = JwtProvider.provider.generateToken(user)
