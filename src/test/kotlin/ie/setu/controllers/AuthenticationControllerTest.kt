@@ -65,7 +65,7 @@ class AuthenticationControllerTest {
         email: String,
         password: String,
     ): HttpResponse<JsonNode> {
-        return Unirest.post(origin + "/api/authentication")
+        return Unirest.post("$origin/api/authentication")
             .body("{\"name\":\"$name\", \"email\":\"$email\", \"password\":\"$password\"}")
             .asJson()
     }
@@ -76,13 +76,13 @@ class AuthenticationControllerTest {
         email: String,
         password: String,
     ): HttpResponse<JsonNode> {
-        return Unirest.post(origin + "/api/users")
+        return Unirest.post("$origin/api/users")
             .body("{\"name\":\"$name\", \"email\":\"$email\", \"password\":\"$password\"}")
             .asJson()
     }
 
     // helper function to delete a test user from the database
     private fun deleteUser(id: Int): HttpResponse<String> {
-        return Unirest.delete(origin + "/api/users/$id").asString()
+        return Unirest.delete("$origin/api/users/$id").asString()
     }
 }

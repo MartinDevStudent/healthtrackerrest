@@ -16,7 +16,15 @@
     <!-- Javalin’s Vue plugin will scan your /resources/vue folder and put -->
     <!-- all your Vue components into componentRegistration -->
     <script>
-        const app =  Vue.createApp({});
+        const { createApp, reactive } = Vue;
+
+        const store = reactive({
+            token: null,
+            setToken(token) {
+                this.token = token
+            }
+        })
+        const app =  createApp({ store });
     </script>
     @componentRegistration
 </head>

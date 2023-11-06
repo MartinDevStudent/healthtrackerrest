@@ -1,4 +1,4 @@
-<template id="login-page">
+<template id="login-page" v-if="store.token">
   <div class="container">
     <h1>LOGIN</h1>
       <form @submit.prevent="login" class="mt-5">
@@ -13,8 +13,8 @@
       </form>
     <button v-on:click="validate" class="btn btn-primary">Validate</button>
     <br />
-    <p>{{token ? `Bearer token: ${token}` : null}}</p>
-    <p>{{validationResponse ? `${validationResponse}, you were able to login using the bearer token above` : null }}</p>
+    <p v-if="token !== null">{{ `Bearer token: ${token}` }}</p>
+    <p v-if="validationResponse !== null">{{ `${validationResponse}, you were able to login using the bearer token above` }}</p>
   </div>
 </template>
 <script>
@@ -25,7 +25,6 @@
       return {
         email: "",
         password: "",
-        token: null,
         validationResponse: null,
       };
     },
@@ -37,16 +36,22 @@
         }, {
           headers: { "Content-Type": "application/json"}
         })
-          .then(res => this.token = res.data.jwt)
+
+          .then(res => store.setToken(res.data.jwt))
           .catch(() => alert("Error while logging in"));
       },
       async validate() {
         axios.get("/api/login/validate", {
-          headers: { "Authorization": `Bearer ${this.token}`}
+          headers: { "Authorization": `Bearer ${store.token}`}
         })
             .then(res => this.validationResponse = res.data)
             .catch(() => alert("Error while validating token"));
       },
     },
+    computed: {
+      token: function () {
+        return store.token
+      }
+    }
   });
 </script>

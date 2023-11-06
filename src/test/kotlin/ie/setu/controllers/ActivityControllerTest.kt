@@ -79,7 +79,7 @@ class ActivityControllerTest {
     inner class ReadActivities {
         @Test
         fun `get all activities from the database returns 200 or 404 response`() {
-            val response = Unirest.get(origin + "/api/activities/").asString()
+            val response = Unirest.get("$origin/api/activities/").asString()
             if (response.status == 200) {
                 val retrievedActivities: ArrayList<Activity> = jsonToObject(response.body.toString())
                 assertNotEquals(0, retrievedActivities.size)
@@ -228,12 +228,12 @@ class ActivityControllerTest {
 
     // helper function to retrieve a test activity from the database by activity id
     private fun retrieveActivityById(id: Int): HttpResponse<String> {
-        return Unirest.get(origin + "/api/activities/$id").asString()
+        return Unirest.get("$origin/api/activities/$id").asString()
     }
 
     // helper function to retrieve a test activity from the database by activity id
     private fun retrieveActivitiesByUserId(userId: Int): HttpResponse<String> {
-        return Unirest.get(origin + "/api/users/$userId/activities").asString()
+        return Unirest.get("$origin/api/users/$userId/activities").asString()
     }
 
     // helper function to add a test activity to the database
@@ -245,7 +245,7 @@ class ActivityControllerTest {
         userId: Int,
     ): HttpResponse<JsonNode> {
         @Suppress("ktlint:standard:max-line-length")
-        return Unirest.post(origin + "/api/activities")
+        return Unirest.post("$origin/api/activities")
             .body(
                 "{\"description\":\"$description\", \"duration\":\"$duration\", \"calories\":\"$calories\", \"started\":\"$started\", \"userId\":\"$userId\"}",
             )
@@ -262,7 +262,7 @@ class ActivityControllerTest {
         userId: Int,
     ): HttpResponse<JsonNode> {
         @Suppress("ktlint:standard:max-line-length")
-        return Unirest.patch(origin + "/api/activities/$id")
+        return Unirest.patch("$origin/api/activities/$id")
             .body(
                 "{\"id\":\"$id\", \"description\":\"$description\", \"duration\":\"$duration\", \"calories\":\"$calories\", \"started\":\"$started\", \"userId\":\"$userId\"}",
             )
@@ -271,12 +271,12 @@ class ActivityControllerTest {
 
     // helper function to delete a test activity from the database
     private fun deleteActivity(id: Int): HttpResponse<String> {
-        return Unirest.delete(origin + "/api/activities/$id").asString()
+        return Unirest.delete("$origin/api/activities/$id").asString()
     }
 
     // helper function to retrieve a test user from the database by id
     private fun retrieveUserById(id: Int): HttpResponse<String> {
-        return Unirest.get(origin + "/api/users/$id").asString()
+        return Unirest.get("$origin/api/users/$id").asString()
     }
 
     // helper function to add a test user to the database
@@ -285,13 +285,13 @@ class ActivityControllerTest {
         email: String,
         password: String,
     ): HttpResponse<JsonNode> {
-        return Unirest.post(origin + "/api/users")
+        return Unirest.post("$origin/api/users")
             .body("{\"name\":\"$name\", \"email\":\"$email\", \"password\":\"$password\"}")
             .asJson()
     }
 
     // helper function to delete a test user from the database
     private fun deleteUser(id: Int): HttpResponse<String> {
-        return Unirest.delete(origin + "/api/users/$id").asString()
+        return Unirest.delete("$origin/api/users/$id").asString()
     }
 }

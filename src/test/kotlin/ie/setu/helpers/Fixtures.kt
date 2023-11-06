@@ -7,14 +7,14 @@ import ie.setu.domain.RecommendedDailyAllowance
 import ie.setu.domain.User
 import org.joda.time.DateTime
 
-val nonExistingEmail = "112233445566778testUser@xxxxx.xx"
-val nonExistingMealId = -999
-val incorrectPassword = "**********"
-val invalidMealName = "football"
+const val nonExistingEmail = "112233445566778testUser@xxxxx.xx"
+const val nonExistingMealId = -999
+const val incorrectPassword = "**********"
+const val invalidMealName = "football"
 
-val validName = "Test User 1"
-val validEmail = "testuser1@test.com"
-val validPassword = "password"
+const val validName = "Test User 1"
+const val validEmail = "testuser1@test.com"
+const val validPassword = "password"
 var validDescription = "Test Description"
 var validDuration = 100.0
 var validCalories = 150
@@ -22,7 +22,7 @@ var validStarted = DateTime("2020-06-10T05:59:27.258Z")
 var validMealName = "ceasar salad"
 
 val users =
-    arrayListOf<User>(
+    arrayListOf(
         User(name = "Alice Wonderland", email = "alice@wonderland.com", id = 1, level = "user", passwordHash = "111111111"),
         User(name = "Bob Cat", email = "bob@cat.ie", id = 2, level = "user", passwordHash = "111111111"),
         User(name = "Mary Contrary", email = "mary@contrary.com", id = 3, level = "user", passwordHash = "111111111"),
@@ -30,7 +30,7 @@ val users =
     )
 
 val activities =
-    arrayListOf<Activity>(
+    arrayListOf(
         Activity(
             description = "Running",
             duration = 12.5,
@@ -66,7 +66,7 @@ val activities =
     )
 
 val meals =
-    arrayListOf<Meal>(
+    arrayListOf(
         Meal(id = 1, name = "Burger"),
         Meal(id = 2, name = "Fries"),
         Meal(id = 3, name = "Salmon Salad"),
@@ -74,7 +74,7 @@ val meals =
     )
 
 val ingredients =
-    arrayListOf<Ingredient>(
+    arrayListOf(
         Ingredient(
             id = 1,
             name = "Burger",

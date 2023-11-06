@@ -13,10 +13,10 @@ import javalinjwt.JavalinJWT
  */
 object JwtProvider {
     // 1. Define the JWT signing algorithm using HMAC256 and a secret key.
-    val algorithm = Algorithm.HMAC256("very_secret")
+    private val algorithm = Algorithm.HMAC256("very_secret")
 
     // 2. Define a JWT generator to create JWTs for user data.
-    val generator: JWTGenerator<User> =
+    private val generator: JWTGenerator<User> =
         JWTGenerator<User> { user: User, alg: Algorithm? ->
             val token: JWTCreator.Builder =
                 JWT.create()
@@ -26,7 +26,7 @@ object JwtProvider {
         }
 
     // 3. Define a JWT verifier to validate incoming JWTs using the configured algorithm.
-    val verifier = JWT.require(algorithm).build()
+    private val verifier = JWT.require(algorithm).build()
 
     // 4. Create a JWTProvider with the defined algorithm, generator, and verifier.
     val provider: JWTProvider<User> = JWTProvider(algorithm, generator, verifier)
