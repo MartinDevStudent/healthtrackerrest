@@ -6,9 +6,9 @@ import ie.setu.domain.db.Meals
 import ie.setu.domain.db.MealsIngredients
 import ie.setu.domain.repository.IngredientDAO
 import ie.setu.domain.repository.MealDAO
+import ie.setu.helpers.NON_EXISTING_MEAL_ID
 import ie.setu.helpers.ingredients
 import ie.setu.helpers.meals
-import ie.setu.helpers.nonExistingMealId
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -84,7 +84,7 @@ class IngredientDAOTest {
                 val ingredientDAO = populateIngredientTable()
 
                 // Act & Assert
-                assertEquals(ArrayList<Ingredient>(), ingredientDAO.findByMealId(nonExistingMealId))
+                assertEquals(ArrayList<Ingredient>(), ingredientDAO.findByMealId(NON_EXISTING_MEAL_ID))
             }
         }
 

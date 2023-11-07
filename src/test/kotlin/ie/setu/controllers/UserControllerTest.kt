@@ -2,11 +2,11 @@ package ie.setu.controllers
 
 import ie.setu.config.DbConfig
 import ie.setu.domain.User
+import ie.setu.helpers.NONE_EXISTING_EMAIL
 import ie.setu.helpers.ServerContainer
-import ie.setu.helpers.nonExistingEmail
-import ie.setu.helpers.validEmail
-import ie.setu.helpers.validName
-import ie.setu.helpers.validPassword
+import ie.setu.helpers.VALID_EMAIL
+import ie.setu.helpers.VALID_NAME
+import ie.setu.helpers.VALID_PASSWORD
 import jsonToObject
 import kong.unirest.HttpResponse
 import kong.unirest.JsonNode
@@ -51,7 +51,7 @@ class UserControllerTest {
         @Test
         fun `get user by email when user does not exist returns 404 response`() {
             // Arrange & Act - attempt to retrieve the non-existent user from the database
-            val retrieveResponse = retrieveUserByEmail(nonExistingEmail)
+            val retrieveResponse = retrieveUserByEmail(NONE_EXISTING_EMAIL)
 
             // Assert -  verify return code
             assertEquals(404, retrieveResponse.status)
@@ -60,7 +60,7 @@ class UserControllerTest {
         @Test
         fun `getting a user by id when id exists, returns a 200 response`() {
             // Arrange - add the user
-            val addResponse = addUser(validName, validEmail, validPassword)
+            val addResponse = addUser(VALID_NAME, VALID_EMAIL, VALID_PASSWORD)
             val addedUser: User = jsonToObject(addResponse.body.toString())
 
             // Assert - retrieve the added user from the database and verify return code
@@ -75,10 +75,10 @@ class UserControllerTest {
         @Test
         fun `getting a user by email when email exists, returns a 200 response`() {
             // Arrange - add the user
-            addUser(validName, validEmail, validPassword)
+            addUser(VALID_NAME, VALID_EMAIL, VALID_PASSWORD)
 
             // Assert - retrieve the added user from the database and verify return code
-            val retrieveResponse = retrieveUserByEmail(validEmail)
+            val retrieveResponse = retrieveUserByEmail(VALID_EMAIL)
             assertEquals(200, retrieveResponse.status)
 
             // After - restore the db to previous state by deleting the added user
@@ -94,17 +94,17 @@ class UserControllerTest {
         fun `add a user with correct details returns a 201 response`() {
             // Arrange & Act & Assert
             //    add the user and verify return code (using fixture data)
-            val addResponse = addUser(validName, validEmail, validPassword)
+            val addResponse = addUser(VALID_NAME, VALID_EMAIL, VALID_PASSWORD)
             assertEquals(201, addResponse.status)
 
             // Assert - retrieve the added user from the database and verify return code
-            val retrieveResponse = retrieveUserByEmail(validEmail)
+            val retrieveResponse = retrieveUserByEmail(VALID_EMAIL)
             assertEquals(200, retrieveResponse.status)
 
             // Assert - verify the contents of the retrieved user
             val retrievedUser: User = jsonToObject(addResponse.body.toString())
-            assertEquals(validEmail, retrievedUser.email)
-            assertEquals(validName, retrievedUser.name)
+            assertEquals(VALID_EMAIL, retrievedUser.email)
+            assertEquals(VALID_NAME, retrievedUser.name)
             assertEquals("user", retrievedUser.level)
 
             // After - restore the db to previous state by deleting the added user
@@ -120,11 +120,11 @@ class UserControllerTest {
             // Arrange - add the user that we plan to do an update on
             val updatedName = "Updated Name"
             val updatedEmail = "Updated Email"
-            val addedResponse = addUser(validName, validEmail, validPassword)
+            val addedResponse = addUser(VALID_NAME, VALID_EMAIL, VALID_PASSWORD)
             val addedUser: User = jsonToObject(addedResponse.body.toString())
 
             // Act & Assert - update the email and name of the retrieved user and assert 204 is returned
-            assertEquals(204, updateUser(addedUser.id, updatedName, updatedEmail, validPassword).status)
+            assertEquals(204, updateUser(addedUser.id, updatedName, updatedEmail, VALID_PASSWORD).status)
 
             // Act & Assert - retrieve updated user and assert details are correct
             val updatedUserResponse = retrieveUserById(addedUser.id)
@@ -144,7 +144,7 @@ class UserControllerTest {
             val updatedEmail = "Updated Email"
 
             // Act & Assert - attempt to update the email and name of user that doesn't exist
-            assertEquals(404, updateUser(-1, updatedName, updatedEmail, validPassword).status)
+            assertEquals(404, updateUser(-1, updatedName, updatedEmail, VALID_PASSWORD).status)
         }
     }
 
@@ -159,7 +159,7 @@ class UserControllerTest {
         @Test
         fun `deleting a user when it exists, returns a 204 response`() {
             // Arrange - add the user that we plan to do a delete on
-            val addedResponse = addUser(validName, validEmail, validPassword)
+            val addedResponse = addUser(VALID_NAME, VALID_EMAIL, VALID_PASSWORD)
             val addedUser: User = jsonToObject(addedResponse.body.toString())
 
             // Act & Assert - delete the added user and assert a 204 is returned

@@ -3,7 +3,7 @@ package ie.setu.repository
 import ie.setu.domain.User
 import ie.setu.domain.db.Users
 import ie.setu.domain.repository.UserDAO
-import ie.setu.helpers.nonExistingEmail
+import ie.setu.helpers.NONE_EXISTING_EMAIL
 import ie.setu.helpers.users
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
@@ -82,7 +82,7 @@ class UserDAOTest {
                 val userDAO = populateUserTable()
 
                 // Act & Assert
-                assertEquals(null, userDAO.findByEmail(nonExistingEmail))
+                assertEquals(null, userDAO.findByEmail(NONE_EXISTING_EMAIL))
             }
         }
 

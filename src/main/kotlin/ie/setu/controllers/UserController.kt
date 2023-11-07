@@ -64,7 +64,8 @@ object UserController {
         val userDTO: UserDTO = jsonToObject(ctx.body())
         val passwordHash = hashPassword(userDTO.password)
 
-        val user = User(
+        val user =
+            User(
                 id = -1,
                 name = userDTO.name,
                 email = userDTO.email,
