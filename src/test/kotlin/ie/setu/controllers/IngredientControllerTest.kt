@@ -24,7 +24,7 @@ class IngredientControllerTest {
     @Nested
     inner class ReadIngredients {
         @Test
-        fun `get all ingredients from the database returns 200 or 404 response`() {
+        fun `getting all ingredients from the database returns 200 or 404 response`() {
             val response = Unirest.get("$origin/api/ingredients/").asString()
             if (response.status == 200) {
                 val retrievedIngredients: ArrayList<Ingredient> = jsonToObject(response.body.toString())
@@ -35,7 +35,7 @@ class IngredientControllerTest {
         }
 
         @Test
-        fun `get ingredient by id when ingredient does not exist returns 404 response`() {
+        fun `getting ingredient by id when ingredient does not exist returns 404 response`() {
             // Arrange - test data for ingredient id
             val id = Integer.MIN_VALUE
 
@@ -64,7 +64,7 @@ class IngredientControllerTest {
         }
 
         @Test
-        fun `get ingredients by meal id when meal does not exist returns 404 response`() {
+        fun `getting ingredients by meal id when meal does not exist returns 404 response`() {
             // Arrange - test data for meal id
             val id = Integer.MIN_VALUE
 

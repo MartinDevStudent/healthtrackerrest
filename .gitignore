@@ -40,3 +40,6 @@ build/
 ### Mac OS ###
 .DS_Store
 /htmlReport/
+/.idea/codeStyles/codeStyleConfig.xml
+/.idea/uiDesigner.xml
+/.idea/inspectionProfiles/Project_Default.xml

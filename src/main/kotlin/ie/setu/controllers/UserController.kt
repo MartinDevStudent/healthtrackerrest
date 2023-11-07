@@ -74,11 +74,10 @@ object UserController {
             )
 
         val userId = userDao.save(user)
-        if (userId != null) {
-            user.id = userId
-            ctx.json(user)
-            ctx.status(201)
-        }
+        user.id = userId
+
+        ctx.json(user)
+        ctx.status(201)
     }
 
     /**

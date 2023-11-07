@@ -4,12 +4,12 @@ import ie.setu.config.DbConfig
 import ie.setu.domain.Activity
 import ie.setu.domain.User
 import ie.setu.helpers.ServerContainer
+import ie.setu.helpers.VALID_EMAIL
+import ie.setu.helpers.VALID_NAME
+import ie.setu.helpers.VALID_PASSWORD
 import ie.setu.helpers.validCalories
 import ie.setu.helpers.validDescription
 import ie.setu.helpers.validDuration
-import ie.setu.helpers.validEmail
-import ie.setu.helpers.validName
-import ie.setu.helpers.validPassword
 import ie.setu.helpers.validStarted
 import jsonToObject
 import kong.unirest.HttpResponse
@@ -31,10 +31,10 @@ class ActivityControllerTest {
     @Nested
     inner class CreateActivities {
         @Test
-        fun `add an activity with correct details returns a 201 response`() {
+        fun `adding an activity with correct details returns a 201 response`() {
             // Arrange
             // add a user to the database
-            val addUserResponse = addUser(validName, validEmail, validPassword)
+            val addUserResponse = addUser(VALID_NAME, VALID_EMAIL, VALID_PASSWORD)
             val addedUser: User = jsonToObject(addUserResponse.body.toString())
 
             // Arrange & Act & Assert
@@ -62,7 +62,7 @@ class ActivityControllerTest {
         }
 
         @Test
-        fun `add an activity when no user exists for it, returns a 404 response`() {
+        fun `adding an activity when no user exists for it, returns a 404 response`() {
             // Arrange - check there is no user for -1 id
             val userId = -1
             assertEquals(404, retrieveUserById(userId).status)
@@ -103,7 +103,7 @@ class ActivityControllerTest {
         @Test
         fun `getting an activity when activity id exists, returns a 200 response`() {
             // Arrange - add the user and activity
-            val addUserResponse = addUser(validName, validEmail, validPassword)
+            val addUserResponse = addUser(VALID_NAME, VALID_EMAIL, VALID_PASSWORD)
             val addedUser: User = jsonToObject(addUserResponse.body.toString())
             val addActivityResponse = addActivity(validDescription, validDuration, validCalories, validStarted, addedUser.id)
             val addedActivity: Activity = jsonToObject(addActivityResponse.body.toString())
@@ -132,7 +132,7 @@ class ActivityControllerTest {
         @Test
         fun `getting a user's activities when user id exists, returns a 200 response`() {
             // Arrange - add the user and activity
-            val addUserResponse = addUser(validName, validEmail, validPassword)
+            val addUserResponse = addUser(VALID_NAME, VALID_EMAIL, VALID_PASSWORD)
             val addedUser: User = jsonToObject(addUserResponse.body.toString())
             val addActivityResponse = addActivity(validDescription, validDuration, validCalories, validStarted, addedUser.id)
 
@@ -156,9 +156,9 @@ class ActivityControllerTest {
             val updatedDuration = 20.0
             val updatedCalories = 200
             val updatedStarted = DateTime.parse("2020-06-20T05:59:27.258Z")
-            val updateUserResponse = addUser(validName, "updateduser@mail.com", validPassword)
+            val updateUserResponse = addUser(VALID_NAME, "updateduser@mail.com", VALID_PASSWORD)
             val updateUser: User = jsonToObject(updateUserResponse.body.toString())
-            val addUserResponse = addUser(validName, validEmail, validPassword)
+            val addUserResponse = addUser(VALID_NAME, VALID_EMAIL, VALID_PASSWORD)
             val addedUser: User = jsonToObject(addUserResponse.body.toString())
             val addActivityResponse =
                 addActivity(validDescription, validDuration, validCalories, validStarted, addedUser.id)
@@ -204,7 +204,7 @@ class ActivityControllerTest {
         @Test
         fun `deleting a activity when it exists, returns a 204 response`() {
             // Arrange - add the activity that we plan to do a delete on
-            val addUserResponse = addUser(validName, validEmail, validPassword)
+            val addUserResponse = addUser(VALID_NAME, VALID_EMAIL, VALID_PASSWORD)
             val addedUser: User = jsonToObject(addUserResponse.body.toString())
             val addActivityResponse = addActivity(validDescription, validDuration, validCalories, validStarted, addedUser.id)
             val addedActivity: Activity = jsonToObject(addActivityResponse.body.toString())
