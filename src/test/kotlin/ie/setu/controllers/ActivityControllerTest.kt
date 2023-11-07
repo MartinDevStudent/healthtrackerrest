@@ -31,7 +31,7 @@ class ActivityControllerTest {
     @Nested
     inner class CreateActivities {
         @Test
-        fun `add an activity with correct details returns a 201 response`() {
+        fun `adding an activity with correct details returns a 201 response`() {
             // Arrange
             // add a user to the database
             val addUserResponse = addUser(validName, validEmail, validPassword)
@@ -62,7 +62,7 @@ class ActivityControllerTest {
         }
 
         @Test
-        fun `add an activity when no user exists for it, returns a 404 response`() {
+        fun `adding an activity when no user exists for it, returns a 404 response`() {
             // Arrange - check there is no user for -1 id
             val userId = -1
             assertEquals(404, retrieveUserById(userId).status)

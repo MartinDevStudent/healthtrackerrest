@@ -33,7 +33,7 @@ class AuthenticationControllerTest {
 
             // Arrange & Act & Assert
             // send the login request and verify return code (using fixture data)
-            val loginResponse = login(validName, validEmail, incorrectPassword)
+            val loginResponse = login(validEmail, incorrectPassword)
             assertEquals(401, loginResponse.status)
 
             // After - restore the db to previous state by deleting the added user
@@ -50,7 +50,7 @@ class AuthenticationControllerTest {
 
             // Arrange & Act & Assert
             // send the login request and verify return code (using fixture data)
-            val loginResponse = login(validName, validEmail, validPassword)
+            val loginResponse = login(validEmail, validPassword)
             assertEquals(200, loginResponse.status)
 
             // After - restore the db to previous state by deleting the added user
@@ -59,14 +59,13 @@ class AuthenticationControllerTest {
         }
     }
 
-    // helper function to login into the site and retrieve JWT token
+    // helper function to log in to the site and retrieve JWT token
     private fun login(
-        name: String,
         email: String,
         password: String,
     ): HttpResponse<JsonNode> {
-        return Unirest.post("$origin/api/authentication")
-            .body("{\"name\":\"$name\", \"email\":\"$email\", \"password\":\"$password\"}")
+        return Unirest.post("$origin/api/login")
+            .body("{\"email\":\"$email\", \"password\":\"$password\"}")
             .asJson()
     }
 

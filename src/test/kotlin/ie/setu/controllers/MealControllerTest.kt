@@ -106,7 +106,7 @@ class MealControllerTest {
     @Nested
     inner class CreateMeals {
         @Test
-        fun `adding an meal with an invalid name, returns a 400 response`() {
+        fun `adding a meal with an invalid name, returns a 400 response`() {
             // Act - add a meal to the database
             val addMealResponse = addMeal(invalidMealName)
 
@@ -115,14 +115,14 @@ class MealControllerTest {
         }
 
         @Test
-        fun `adding an meal when it already exists, returns a 409 response`() {
+        fun `adding a meal when it already exists, returns a 409 response`() {
             // Arrange - add a meal to the database
             val addMealResponse = addMeal(validMealName)
 
             // Act - attempt to add second meal with same name
             val secondAddMealResponse = addMeal(validMealName)
 
-            // Assert -  verify return code
+            // Assert - verify return code
             assertEquals(409, secondAddMealResponse.status)
 
             // After - restore the db to previous state by deleting the original meal
@@ -189,7 +189,7 @@ class MealControllerTest {
     @Nested
     inner class DeleteMeals {
         @Test
-        fun `deleting an meal when it doesn't exist, returns a 404 response`() {
+        fun `deleting a meal when it doesn't exist, returns a 404 response`() {
             // Act & Assert - attempt to delete an meal that doesn't exist
             assertEquals(404, deleteMeal(-1).status)
         }

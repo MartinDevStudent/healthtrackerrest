@@ -64,8 +64,7 @@ object UserController {
         val userDTO: UserDTO = jsonToObject(ctx.body())
         val passwordHash = hashPassword(userDTO.password)
 
-        val user =
-            User(
+        val user = User(
                 id = -1,
                 name = userDTO.name,
                 email = userDTO.email,
@@ -74,11 +73,10 @@ object UserController {
             )
 
         val userId = userDao.save(user)
-        if (userId != null) {
-            user.id = userId
-            ctx.json(user)
-            ctx.status(201)
-        }
+        user.id = userId
+
+        ctx.json(user)
+        ctx.status(201)
     }
 
     /**
