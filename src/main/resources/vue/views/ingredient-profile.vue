@@ -28,8 +28,6 @@
         <input class="form-control" v-model="ingredient.fiberG" name="fiberG"  type="number" step=".01" readonly/><br>
         <label class="col-form-label">Sugar (g): </label>
         <input class="form-control" v-model="ingredient.sugarG" name="sugarG"  type="number" step=".01" readonly/><br>
-        <label class="col-form-label">Meal Id: </label>
-        <input class="form-control" v-model="ingredient.mealId" name="mealId"  type="number" readonly/><br>
       </form>
     </div>
   </app-layout>
