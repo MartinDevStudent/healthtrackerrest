@@ -83,7 +83,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UserDTO'
+              $ref: '#/components/schemas/CreateUserDTO'
       responses:
         200:
           description: User provided correct credentials
@@ -248,7 +248,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: '#/components/schemas/CreateUserDTO'
       responses:
         201:
           description: The user has been created
@@ -277,7 +277,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: '#/components/schemas/CreateUserDTO'
       responses:
         204:
           description: The user has been updated/modified
@@ -354,6 +354,8 @@ paths:
                   $ref: '#/components/schemas/User'
         404:
           description: No meals found for user with specified id
+      tags:
+        - Users
     post:
       parameters:
         - $ref: '#/components/parameters/UserIdPath'
@@ -565,7 +567,10 @@ components:
         email:
           type: string
           example: joe@soap.com
-    UserDTO:
+        level:
+          type: string
+          example: user
+    CreateUserDTO:
       type: object
       properties:
         name:

@@ -4,7 +4,7 @@ import ie.setu.domain.Activity
 import ie.setu.domain.Ingredient
 import ie.setu.domain.Meal
 import ie.setu.domain.RecommendedDailyAllowance
-import ie.setu.domain.User
+import ie.setu.domain.user.User
 import org.joda.time.DateTime
 
 const val NONE_EXISTING_EMAIL = "112233445566778testUser@xxxxx.xx"

@@ -1,4 +1,4 @@
-package ie.setu.domain
+package ie.setu.domain.user
 
 data class User(
     var id: Int,

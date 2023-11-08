@@ -1,8 +1,9 @@
 package ie.setu.controllers
 
-import ie.setu.domain.User
-import ie.setu.domain.UserDTO
 import ie.setu.domain.repository.UserDAO
+import ie.setu.domain.user.CreateUserDTO
+import ie.setu.domain.user.User
+import ie.setu.utils.DTOMappingUtilities.userToUserResponseDto
 import ie.setu.utils.authentication.hashPassword
 import io.javalin.http.Context
 import jsonToObject
@@ -22,7 +23,7 @@ object UserController {
         } else {
             ctx.status(404)
         }
-        ctx.json(users)
+        ctx.json(users.map { userToUserResponseDto(it) })
     }
 
     /**
@@ -33,7 +34,7 @@ object UserController {
     fun getUserByUserId(ctx: Context) {
         val user = userDao.findById(ctx.pathParam("user-id").toInt())
         if (user != null) {
-            ctx.json(user)
+            ctx.json(userToUserResponseDto(user))
             ctx.status(200)
         } else {
             ctx.status(404)
@@ -48,7 +49,7 @@ object UserController {
     fun getUserByEmail(ctx: Context) {
         val user = userDao.findByEmail(ctx.pathParam("email"))
         if (user != null) {
-            ctx.json(user)
+            ctx.json(userToUserResponseDto(user))
             ctx.status(200)
         } else {
             ctx.status(404)
@@ -61,8 +62,8 @@ object UserController {
      * @param ctx The context for handling the HTTP request and response.
      */
     fun addUser(ctx: Context) {
-        val userDTO: UserDTO = jsonToObject(ctx.body())
-        val passwordHash = hashPassword(userDTO.password)
+        val userDTO: CreateUserDTO = jsonToObject(ctx.body())
+        val passwordHash = hashPassword(userDTO.password!!)
 
         val user =
             User(
@@ -76,7 +77,7 @@ object UserController {
         val userId = userDao.save(user)
         user.id = userId
 
-        ctx.json(user)
+        ctx.json(userToUserResponseDto(user))
         ctx.status(201)
     }
 
@@ -99,19 +100,20 @@ object UserController {
      * @param ctx The context for handling the HTTP request and response.
      */
     fun updateUser(ctx: Context) {
-        val foundUserDto: UserDTO = jsonToObject(ctx.body())
-        val passwordHash = hashPassword(foundUserDto.password)
+        val userId = ctx.pathParam("user-id").toInt()
+        val userDto: CreateUserDTO = jsonToObject(ctx.body())
 
-        val foundUser =
-            User(
-                id = -1,
-                name = foundUserDto.name,
-                email = foundUserDto.email,
-                level = "user",
-                passwordHash = passwordHash,
-            )
+        val user = userDao.findById(userId)
+        if (user === null) {
+            ctx.status(404)
+        } else {
+            user.name = userDto.name
+            user.email = userDto.email
+            user.passwordHash = if (userDto.password === null) user.passwordHash else hashPassword(userDto.password!!)
+        }
 
-        if ((userDao.update(id = ctx.pathParam("user-id").toInt(), user = foundUser)) != 0) {
+        if ((userDao.update(id = userId, user = user!!)) != 0) {
+            ctx.json(userToUserResponseDto(user))
             ctx.status(204)
         } else {
             ctx.status(404)

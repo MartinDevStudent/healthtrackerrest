@@ -1,7 +1,7 @@
 package ie.setu.controllers
 
 import ie.setu.config.DbConfig
-import ie.setu.domain.User
+import ie.setu.domain.user.User
 import ie.setu.helpers.INCORRECT_PASSWORD
 import ie.setu.helpers.ServerContainer
 import ie.setu.helpers.VALID_EMAIL

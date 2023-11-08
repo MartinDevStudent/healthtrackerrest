@@ -4,12 +4,12 @@ import ie.setu.domain.Activity
 import ie.setu.domain.Ingredient
 import ie.setu.domain.Meal
 import ie.setu.domain.RecommendedDailyAllowance
-import ie.setu.domain.User
 import ie.setu.domain.db.Activities
 import ie.setu.domain.db.Ingredients
 import ie.setu.domain.db.Meals
 import ie.setu.domain.db.RecommendedDailyAllowances
 import ie.setu.domain.db.Users
+import ie.setu.domain.user.User
 import org.jetbrains.exposed.sql.ResultRow
 
 /**
