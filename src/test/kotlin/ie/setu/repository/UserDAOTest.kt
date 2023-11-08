@@ -1,8 +1,8 @@
 package ie.setu.repository
 
-import ie.setu.domain.User
 import ie.setu.domain.db.Users
 import ie.setu.domain.repository.UserDAO
+import ie.setu.domain.user.User
 import ie.setu.helpers.NONE_EXISTING_EMAIL
 import ie.setu.helpers.users
 import org.jetbrains.exposed.sql.Database

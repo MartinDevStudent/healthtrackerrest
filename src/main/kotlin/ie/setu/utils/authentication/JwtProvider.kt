@@ -3,7 +3,7 @@ package ie.setu.utils.authentication
 import com.auth0.jwt.JWT
 import com.auth0.jwt.JWTCreator
 import com.auth0.jwt.algorithms.Algorithm
-import ie.setu.domain.User
+import ie.setu.domain.user.User
 import javalinjwt.JWTGenerator
 import javalinjwt.JWTProvider
 import javalinjwt.JavalinJWT

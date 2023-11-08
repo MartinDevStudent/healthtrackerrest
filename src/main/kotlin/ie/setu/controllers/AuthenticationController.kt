@@ -2,8 +2,8 @@ package ie.setu.controllers
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
-import ie.setu.domain.UserLoginDTO
 import ie.setu.domain.repository.UserDAO
+import ie.setu.domain.user.UserLoginDTO
 import ie.setu.utils.authentication.JwtProvider
 import ie.setu.utils.authentication.JwtResponse
 import ie.setu.utils.authentication.decodeJWT

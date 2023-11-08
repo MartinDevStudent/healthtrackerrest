@@ -1,7 +1,7 @@
 package ie.setu.domain.repository
 
-import ie.setu.domain.User
 import ie.setu.domain.db.Users
+import ie.setu.domain.user.User
 import ie.setu.utils.mapToUser
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
@@ -108,6 +108,7 @@ class UserDAO {
             }) {
                 it[name] = user.name
                 it[email] = user.email
+                it[passwordHash] = user.passwordHash!!
             }
         }
     }
