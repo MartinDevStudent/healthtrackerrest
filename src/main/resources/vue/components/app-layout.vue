@@ -21,6 +21,12 @@
             <li class="nav-item">
               <a class="nav-link" href="/activities">Activities</a>
             </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/meals">Meals</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/ingredients">Ingredient</a>
+            </li>
           </ul>
         </div>
       </nav>

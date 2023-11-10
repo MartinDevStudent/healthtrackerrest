@@ -1,16 +1,47 @@
 <template id="meal-profile">
   <app-layout>
-    <div>
-      <form v-if="meal">
-        <label class="col-form-label">Meal ID: </label>
-        <input class="form-control" v-model="meal.id" name="id" type="number" readonly/><br>
-        <label class="col-form-label">Name: </label>
-        <input class="form-control" v-model="meal.name" name="name" type="text" readonly/><br>
-      </form>
-      <dt v-if="meal">
-        <br>
-        <a :href="`/meals/${meal.id}/ingredients`">View Meal Ingredients</a>
-      </dt>
+    <div v-if="noMealFound">
+      <p> We're sorry, we were not able to retrieve this meal.</p>
+      <p> View <a :href="'/meals'">all meals</a>.</p>
+    </div>
+    <div class="card bg-light mb-3" v-if="!noMealFound">
+      <div class="card-header">
+        <div class="row">
+          <div class="col-6"> Meal Profile </div>
+          <div class="col" align="right">
+            <button rel="tooltip" title="Delete"
+                    class="btn btn-info btn-simple btn-link"
+                    @click="deleteMeal()">
+              <i class="fas fa-trash" aria-hidden="true"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="card-body">
+        <form>
+          <div class="input-group mb-3">
+            <div class="input-group-prepend">
+              <span class="input-group-text" id="input-user-id">Meal ID</span>
+            </div>
+            <input type="number" class="form-control" v-model="meal.id" name="id" readonly/>
+          </div>
+          <div class="input-group mb-3">
+            <div class="input-group-prepend">
+              <span class="input-group-text" id="input-user-name">Name</span>
+            </div>
+            <input type="text" class="form-control" v-model="meal.name" name="name" readonly/>
+          </div>
+        </form>
+      </div>
+      <div class="card-footer text-left">
+        <p  v-if="ingredients.length === 0"> No ingredients...</p>
+        <p  v-if="ingredients.length > 0"> Ingredients...</p>
+        <ul>
+          <li v-for="ingredient in ingredients">
+            <a :href="'/ingredients/' + ingredient.id">{{ ingredient.name }}</a>
+          </li>
+        </ul>
+      </div>
     </div>
   </app-layout>
 </template>
@@ -19,14 +50,42 @@
 app.component("meal-profile", {
   template: "#meal-profile",
   data: () => ({
-    meal: null
+    meal: null,
+    noMealFound: false,
+    ingredients: [],
   }),
   created: function () {
     const mealId = this.$javalin.pathParams["meal-id"];
     const url = `/api/meals/${mealId}`
     axios.get(url)
-        .then(res => this.meal = res.data)
-        .catch(() => alert("Error while fetching meal" + mealId));
-  }
+      .then(res => this.meal = res.data)
+      .catch(() => {
+        console.error("No meal found for id passed in the path parameter: " + error)
+        this.noMealFound = true
+      })
+    axios.get(url + `/ingredients`)
+      .then(res => this.ingredients = res.data)
+        .catch(error => {
+          console.error("No ingredients in this meal: " + error)
+        })
+    },
+    methods: {
+      deleteMeal: function () {
+        if (confirm("Do you really want to delete?")) {
+          const mealId = this.$javalin.pathParams["meal-id"];
+          const url = `/api/meals/${mealId}`
+          axios.delete(url)
+            .then( _ => {
+              alert("Meal deleted")
+              //display the /meals endpoint
+              window.location.href = '/meals';
+            })
+            .catch(function (error) {
+              console.error(error)
+            });
+        }
+      }
+    }
+
 });
 </script>
