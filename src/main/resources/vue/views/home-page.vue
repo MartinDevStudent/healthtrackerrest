@@ -58,16 +58,36 @@ app.component('home-page',
       created() {
         axios.get("/api/users")
             .then(res => this.users = res.data)
-            .catch(() => alert("Error while fetching users"));
+            .catch(function (error) {
+              if (error.response.status !== 404)
+              {
+                alert("Error while fetching users")
+              }
+            });
         axios.get("/api/activities")
             .then(res => this.activities = res.data)
-            .catch(() => alert("Error while fetching activities"));
+            .catch(function (error) {
+              if (error.response.status !== 404)
+              {
+                alert("Error while fetching activities")
+              }
+            });
         axios.get("/api/meals")
             .then(res => this.meals = res.data)
-            .catch(() => alert("Error while fetching meals"));
+            .catch(function (error) {
+              if (error.response.status !== 404)
+              {
+                alert("Error while fetching meals")
+              }
+            });
         axios.get("/api/ingredients")
             .then(res => this.ingredients = res.data)
-            .catch(() => alert("Error while fetching meals"));
+            .catch(function (error) {
+              if (error.response.status !== 404)
+              {
+                alert("Error while fetching ingredients")
+              }
+            });
       }
     });
 </script>
