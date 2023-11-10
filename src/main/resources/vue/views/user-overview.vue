@@ -87,7 +87,7 @@ app.component("user-overview", {
                 //delete from the local state so Vue will reload list automatically
                 this.users.splice(index, 1).push(response.data))
             .catch(function (error) {
-              console.log(error)
+              console.error(error)
             });
       }
     },
@@ -104,7 +104,7 @@ app.component("user-overview", {
           this.hideForm= true;
         })
         .catch(error => {
-          console.log(error)
+          console.error(error)
         })
     }
   }

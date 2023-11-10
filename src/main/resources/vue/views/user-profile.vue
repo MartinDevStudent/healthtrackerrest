@@ -82,16 +82,16 @@ app.component("user-profile", {
     const userId = this.$javalin.pathParams["user-id"];
     const url = `/api/users/${userId}`
     axios.get(url)
-        .then(res => this.user = res.data)
-        .catch(error => {
-          console.log("No user found for id passed in the path parameter: " + error)
-          this.noUserFound = true
-        })
+      .then(res => this.user = res.data)
+      .catch(error => {
+        console.error("No user found for id passed in the path parameter: " + error)
+        this.noUserFound = true
+      })
     axios.get(url + `/activities`)
-        .then(res => this.activities = res.data)
-        .catch(error => {
-          console.log("No activities added yet (this is ok): " + error)
-        })
+      .then(res => this.activities = res.data)
+      .catch(error => {
+        console.error("No activities added yet (this is ok): " + error)
+      })
   },
   methods: {
     updateUser: function () {
@@ -116,14 +116,14 @@ app.component("user-profile", {
         const userId = this.$javalin.pathParams["user-id"];
         const url = `/api/users/${userId}`
         axios.delete(url)
-            .then( _ => {
-              alert("User deleted")
-              //display the /users endpoint
-              window.location.href = '/users';
-            })
-            .catch(function (error) {
-              console.error(error)
-            });
+          .then( _ => {
+            alert("User deleted")
+            //display the /users endpoint
+            window.location.href = '/users';
+          })
+          .catch(function (error) {
+            console.error(error)
+          });
       }
     }
   }

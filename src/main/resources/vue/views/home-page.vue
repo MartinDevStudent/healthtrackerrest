@@ -1,7 +1,7 @@
 <!-- the "home-page" element is passed as a parameter to VueComponent in the JavalinConfig file -->
 <template id="home-page">
   <app-layout>
-    <div class="row">
+    <div class="row mb-3">
       <div class="col">
         <div class="card">
           <h5 class="card-header">Registered Users</h5>
