@@ -4,6 +4,9 @@ import ie.setu.domain.db.Users
 import ie.setu.domain.repository.UserDAO
 import ie.setu.domain.user.User
 import ie.setu.helpers.NONE_EXISTING_EMAIL
+import ie.setu.helpers.UPDATED_EMAIL
+import ie.setu.helpers.UPDATED_NAME
+import ie.setu.helpers.VALID_LEVEL
 import ie.setu.helpers.users
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
@@ -153,7 +156,8 @@ class UserDAOTest {
                 val userDAO = populateUserTable()
 
                 // Act & Assert
-                val user3Updated = User(3, "new username", "new@email.ie", "user", "111111111")
+                val user3Updated =
+                    User(3, UPDATED_NAME, UPDATED_EMAIL, VALID_LEVEL, "NotAnActualValidPasswordHashJustForShowingValueIsSavingCorrectly")
                 userDAO.update(user3.id, user3Updated)
                 assertEquals(user3Updated, userDAO.findById(3))
             }
@@ -166,7 +170,8 @@ class UserDAOTest {
                 val userDAO = populateUserTable()
 
                 // Act & Assert
-                val user4Updated = User(4, "new username", "new@email.ie", "user", "111111111")
+                val user4Updated =
+                    User(4, UPDATED_NAME, UPDATED_EMAIL, VALID_LEVEL, "NotAnActualValidPasswordHashJustForShowingValueIsSavingCorrectly")
                 userDAO.update(4, user4Updated)
                 assertEquals(null, userDAO.findById(4))
                 assertEquals(3, userDAO.getAll().size)

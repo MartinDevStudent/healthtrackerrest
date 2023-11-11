@@ -26,7 +26,7 @@ class RecommendedDailyAllowanceDAOTest {
         @Test
         fun `getting recommended daily allowance from a populated table returns correct result`() {
             transaction {
-                // Arrange - create and populate recommended daily allowancess tables
+                // Arrange - create and populate recommended daily allowances tables
                 val recommendedDailyAllowancesDAO = populateRecommendedDailyAllowancesTable()
 
                 // Act & Assert

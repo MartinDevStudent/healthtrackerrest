@@ -4,6 +4,8 @@ import ie.setu.config.DbConfig
 import ie.setu.domain.user.User
 import ie.setu.helpers.NONE_EXISTING_EMAIL
 import ie.setu.helpers.ServerContainer
+import ie.setu.helpers.UPDATED_EMAIL
+import ie.setu.helpers.UPDATED_NAME
 import ie.setu.helpers.VALID_EMAIL
 import ie.setu.helpers.VALID_NAME
 import ie.setu.helpers.VALID_PASSWORD
@@ -118,19 +120,17 @@ class UserControllerTest {
         @Test
         fun `updating a user when it exists, returns a 204 response`() {
             // Arrange - add the user that we plan to do an update on
-            val updatedName = "Updated Name"
-            val updatedEmail = "Updated Email"
             val addedResponse = addUser(VALID_NAME, VALID_EMAIL, VALID_PASSWORD)
             val addedUser: User = jsonToObject(addedResponse.body.toString())
 
             // Act & Assert - update the email and name of the retrieved user and assert 204 is returned
-            assertEquals(204, updateUser(addedUser.id, updatedName, updatedEmail, VALID_PASSWORD).status)
+            assertEquals(204, updateUser(addedUser.id, UPDATED_NAME, UPDATED_EMAIL, VALID_PASSWORD).status)
 
             // Act & Assert - retrieve updated user and assert details are correct
             val updatedUserResponse = retrieveUserById(addedUser.id)
             val updatedUser: User = jsonToObject(updatedUserResponse.body.toString())
-            assertEquals(updatedName, updatedUser.name)
-            assertEquals(updatedEmail, updatedUser.email)
+            assertEquals(UPDATED_NAME, updatedUser.name)
+            assertEquals(UPDATED_EMAIL, updatedUser.email)
 
             // After - restore the db to previous state by deleting the added user
             val deleteUserResponse = deleteUser(addedUser.id)
@@ -139,12 +139,8 @@ class UserControllerTest {
 
         @Test
         fun `updating a user when it doesn't exist, returns a 404 response`() {
-            // Arrange - creating some text fixture data
-            val updatedName = "Updated Name"
-            val updatedEmail = "Updated Email"
-
-            // Act & Assert - attempt to update the email and name of user that doesn't exist
-            assertEquals(404, updateUser(-1, updatedName, updatedEmail, VALID_PASSWORD).status)
+            // Arrange, Act & Assert - attempt to update the email and name of user that doesn't exist
+            assertEquals(404, updateUser(Integer.MIN_VALUE, UPDATED_NAME, UPDATED_EMAIL, VALID_PASSWORD).status)
         }
     }
 
@@ -153,7 +149,7 @@ class UserControllerTest {
         @Test
         fun `deleting a user when it doesn't exist, returns a 404 response`() {
             // Act & Assert - attempt to delete a user that doesn't exist
-            assertEquals(404, deleteUser(-1).status)
+            assertEquals(404, deleteUser(Integer.MIN_VALUE).status)
         }
 
         @Test

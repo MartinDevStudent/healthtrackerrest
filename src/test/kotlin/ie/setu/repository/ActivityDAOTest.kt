@@ -5,12 +5,15 @@ import ie.setu.domain.db.Activities
 import ie.setu.domain.db.Users
 import ie.setu.domain.repository.ActivityDAO
 import ie.setu.domain.repository.UserDAO
+import ie.setu.helpers.UPDATED_CALORIES
+import ie.setu.helpers.UPDATED_DESCRIPTION
+import ie.setu.helpers.UPDATED_DURATION
 import ie.setu.helpers.activities
+import ie.setu.helpers.updatedStarted
 import ie.setu.helpers.users
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
-import org.joda.time.DateTime
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Nested
@@ -198,10 +201,10 @@ class ActivityDAOTest {
                 // Act & Assert
                 val activity3Updated =
                     Activity(
-                        description = "Unicycling",
-                        duration = 90.0,
-                        calories = 150,
-                        started = DateTime("2020-06-24T05:59:27.258Z"),
+                        description = UPDATED_DESCRIPTION,
+                        duration = UPDATED_DURATION,
+                        calories = UPDATED_CALORIES,
+                        started = updatedStarted,
                         id = 3,
                         userId = 2,
                     )
@@ -220,10 +223,10 @@ class ActivityDAOTest {
                 // Act & Assert
                 val activity4Updated =
                     Activity(
-                        description = "new activity",
-                        duration = 0.0,
-                        calories = 0,
-                        started = DateTime("2020-06-01T05:59:27.258Z"),
+                        description = UPDATED_DESCRIPTION,
+                        duration = UPDATED_DURATION,
+                        calories = UPDATED_CALORIES,
+                        started = updatedStarted,
                         id = 4,
                         userId = 2,
                     )
