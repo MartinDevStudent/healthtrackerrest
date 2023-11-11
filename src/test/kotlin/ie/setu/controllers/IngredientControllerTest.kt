@@ -4,7 +4,7 @@ import ie.setu.config.DbConfig
 import ie.setu.domain.Ingredient
 import ie.setu.domain.Meal
 import ie.setu.helpers.ServerContainer
-import ie.setu.helpers.validMealName
+import ie.setu.helpers.VALID_MEAL_NAME
 import jsonToObject
 import kong.unirest.HttpResponse
 import kong.unirest.JsonNode
@@ -49,7 +49,7 @@ class IngredientControllerTest {
         @Test
         fun `getting an ingredient by id when id exists, returns a 200 response`() {
             // Arrange - add the meal to retrieve ingredient
-            val addMealResponse = addMeal(validMealName)
+            val addMealResponse = addMeal(VALID_MEAL_NAME)
             val addedMeal: Meal = jsonToObject(addMealResponse.body.toString())
             val addedIngredientsResponse = retrieveIngredientByMealId(addedMeal.id)
             val addedIngredients: ArrayList<Ingredient> = jsonToObject(addedIngredientsResponse.body.toString())
@@ -78,7 +78,7 @@ class IngredientControllerTest {
         @Test
         fun `getting ingredients by meal id when meal exists, returns a 200 response`() {
             // Arrange - add the meal and ingredients
-            val addMealResponse = addMeal(validMealName)
+            val addMealResponse = addMeal(VALID_MEAL_NAME)
             val addedMeal: Meal = jsonToObject(addMealResponse.body.toString())
 
             // Assert - retrieve the ingredients from the database and verify return code

@@ -26,8 +26,7 @@ class AuthenticationControllerTest {
     inner class ReadAuthentication {
         @Test
         fun `logging in with the incorrect details returns a 401 response`() {
-            // Arrange
-            // add a user to the database
+            // Arrange - add a user to the database
             val addUserResponse = addUser(VALID_NAME, VALID_EMAIL, VALID_PASSWORD)
             val addedUser: User = jsonToObject(addUserResponse.body.toString())
 

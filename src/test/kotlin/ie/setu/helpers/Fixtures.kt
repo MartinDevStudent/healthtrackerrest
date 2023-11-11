@@ -7,19 +7,30 @@ import ie.setu.domain.RecommendedDailyAllowance
 import ie.setu.domain.user.User
 import org.joda.time.DateTime
 
-const val NONE_EXISTING_EMAIL = "112233445566778testUser@xxxxx.xx"
-const val NON_EXISTING_MEAL_ID = -999
-const val INCORRECT_PASSWORD = "**********"
+
+//Meal related
+const val VALID_MEAL_NAME = "caesar salad"
 const val INVALID_MEAL_NAME = "football"
 
-const val VALID_NAME = "Test User 1"
-const val VALID_EMAIL = "testuser1@test.com"
+//User related
+const val VALID_NAME = "Test User"
+const val VALID_EMAIL = "test@mail.com"
 const val VALID_PASSWORD = "password"
-var validDescription = "Test Description"
-var validDuration = 100.0
-var validCalories = 150
-var validStarted = DateTime("2020-06-10T05:59:27.258Z")
-var validMealName = "caesar salad"
+const val VALID_LEVEL = "user"
+const val NONE_EXISTING_EMAIL = "112233445566778testUser@xxxxx.xx"
+const val INCORRECT_PASSWORD = "**********"
+const val UPDATED_NAME = "Updated Test User"
+const val UPDATED_EMAIL = "updated@mail.com"
+
+//Activity related
+const val VALID_DESCRIPTION = "Test Description"
+const val VALID_DURATION = 100.0
+const val VALID_CALORIES = 150
+val validStarted = DateTime("2020-06-10T05:59:27.258Z")
+const val UPDATED_DESCRIPTION = "Updated Description"
+const val UPDATED_DURATION = 20.0
+const val UPDATED_CALORIES = 200
+val updatedStarted = DateTime("2020-06-20T05:59:27.258Z")
 
 val users =
     arrayListOf(
