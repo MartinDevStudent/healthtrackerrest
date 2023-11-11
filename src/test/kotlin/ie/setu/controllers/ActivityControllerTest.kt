@@ -4,12 +4,18 @@ import ie.setu.config.DbConfig
 import ie.setu.domain.Activity
 import ie.setu.domain.user.User
 import ie.setu.helpers.ServerContainer
+import ie.setu.helpers.UPDATED_CALORIES
+import ie.setu.helpers.UPDATED_DESCRIPTION
+import ie.setu.helpers.UPDATED_DURATION
+import ie.setu.helpers.UPDATED_EMAIL
+import ie.setu.helpers.UPDATED_NAME
 import ie.setu.helpers.VALID_EMAIL
 import ie.setu.helpers.VALID_NAME
 import ie.setu.helpers.VALID_PASSWORD
-import ie.setu.helpers.validCalories
-import ie.setu.helpers.validDescription
-import ie.setu.helpers.validDuration
+import ie.setu.helpers.VALID_CALORIES
+import ie.setu.helpers.VALID_DESCRIPTION
+import ie.setu.helpers.VALID_DURATION
+import ie.setu.helpers.updatedStarted
 import ie.setu.helpers.validStarted
 import jsonToObject
 import kong.unirest.HttpResponse
@@ -39,7 +45,7 @@ class ActivityControllerTest {
 
             // Arrange & Act & Assert
             // add the activity and verify return code (using fixture data)
-            val addActivityResponse = addActivity(validDescription, validDuration, validCalories, validStarted, addedUser.id)
+            val addActivityResponse = addActivity(VALID_DESCRIPTION, VALID_DURATION, VALID_CALORIES, validStarted, addedUser.id)
             val retrievedActivity: Activity = jsonToObject(addActivityResponse.body.toString())
             assertEquals(201, addActivityResponse.status)
 
@@ -48,9 +54,9 @@ class ActivityControllerTest {
             assertEquals(200, retrieveResponse.status)
 
             // Assert - verify the contents of the retrieved activity
-            assertEquals(validDescription, retrievedActivity.description)
-            assertEquals(validDuration, retrievedActivity.duration)
-            assertEquals(validCalories, retrievedActivity.calories)
+            assertEquals(VALID_DESCRIPTION, retrievedActivity.description)
+            assertEquals(VALID_DURATION, retrievedActivity.duration)
+            assertEquals(VALID_CALORIES, retrievedActivity.calories)
             assertEquals(validStarted.toLocalDate(), retrievedActivity.started.toLocalDate())
             assertEquals(addedUser.id, retrievedActivity.userId)
 
@@ -64,11 +70,11 @@ class ActivityControllerTest {
         @Test
         fun `adding an activity when no user exists for it, returns a 404 response`() {
             // Arrange - check there is no user for -1 id
-            val userId = -1
+            val userId = Integer.MIN_VALUE
             assertEquals(404, retrieveUserById(userId).status)
 
             // Act
-            val addActivityResponse = addActivity(validDescription, validDuration, validCalories, validStarted, userId)
+            val addActivityResponse = addActivity(VALID_DESCRIPTION, VALID_DURATION, VALID_CALORIES, validStarted, userId)
 
             // Assert
             assertEquals(404, addActivityResponse.status)
@@ -105,7 +111,7 @@ class ActivityControllerTest {
             // Arrange - add the user and activity
             val addUserResponse = addUser(VALID_NAME, VALID_EMAIL, VALID_PASSWORD)
             val addedUser: User = jsonToObject(addUserResponse.body.toString())
-            val addActivityResponse = addActivity(validDescription, validDuration, validCalories, validStarted, addedUser.id)
+            val addActivityResponse = addActivity(VALID_DESCRIPTION, VALID_DURATION, VALID_CALORIES, validStarted, addedUser.id)
             val addedActivity: Activity = jsonToObject(addActivityResponse.body.toString())
 
             // Assert - retrieve the user's activities from the database and verify return code
@@ -134,7 +140,7 @@ class ActivityControllerTest {
             // Arrange - add the user and activity
             val addUserResponse = addUser(VALID_NAME, VALID_EMAIL, VALID_PASSWORD)
             val addedUser: User = jsonToObject(addUserResponse.body.toString())
-            val addActivityResponse = addActivity(validDescription, validDuration, validCalories, validStarted, addedUser.id)
+            val addActivityResponse = addActivity(VALID_DESCRIPTION, VALID_DURATION, VALID_CALORIES, validStarted, addedUser.id)
 
             // Assert - retrieve the user's activities from the database and verify return code
             val retrieveResponse = retrieveActivitiesByUserId(addedUser.id)
@@ -150,18 +156,14 @@ class ActivityControllerTest {
     @Nested
     inner class UpdateActivities {
         @Test
-        fun `updating a user when it exists, returns a 204 response`() {
-            // Arrange - add the user that we plan to do an update on
-            val updatedDescription = "Updated Description"
-            val updatedDuration = 20.0
-            val updatedCalories = 200
-            val updatedStarted = DateTime.parse("2020-06-20T05:59:27.258Z")
-            val updateUserResponse = addUser(VALID_NAME, "updateduser@mail.com", VALID_PASSWORD)
+        fun `updating an activity when it exists, returns a 204 response`() {
+            // Arrange - add the activity that we plan to do an update on and users associated with the activity
+            val originalUserResponse = addUser(VALID_NAME, VALID_EMAIL, VALID_PASSWORD)
+            val originalUser: User = jsonToObject(originalUserResponse.body.toString())
+            val updateUserResponse = addUser(VALID_NAME, UPDATED_EMAIL, VALID_PASSWORD)
             val updateUser: User = jsonToObject(updateUserResponse.body.toString())
-            val addUserResponse = addUser(VALID_NAME, VALID_EMAIL, VALID_PASSWORD)
-            val addedUser: User = jsonToObject(addUserResponse.body.toString())
             val addActivityResponse =
-                addActivity(validDescription, validDuration, validCalories, validStarted, addedUser.id)
+                addActivity(VALID_DESCRIPTION, VALID_DURATION, VALID_CALORIES, validStarted, originalUser.id)
             val addedActivity: Activity = jsonToObject(addActivityResponse.body.toString())
 
             // Act & Assert - update the email and name of the retrieved user and assert 204 is returned
@@ -169,9 +171,9 @@ class ActivityControllerTest {
                 204,
                 updateActivity(
                     addedActivity.id,
-                    updatedDescription,
-                    updatedDuration,
-                    updatedCalories,
+                    UPDATED_DESCRIPTION,
+                    UPDATED_DURATION,
+                    UPDATED_CALORIES,
                     updatedStarted,
                     updateUser.id,
                 ).status,
@@ -180,16 +182,28 @@ class ActivityControllerTest {
             // Act & Assert - retrieve updated user and assert details are correct
             val updatedActivityResponse = retrieveActivityById(addedActivity.id)
             val updatedActivity: Activity = jsonToObject(updatedActivityResponse.body.toString())
-            assertEquals(updatedDescription, updatedActivity.description)
-            assertEquals(updatedDuration, updatedActivity.duration)
-            assertEquals(updatedCalories, updatedActivity.calories)
+            assertEquals(UPDATED_DESCRIPTION, updatedActivity.description)
+            assertEquals(UPDATED_DURATION, updatedActivity.duration)
+            assertEquals(UPDATED_CALORIES, updatedActivity.calories)
             assertEquals(updatedStarted.toLocalDate(), updatedActivity.started.toLocalDate())
             assertEquals(updateUser.id, updatedActivity.userId)
 
-            // After - restore the db to previous state by deleting the added user
+            // After - restore the db to previous state by deleting the added activity and users
             deleteActivity(addedActivity.id)
-            deleteUser(addedUser.id)
+            deleteUser(originalUser.id)
             deleteUser(updateUser.id)
+        }
+
+        @Test
+        fun `updating an activity when it doesn't exist, returns a 404 response`() {
+            // Arrange, Act & Assert - attempt to update the email and name of user that doesn't exist
+            assertEquals(404, updateActivity(
+                Integer.MIN_VALUE,
+                UPDATED_DESCRIPTION,
+                UPDATED_DURATION,
+                UPDATED_CALORIES,
+                updatedStarted,
+                Integer.MIN_VALUE,).status)
         }
     }
 
@@ -198,7 +212,7 @@ class ActivityControllerTest {
         @Test
         fun `deleting an activity when it doesn't exist, returns a 404 response`() {
             // Act & Assert - attempt to delete an activity that doesn't exist
-            assertEquals(404, deleteUser(-1).status)
+            assertEquals(404, deleteUser(Integer.MIN_VALUE).status)
         }
 
         @Test
@@ -206,7 +220,7 @@ class ActivityControllerTest {
             // Arrange - add the activity that we plan to do a delete on
             val addUserResponse = addUser(VALID_NAME, VALID_EMAIL, VALID_PASSWORD)
             val addedUser: User = jsonToObject(addUserResponse.body.toString())
-            val addActivityResponse = addActivity(validDescription, validDuration, validCalories, validStarted, addedUser.id)
+            val addActivityResponse = addActivity(VALID_DESCRIPTION, VALID_DURATION, VALID_CALORIES, validStarted, addedUser.id)
             val addedActivity: Activity = jsonToObject(addActivityResponse.body.toString())
 
             // Act & Assert - delete the added activity and assert a 204 is returned
@@ -222,7 +236,7 @@ class ActivityControllerTest {
         @Test
         fun `deleting an activity by user when user id doesn't exist, returns a 404 response`() {
             // Act & Assert - attempt to delete an activity that doesn't exist
-            assertEquals(404, deleteUser(-1).status)
+            assertEquals(404, deleteUser(Integer.MIN_VALUE).status)
         }
     }
 
