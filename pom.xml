@@ -17,7 +17,17 @@
         <kotlin.version>1.8.0</kotlin.version>
         <junit.jupiter.version>5.8.2</junit.jupiter.version>
         <junit.platform.version>1.8.2</junit.platform.version>
+        <dokka.version>1.7.20</dokka.version>
     </properties>
+
+    <!-- Location of the Maven Plugin for Dokka -->
+    <pluginRepositories>
+        <pluginRepository>
+            <id>jcenter</id>
+            <name>JCenter</name>
+            <url>https://jcenter.bintray.com/</url>
+        </pluginRepository>
+    </pluginRepositories>
 
     <dependencies>
         <dependency>
@@ -81,11 +91,16 @@
             <artifactId>jackson-module-kotlin</artifactId>
             <version>2.13.3</version>
         </dependency>
-        <!-- json dependency for serialising joda date time -->
+        <!-- Jackson dependency for serialising joda date time -->
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-joda</artifactId>
             <version>2.15.2</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+            <version>2.16.0-rc1</version>
         </dependency>
         <!-- Jetbrains exposed dependency -->
         <dependency>
@@ -111,12 +126,6 @@
             <artifactId>bcrypt</artifactId>
             <version>0.10.2</version>
         </dependency>
-        <!-- Jackson dependency for serialising joda date time -->
-        <dependency>
-            <groupId>com.fasterxml.jackson.datatype</groupId>
-            <artifactId>jackson-datatype-joda</artifactId>
-            <version>2.15.2</version>
-        </dependency>
         <!-- standalone jar with shaded dependencies (renames dependencies to help avoid
              clashing with other versions of dependencies) -->
         <dependency>
@@ -141,6 +150,7 @@
     <build>
         <sourceDirectory>src/main/kotlin</sourceDirectory>
         <testSourceDirectory>src/test/kotlin</testSourceDirectory>
+
         <plugins>
             <!-- surefire plugin MOJO - for testing during maven lifecycle-->
             <plugin>
@@ -174,15 +184,6 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
-            <!-- Added due to warning from Intellij about HttpClient -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>11</source>
-                    <target>11</target>
-                </configuration>
             </plugin>
             <!-- Maven assembly plugin -->
             <plugin>
@@ -262,7 +263,21 @@
                     <!-- additional 3rd party ruleset(s) can be specified here -->
                 </dependencies>
             </plugin>
+
+            <!-- Maven Plugin for Dokka - basic configuration -->
+            <plugin>
+                <groupId>org.jetbrains.dokka</groupId>
+                <artifactId>dokka-maven-plugin</artifactId>
+                <version>${dokka.version}</version>
+                <executions>
+                    <execution>
+                        <phase>pre-site</phase>
+                        <goals>
+                            <goal>dokka</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
-
 </project>
