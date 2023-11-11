@@ -7,12 +7,11 @@ import ie.setu.domain.RecommendedDailyAllowance
 import ie.setu.domain.user.User
 import org.joda.time.DateTime
 
-
-//Meal related
+// Meal related
 const val VALID_MEAL_NAME = "caesar salad"
 const val INVALID_MEAL_NAME = "football"
 
-//User related
+// User related
 const val VALID_NAME = "Test User"
 const val VALID_EMAIL = "test@mail.com"
 const val VALID_PASSWORD = "password"
@@ -22,7 +21,7 @@ const val INCORRECT_PASSWORD = "**********"
 const val UPDATED_NAME = "Updated Test User"
 const val UPDATED_EMAIL = "updated@mail.com"
 
-//Activity related
+// Activity related
 const val VALID_DESCRIPTION = "Test Description"
 const val VALID_DURATION = 100.0
 const val VALID_CALORIES = 150

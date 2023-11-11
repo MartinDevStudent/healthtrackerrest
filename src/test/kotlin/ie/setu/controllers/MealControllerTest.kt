@@ -6,9 +6,9 @@ import ie.setu.domain.user.User
 import ie.setu.helpers.INVALID_MEAL_NAME
 import ie.setu.helpers.ServerContainer
 import ie.setu.helpers.VALID_EMAIL
+import ie.setu.helpers.VALID_MEAL_NAME
 import ie.setu.helpers.VALID_NAME
 import ie.setu.helpers.VALID_PASSWORD
-import ie.setu.helpers.VALID_MEAL_NAME
 import jsonToObject
 import kong.unirest.HttpResponse
 import kong.unirest.JsonNode

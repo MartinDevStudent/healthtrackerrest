@@ -8,13 +8,12 @@ import ie.setu.helpers.UPDATED_CALORIES
 import ie.setu.helpers.UPDATED_DESCRIPTION
 import ie.setu.helpers.UPDATED_DURATION
 import ie.setu.helpers.UPDATED_EMAIL
-import ie.setu.helpers.UPDATED_NAME
-import ie.setu.helpers.VALID_EMAIL
-import ie.setu.helpers.VALID_NAME
-import ie.setu.helpers.VALID_PASSWORD
 import ie.setu.helpers.VALID_CALORIES
 import ie.setu.helpers.VALID_DESCRIPTION
 import ie.setu.helpers.VALID_DURATION
+import ie.setu.helpers.VALID_EMAIL
+import ie.setu.helpers.VALID_NAME
+import ie.setu.helpers.VALID_PASSWORD
 import ie.setu.helpers.updatedStarted
 import ie.setu.helpers.validStarted
 import jsonToObject
@@ -197,13 +196,17 @@ class ActivityControllerTest {
         @Test
         fun `updating an activity when it doesn't exist, returns a 404 response`() {
             // Arrange, Act & Assert - attempt to update the email and name of user that doesn't exist
-            assertEquals(404, updateActivity(
-                Integer.MIN_VALUE,
-                UPDATED_DESCRIPTION,
-                UPDATED_DURATION,
-                UPDATED_CALORIES,
-                updatedStarted,
-                Integer.MIN_VALUE,).status)
+            assertEquals(
+                404,
+                updateActivity(
+                    Integer.MIN_VALUE,
+                    UPDATED_DESCRIPTION,
+                    UPDATED_DURATION,
+                    UPDATED_CALORIES,
+                    updatedStarted,
+                    Integer.MIN_VALUE,
+                ).status,
+            )
         }
     }
 
