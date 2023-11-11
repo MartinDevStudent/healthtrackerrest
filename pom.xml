@@ -111,7 +111,7 @@
             <artifactId>bcrypt</artifactId>
             <version>0.10.2</version>
         </dependency>
-        <!-- json dependency for serialising joda date time -->
+        <!-- Jackson dependency for serialising joda date time -->
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-joda</artifactId>
@@ -124,12 +124,6 @@
             <artifactId>unirest-java</artifactId>
             <version>3.14.1</version>
             <classifier>standalone</classifier>
-        </dependency>
-        <!-- Jackson depenency for serialising JodaTime -->
-        <dependency>
-            <groupId>com.fasterxml.jackson.datatype</groupId>
-            <artifactId>jackson-datatype-jsr310</artifactId>
-            <version>2.15.2</version>
         </dependency>
         <!-- adding Vue -->
         <dependency>
