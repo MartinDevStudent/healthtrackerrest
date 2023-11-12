@@ -1,8 +1,13 @@
-name: Deploy to Railway
+name: Pull Request
 
 on:
   push:
-    branches: [ master ]
+    branches:
+      - '*'
+      - '!master'
+  pull_request:
+    branches:
+      - master
 
 jobs:
   package:
@@ -53,16 +58,4 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: KDoc Documentation Site
-          path: target/dokka  
-  deploy:
-    name: Railway Deploy
-    needs: test
-    runs-on: ubuntu-latest  
-    steps:
-       - uses: actions/checkout@v3
-       - uses: bervProject/railway-deploy@main
-         name: Deploy to Railway
-         env:
-           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-         with:
-           service: "health-tracker-rest"
+          path: target/dokka
