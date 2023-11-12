@@ -4,6 +4,11 @@ import ie.setu.domain.repository.IngredientDAO
 import ie.setu.domain.repository.RecommendedDailyAllowancesDAO
 import io.javalin.http.Context
 
+/**
+ * Singleton object for handling ingredient-related operations.
+ *
+ * This object provides functionality for retrieving information about ingredients and recommended daily allowances.
+ */
 object IngredientController {
     private val ingredientDao = IngredientDAO()
     private val recommendedDailyAllowancesDao = RecommendedDailyAllowancesDAO()
