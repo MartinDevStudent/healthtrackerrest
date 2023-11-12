@@ -10,6 +10,11 @@ import ie.setu.utils.authentication.decodeJWT
 import ie.setu.utils.authentication.isCorrectPassword
 import io.javalin.http.Context
 
+/**
+ * Singleton object for handling authentication-related operations.
+ *
+ * This object provides functionality for user login, authentication, and JWT validation.
+ */
 object AuthenticationController {
     private val userDao = UserDAO()
 
