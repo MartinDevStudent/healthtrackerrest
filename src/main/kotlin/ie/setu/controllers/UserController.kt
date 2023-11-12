@@ -8,6 +8,11 @@ import ie.setu.utils.authentication.hashPassword
 import io.javalin.http.Context
 import jsonToObject
 
+/**
+ * Singleton object for handling user-related operations.
+ *
+ * This object provides functionality for retrieving, adding, updating, and deleting user information.
+ */
 object UserController {
     private val userDao = UserDAO()
 
