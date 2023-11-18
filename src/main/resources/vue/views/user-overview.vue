@@ -1,49 +1,50 @@
 <template id="user-overview">
   <app-layout>
-    <div class="list-group list-group-flush">
-      <div class="card bg-light mb-3">
-        <div class="card-header">
-          <div class="row">
-            <div class="col-6">
-              Users
-            </div>
-            <div class="col" align="right">
-              <button rel="tooltip" title="Add"
-                      class="btn btn-info btn-simple btn-link"
-                      @click="hideForm =!hideForm">
-                <i class="fa fa-plus" aria-hidden="true"></i>
-              </button>
-            </div>
+    <div class="card bg-light mb-3">
+      <div class="card-header">
+        <div class="row">
+          <div class="col-6">
+            Users
           </div>
-          <div class="card-body" :class="{ 'd-none': hideForm}">
-          <form id="addUser">
-              <div class="input-group mb-3">
-                <div class="input-group-prepend">
-                  <span class="input-group-text" id="input-user-name">Name</span>
-                </div>
-                <input type="text" class="form-control" v-model="formData.name" name="name" placeholder="Name"/>
-              </div>
-              <div class="input-group mb-3">
-                <div class="input-group-prepend">
-                  <span class="input-group-text" id="input-user-email">Email</span>
-                </div>
-                <input type="email" class="form-control" v-model="formData.email" name="email" placeholder="Email"/>
-              </div>
-              <div class="input-group mb-3">
-                <div class="input-group-prepend">
-                  <span class="input-group-text" id="input-user-password">Password</span>
-                </div>
-                <input type="password" class="form-control" v-model="formData.password" name="password" placeholder="******"/>
-              </div>
-            </form>
-            <button rel="tooltip" title="Update" class="btn btn-info btn-simple btn-link" @click="addUser()">Add User</button>
+          <div class="col" align="right">
+            <button rel="tooltip" title="Add"
+                    class="btn btn-info btn-simple btn-link"
+                    @click="hideForm =!hideForm">
+              <i class="fa fa-plus" aria-hidden="true"></i>
+            </button>
           </div>
         </div>
       </div>
-      <div class="list-group-item d-flex align-items-start"
+      <div class="card-body" :class="{ 'd-none': hideForm}">
+        <form id="addUser">
+          <div class="input-group mb-3">
+            <div class="input-group-prepend">
+              <span class="input-group-text" id="input-user-name">Name</span>
+            </div>
+            <input type="text" class="form-control" v-model="formData.name" name="name" placeholder="Name"/>
+          </div>
+          <div class="input-group mb-3">
+            <div class="input-group-prepend">
+              <span class="input-group-text" id="input-user-email">Email</span>
+            </div>
+            <input type="email" class="form-control" v-model="formData.email" name="email" placeholder="Email"/>
+          </div>
+          <div class="input-group mb-3">
+            <div class="input-group-prepend">
+              <span class="input-group-text" id="input-user-password">Password</span>
+            </div>
+            <input type="password" class="form-control" v-model="formData.password" name="password" placeholder="******"/>
+          </div>
+        </form>
+        <button rel="tooltip" title="AddUser" class="btn btn-info btn-simple btn-link" @click="addUser()">Add User
+        </button>
+      </div>
+    </div>
+    <div class="list-group list-group-flush" name="list-group">
+      <div class="list-group-item d-flex align-items-start"  name="list-group-item"
            v-for="(user,index) in users" v-bind:key="index">
         <div class="mr-auto p-2">
-          <span><a :href="`/users/${user.id}`"> {{ user.name }} ({{ user.email }})</a></span>
+          <span><a :href="`/users/${user.id}`">{{ user.name }} ({{ user.email }})</a></span>
         </div>
         <div class="p2">
           <a :href="`/users/${user.id}`">
@@ -61,6 +62,8 @@
   </app-layout>
 </template>
 <script>
+
+
 app.component("user-overview", {
   template: "#user-overview",
   data: () => ({

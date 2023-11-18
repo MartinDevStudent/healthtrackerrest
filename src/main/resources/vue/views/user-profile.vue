@@ -116,7 +116,7 @@ app.component("user-profile", {
         const userId = this.$javalin.pathParams["user-id"];
         const url = `/api/users/${userId}`
         axios.delete(url)
-          .then( _ => {
+          .then( response => {
             alert("User deleted")
             //display the /users endpoint
             window.location.href = '/users';
@@ -127,6 +127,5 @@ app.component("user-profile", {
       }
     }
   }
-
 });
 </script>
