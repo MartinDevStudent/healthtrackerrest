@@ -20,6 +20,11 @@ import org.junit.jupiter.api.TestInstance
 class UserControllerTest {
     private val requests = IntegrationTestHelper()
 
+    /**
+     * Ensures that users with the specified emails do not exist in the system.
+     * If a user with either VALID_EMAIL or UPDATED_EMAIL exists, they are deleted.
+     * This is a setup method that runs before each test to maintain a clean state.
+     */
     @BeforeEach
     fun ensureUserDoesNotExist() {
         val responseOne = requests.retrieveUserByEmail(VALID_EMAIL)

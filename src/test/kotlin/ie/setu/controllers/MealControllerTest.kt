@@ -20,6 +20,10 @@ import org.junit.jupiter.api.TestInstance
 class MealControllerTest {
     private val requests = IntegrationTestHelper()
 
+    /**
+     * Ensures that a user with the valid email does not exist in the system before each test.
+     * If a user is found, they are deleted to maintain a clean state for tests.
+     */
     @BeforeEach
     fun ensureUserDoesNotExist() {
         val response = requests.retrieveUserByEmail(VALID_EMAIL)

@@ -39,6 +39,11 @@ class HealthTrackerControllerTestMockDB {
         }
     }
 
+    /**
+     * Tests that getting a user by email when the email exists in the database returns a 201 response.
+     * This test sets up an in-memory H2 database, creates a users table, adds a user
+     * and then attempts to retrieve the user by email to verify the correct response status is returned.
+     */
     @Test
     fun `getting a user by email when email exists, returns a 201 response`() {
         transaction {

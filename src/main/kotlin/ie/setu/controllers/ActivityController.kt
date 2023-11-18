@@ -63,8 +63,8 @@ object ActivityController {
      */
     fun addActivity(ctx: Context) {
         val activity: Activity = jsonToObject(ctx.body())
-        val userId = userDao.findById(activity.userId)
-        if (userId != null) {
+        val user = userDao.findById(activity.userId)
+        if (user != null) {
             val activityId = activityDao.save(activity)
             activity.id = activityId
             ctx.json(mapObjectWithDateToJson(activity))

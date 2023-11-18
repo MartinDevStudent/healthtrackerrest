@@ -18,6 +18,13 @@ import org.openqa.selenium.support.ui.ExpectedConditions
 import org.openqa.selenium.support.ui.WebDriverWait
 import java.time.Duration
 
+/**
+ * AddUserTest is a test suite for testing the user addition functionality in the application.
+ * It uses Selenium WebDriver for browser automation and Javalin as the web server for testing.
+ *
+ * This class sets up the necessary components for the tests, such as the web driver and
+ * the Javalin server instance, and defines test cases to verify the user addition process.
+ */
 class AddUserTest {
     private lateinit var app: Javalin
     private lateinit var driver: WebDriver
