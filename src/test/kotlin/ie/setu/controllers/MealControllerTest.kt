@@ -11,6 +11,7 @@ import ie.setu.helpers.VALID_PASSWORD
 import jsonToObject
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotEquals
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
@@ -18,6 +19,16 @@ import org.junit.jupiter.api.TestInstance
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class MealControllerTest {
     private val requests = IntegrationTestHelper()
+
+    @BeforeEach
+    fun ensureUserDoesNotExist() {
+        val response = requests.retrieveUserByEmail(VALID_EMAIL)
+
+        if (response.status == 200) {
+            val retrievedUser: User = jsonToObject(response.body.toString())
+            requests.deleteUser(retrievedUser.id)
+        }
+    }
 
     @Nested
     inner class ReadMeals {
