@@ -18,6 +18,13 @@ import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 
+/**
+ * HealthTrackerControllerTestMockDB sets up a mock database for testing the HealthTrackerController.
+ * It uses an in-memory H2 database to simulate database operations without the need for an actual database connection.
+ *
+ * This test class demonstrates how to interact with the HealthTrackerController and verifies its behavior
+ * in a controlled environment where the database state can be easily managed and inspected.
+ */
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class HealthTrackerControllerTestMockDB {
     private val app = ServerContainer.instance

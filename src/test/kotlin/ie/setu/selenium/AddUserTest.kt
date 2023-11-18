@@ -23,6 +23,12 @@ class AddUserTest {
     private lateinit var driver: WebDriver
     private var wait: WebDriverWait? = null
 
+    /**
+     * Sets up the test environment before each test.
+     *
+     * This includes starting the Javalin server, establishing a database connection,
+     * configuring the web driver system properties, and preparing the WebDriverManager.
+     */
     @BeforeEach
     fun setup() {
         app = JavalinConfig().getJavalinService() // Initialize the server before each test
@@ -48,12 +54,19 @@ class AddUserTest {
         wait = WebDriverWait(driver, Duration.ofSeconds(30))
     }
 
+    /**
+     * Shuts down the WebDriver and the Javalin server.
+     * This function is called after each test to ensure that all resources are properly released.
+     */
     @AfterEach
     fun teardown() {
         driver.quit() // Close the WebDriver after each test
         app.stop() // Stop the Javalin server after each test
     }
 
+    /**
+     * Test case for adding a user.
+     */
     @Test
     fun addUser() {
         JavalinTest.test(app) { _, client ->
@@ -94,7 +107,6 @@ class AddUserTest {
 
             wait!!.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("button[title='Delete']")))
             driver.findElement(By.cssSelector("button[title='Delete']")).click()
-            // driver.findElement(By.cssSelector(".list-group-item:nth-child(8) .fas")).click()
             assertThat(
                 driver.switchTo().alert().text,
             ).isEqualTo("Do you really want to delete?")

@@ -11,6 +11,7 @@ import ie.setu.helpers.VALID_PASSWORD
 import jsonToObject
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotEquals
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
@@ -18,6 +19,22 @@ import org.junit.jupiter.api.TestInstance
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class UserControllerTest {
     private val requests = IntegrationTestHelper()
+
+    @BeforeEach
+    fun ensureUserDoesNotExist() {
+        val responseOne = requests.retrieveUserByEmail(VALID_EMAIL)
+        val responseTwo = requests.retrieveUserByEmail(UPDATED_EMAIL)
+
+        if (responseOne.status == 200) {
+            val retrievedUserOne: User = jsonToObject(responseOne.body.toString())
+            requests.deleteUser(retrievedUserOne.id)
+        }
+
+        if (responseTwo.status == 200) {
+            val retrievedUserTwo: User = jsonToObject(responseTwo.body.toString())
+            requests.deleteUser(retrievedUserTwo.id)
+        }
+    }
 
     @Nested
     inner class ReadUsers {
@@ -113,7 +130,7 @@ class UserControllerTest {
     inner class UpdateUsers {
         @Test
         fun `updating a user when it exists, returns a 204 response`() {
-            // Arrange - add the user that we plan to do an update on
+            // Arrange - add the user that we plan to do an update on and ensure user with update email does not exist
             val addedResponse = requests.addUser(VALID_NAME, VALID_EMAIL, VALID_PASSWORD)
             val addedUser: User = jsonToObject(addedResponse.body.toString())
 

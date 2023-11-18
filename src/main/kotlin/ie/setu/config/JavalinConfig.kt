@@ -40,6 +40,13 @@ class JavalinConfig {
         return app
     }
 
+    /**
+     * Retrieves the current instance of the Javalin app.
+     *
+     * This function is used to obtain the configured Javalin app instance for further operations such as adding routes, starting the server, etc.
+     *
+     * @return The configured Javalin app instance.
+     */
     fun getJavalinService(): Javalin {
         registerRoutes(app)
         return app
