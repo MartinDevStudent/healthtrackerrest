@@ -1,9 +1,11 @@
 package ie.setu.controllers
 
+import ie.setu.config.DbConfig
 import ie.setu.domain.Meal
 import ie.setu.domain.user.User
 import ie.setu.helpers.INVALID_MEAL_NAME
 import ie.setu.helpers.IntegrationTestHelper
+import ie.setu.helpers.ServerContainer
 import ie.setu.helpers.VALID_EMAIL
 import ie.setu.helpers.VALID_MEAL_NAME
 import ie.setu.helpers.VALID_NAME
@@ -18,7 +20,10 @@ import org.junit.jupiter.api.TestInstance
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class MealControllerTest {
-    private val requests = IntegrationTestHelper()
+    private val db = DbConfig().getDbConnection()
+    private val app = ServerContainer.instance
+    private val origin = "http://localhost:" + app.port()
+    private val requests = IntegrationTestHelper(origin)
 
     /**
      * Ensures that a user with the valid email does not exist in the system before each test.

@@ -1,21 +1,15 @@
 package ie.setu.helpers
 
-import ie.setu.config.DbConfig
 import kong.unirest.HttpResponse
 import kong.unirest.JsonNode
 import kong.unirest.Unirest
 import org.joda.time.DateTime
 
 /**
- * IntegrationTestHelper provides utility functions for integration testing,
- * It sets up a connection to the database and starts the server for testing purposes
- * and provides a collection functions for sending http request to the server
+ * IntegrationTestHelper provides a collection of functions for sending
+ * http request to the server
  */
-class IntegrationTestHelper {
-    private val db = DbConfig().getDbConnection()
-    private val app = ServerContainer.instance
-    private val origin = "http://localhost:" + app.port()
-
+class IntegrationTestHelper(var origin: String) {
     /**
      * Performs a user login by sending a POST request to the specified API endpoint.
      *

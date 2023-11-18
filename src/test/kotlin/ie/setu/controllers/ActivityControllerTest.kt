@@ -1,8 +1,10 @@
 package ie.setu.controllers
 
+import ie.setu.config.DbConfig
 import ie.setu.domain.Activity
 import ie.setu.domain.user.User
 import ie.setu.helpers.IntegrationTestHelper
+import ie.setu.helpers.ServerContainer
 import ie.setu.helpers.UPDATED_CALORIES
 import ie.setu.helpers.UPDATED_DESCRIPTION
 import ie.setu.helpers.UPDATED_DURATION
@@ -25,7 +27,10 @@ import org.junit.jupiter.api.TestInstance
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class ActivityControllerTest {
-    private val requests = IntegrationTestHelper()
+    private val db = DbConfig().getDbConnection()
+    private val app = ServerContainer.instance
+    private val origin = "http://localhost:" + app.port()
+    private val requests = IntegrationTestHelper(origin)
 
     /**
      * Ensures that a user with the valid email does not exist in the system before each test.
