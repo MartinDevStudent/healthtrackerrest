@@ -3,15 +3,14 @@ package ie.setu.controllers
 import ie.setu.config.DbConfig
 import ie.setu.domain.user.User
 import ie.setu.helpers.INCORRECT_PASSWORD
+import ie.setu.helpers.IntegrationTestHelper
 import ie.setu.helpers.ServerContainer
 import ie.setu.helpers.VALID_EMAIL
 import ie.setu.helpers.VALID_NAME
 import ie.setu.helpers.VALID_PASSWORD
 import jsonToObject
-import kong.unirest.HttpResponse
-import kong.unirest.JsonNode
-import kong.unirest.Unirest
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
@@ -21,22 +20,37 @@ class AuthenticationControllerTest {
     private val db = DbConfig().getDbConnection()
     private val app = ServerContainer.instance
     private val origin = "http://localhost:" + app.port()
+    private val requests = IntegrationTestHelper(origin)
+
+    /**
+     * Ensures that a user with the valid email does not exist in the system before each test.
+     * If a user is found, they are deleted to maintain a clean state for tests.
+     */
+    @BeforeEach
+    fun ensureUserDoesNotExist() {
+        val response = requests.retrieveUserByEmail(VALID_EMAIL)
+
+        if (response.status == 200) {
+            val retrievedUser: User = jsonToObject(response.body.toString())
+            requests.deleteUser(retrievedUser.id)
+        }
+    }
 
     @Nested
     inner class ReadAuthentication {
         @Test
         fun `logging in with the incorrect details returns a 401 response`() {
             // Arrange - add a user to the database
-            val addUserResponse = addUser(VALID_NAME, VALID_EMAIL, VALID_PASSWORD)
+            val addUserResponse = requests.addUser(VALID_NAME, VALID_EMAIL, VALID_PASSWORD)
             val addedUser: User = jsonToObject(addUserResponse.body.toString())
 
             // Arrange & Act & Assert
             // send the login request and verify return code (using fixture data)
-            val loginResponse = login(VALID_EMAIL, INCORRECT_PASSWORD)
+            val loginResponse = requests.login(VALID_EMAIL, INCORRECT_PASSWORD)
             assertEquals(401, loginResponse.status)
 
             // After - restore the db to previous state by deleting the added user
-            val deleteUserResponse = deleteUser(addedUser.id)
+            val deleteUserResponse = requests.deleteUser(addedUser.id)
             assertEquals(204, deleteUserResponse.status)
         }
 
@@ -44,43 +58,17 @@ class AuthenticationControllerTest {
         fun `logging in with the correct details returns a 200 response`() {
             // Arrange
             // add a user to the database
-            val addUserResponse = addUser(VALID_NAME, VALID_EMAIL, VALID_PASSWORD)
+            val addUserResponse = requests.addUser(VALID_NAME, VALID_EMAIL, VALID_PASSWORD)
             val addedUser: User = jsonToObject(addUserResponse.body.toString())
 
             // Arrange & Act & Assert
             // send the login request and verify return code (using fixture data)
-            val loginResponse = login(VALID_EMAIL, VALID_PASSWORD)
+            val loginResponse = requests.login(VALID_EMAIL, VALID_PASSWORD)
             assertEquals(200, loginResponse.status)
 
             // After - restore the db to previous state by deleting the added user
-            val deleteUserResponse = deleteUser(addedUser.id)
+            val deleteUserResponse = requests.deleteUser(addedUser.id)
             assertEquals(204, deleteUserResponse.status)
         }
-    }
-
-    // helper function to log in to the site and retrieve JWT token
-    private fun login(
-        email: String,
-        password: String,
-    ): HttpResponse<JsonNode> {
-        return Unirest.post("$origin/api/login")
-            .body("{\"email\":\"$email\", \"password\":\"$password\"}")
-            .asJson()
-    }
-
-    // helper function to add a test user to the database
-    private fun addUser(
-        name: String,
-        email: String,
-        password: String,
-    ): HttpResponse<JsonNode> {
-        return Unirest.post("$origin/api/users")
-            .body("{\"name\":\"$name\", \"email\":\"$email\", \"password\":\"$password\"}")
-            .asJson()
-    }
-
-    // helper function to delete a test user from the database
-    private fun deleteUser(id: Int): HttpResponse<String> {
-        return Unirest.delete("$origin/api/users/$id").asString()
     }
 }

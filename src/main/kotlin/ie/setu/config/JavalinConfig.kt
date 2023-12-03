@@ -20,28 +20,35 @@ import javalinjwt.JWTAccessManager
 import jsonObjectMapper
 
 class JavalinConfig {
-    /**
-     * Starts the Javalin service with JWT-based authentication and registers routes.
-     *
-     * @return The Javalin instance representing the r  unning service.
-     */
+    val app =
+        Javalin.create { config ->
+            config.accessManager(JWTAccessManager("level", rolesMapping, Roles.ANYONE))
+            // Added this jsonMapper for our integration tests - serialise objects to json
+            config.jsonMapper(JavalinJackson(jsonObjectMapper()))
+            config.staticFiles.enableWebjars()
+            config.vue.vueAppName = "app" // only required for Vue 3, is defined in layout.html
+            config.vue.stateFunction = { ctx -> mapOf("user" to currentUser(ctx)) }
+        }.apply {
+            exception(Exception::class.java) { e, _ -> e.printStackTrace() }
+            error(404) { ctx -> ctx.json("404 : Not Found") }
+        }
+
     fun startJavalinService(): Javalin {
-        val app =
-            Javalin.create { config ->
-                config.accessManager(JWTAccessManager("level", rolesMapping, Roles.ANYONE))
-                // Added this jsonMapper for our integration tests - serialise objects to json
-                config.jsonMapper(JavalinJackson(jsonObjectMapper()))
-                config.staticFiles.enableWebjars()
-                config.vue.vueAppName = "app" // only required for Vue 3, is defined in layout.html
-                config.vue.stateFunction = { ctx -> mapOf("user" to currentUser(ctx)) }
-            }.apply {
-                exception(Exception::class.java) { e, _ -> e.printStackTrace() }
-                error(404) { ctx -> ctx.json("404 : Not Found") }
-            }.start(getRemoteAssignedPort())
+        app.start(getRemoteAssignedPort())
         app.before(JwtProvider.decodeHandler)
-
         registerRoutes(app)
+        return app
+    }
 
+    /**
+     * Retrieves the current instance of the Javalin app.
+     *
+     * This function is used to obtain the configured Javalin app instance for further operations such as adding routes, starting the server, etc.
+     *
+     * @return The configured Javalin app instance.
+     */
+    fun getJavalinService(): Javalin {
+        registerRoutes(app)
         return app
     }
 

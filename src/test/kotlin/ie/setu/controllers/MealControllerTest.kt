@@ -4,17 +4,16 @@ import ie.setu.config.DbConfig
 import ie.setu.domain.Meal
 import ie.setu.domain.user.User
 import ie.setu.helpers.INVALID_MEAL_NAME
+import ie.setu.helpers.IntegrationTestHelper
 import ie.setu.helpers.ServerContainer
 import ie.setu.helpers.VALID_EMAIL
 import ie.setu.helpers.VALID_MEAL_NAME
 import ie.setu.helpers.VALID_NAME
 import ie.setu.helpers.VALID_PASSWORD
 import jsonToObject
-import kong.unirest.HttpResponse
-import kong.unirest.JsonNode
-import kong.unirest.Unirest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotEquals
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
@@ -24,12 +23,27 @@ class MealControllerTest {
     private val db = DbConfig().getDbConnection()
     private val app = ServerContainer.instance
     private val origin = "http://localhost:" + app.port()
+    private val requests = IntegrationTestHelper(origin)
+
+    /**
+     * Ensures that a user with the valid email does not exist in the system before each test.
+     * If a user is found, they are deleted to maintain a clean state for tests.
+     */
+    @BeforeEach
+    fun ensureUserDoesNotExist() {
+        val response = requests.retrieveUserByEmail(VALID_EMAIL)
+
+        if (response.status == 200) {
+            val retrievedUser: User = jsonToObject(response.body.toString())
+            requests.deleteUser(retrievedUser.id)
+        }
+    }
 
     @Nested
     inner class ReadMeals {
         @Test
         fun `get all meals from the database returns 200 or 404 response`() {
-            val response = Unirest.get("$origin/api/meals/").asString()
+            val response = requests.retrieveMeals()
             if (response.status == 200) {
                 val retrievedMeals: ArrayList<Meal> = jsonToObject(response.body.toString())
                 assertNotEquals(0, retrievedMeals.size)
@@ -44,7 +58,7 @@ class MealControllerTest {
             val id = Integer.MIN_VALUE
 
             // Act - attempt to retrieve the non-existent meal from the database
-            val retrieveResponse = retrieveMealById(id)
+            val retrieveResponse = requests.retrieveMealById(id)
 
             // Assert -  verify return code
             assertEquals(404, retrieveResponse.status)
@@ -54,17 +68,17 @@ class MealControllerTest {
         fun `get meal by id when meal exists returns 200 response`() {
             // Arrange
             // add a meal to the database
-            val addMealResponse = addMeal(VALID_MEAL_NAME)
+            val addMealResponse = requests.addMeal(VALID_MEAL_NAME)
             val addedMeal: Meal = jsonToObject(addMealResponse.body.toString())
 
             // Act - retrieve the meal from the database
-            val retrieveResponse = retrieveMealById(addedMeal.id)
+            val retrieveResponse = requests.retrieveMealById(addedMeal.id)
 
             // Assert -  verify return code
             assertEquals(200, retrieveResponse.status)
 
             // After - restore the db to previous state by deleting the added meal
-            val deleteMealResponse = deleteMeal(addedMeal.id)
+            val deleteMealResponse = requests.deleteMeal(addedMeal.id)
             assertEquals(204, deleteMealResponse.status)
         }
 
@@ -74,7 +88,7 @@ class MealControllerTest {
             val id = Integer.MIN_VALUE
 
             // Act - attempt to retrieve the non-existent meal from the database
-            val retrieveResponse = retrieveMealByUserId(id)
+            val retrieveResponse = requests.retrieveMealByUserId(id)
 
             // Assert -  verify return code
             assertEquals(404, retrieveResponse.status)
@@ -84,20 +98,20 @@ class MealControllerTest {
         fun `getting meals by user id when user exist returns 200 response`() {
             // Arrange
             // add a user and meal to the database
-            val addUserResponse = addUser(VALID_NAME, VALID_EMAIL, VALID_PASSWORD)
+            val addUserResponse = requests.addUser(VALID_NAME, VALID_EMAIL, VALID_PASSWORD)
             val addedUser: User = jsonToObject(addUserResponse.body.toString())
-            val addMealResponse = addMealByUserId(VALID_MEAL_NAME, addedUser.id)
+            val addMealResponse = requests.addMealByUserId(VALID_MEAL_NAME, addedUser.id)
             val addedMeal: Meal = jsonToObject(addMealResponse.body.toString())
 
             // Act - retrieve the meal from the database via the user id
-            val retrieveResponse = retrieveMealByUserId(addedUser.id)
+            val retrieveResponse = requests.retrieveMealByUserId(addedUser.id)
 
             // Assert -  verify return code
             assertEquals(200, retrieveResponse.status)
 
             // After - restore the db to previous state by deleting the added user and meal
-            val deleteMealResponse = deleteMeal(addedMeal.id)
-            val deleteUserResponse = deleteUser(addedUser.id)
+            val deleteMealResponse = requests.deleteMeal(addedMeal.id)
+            val deleteUserResponse = requests.deleteUser(addedUser.id)
             assertEquals(204, deleteUserResponse.status)
             assertEquals(204, deleteMealResponse.status)
         }
@@ -108,7 +122,7 @@ class MealControllerTest {
         @Test
         fun `adding a meal with an invalid name, returns a 400 response`() {
             // Act - add a meal to the database
-            val addMealResponse = addMeal(INVALID_MEAL_NAME)
+            val addMealResponse = requests.addMeal(INVALID_MEAL_NAME)
 
             // Assert -  verify return code
             assertEquals(400, addMealResponse.status)
@@ -117,31 +131,31 @@ class MealControllerTest {
         @Test
         fun `adding a meal when it already exists, returns a 409 response`() {
             // Arrange - add a meal to the database
-            val addMealResponse = addMeal(VALID_MEAL_NAME)
+            val addMealResponse = requests.addMeal(VALID_MEAL_NAME)
 
             // Act - attempt to add second meal with same name
-            val secondAddMealResponse = addMeal(VALID_MEAL_NAME)
+            val secondAddMealResponse = requests.addMeal(VALID_MEAL_NAME)
 
             // Assert - verify return code
             assertEquals(409, secondAddMealResponse.status)
 
             // After - restore the db to previous state by deleting the original meal
             val addedMeal: Meal = jsonToObject(addMealResponse.body.toString())
-            val deleteMealResponse = deleteMeal(addedMeal.id)
+            val deleteMealResponse = requests.deleteMeal(addedMeal.id)
             assertEquals(204, deleteMealResponse.status)
         }
 
         @Test
         fun `add a meal with correct details returns a 201 response`() {
             // Act - add a meal to the database
-            val addMealResponse = addMeal(VALID_MEAL_NAME)
+            val addMealResponse = requests.addMeal(VALID_MEAL_NAME)
 
             // Assert -  verify return code
             assertEquals(201, addMealResponse.status)
 
             // After - restore the db to previous state by deleting the added meal
             val addedMeal: Meal = jsonToObject(addMealResponse.body.toString())
-            val deleteMealResponse = deleteMeal(addedMeal.id)
+            val deleteMealResponse = requests.deleteMeal(addedMeal.id)
             assertEquals(204, deleteMealResponse.status)
         }
 
@@ -149,17 +163,17 @@ class MealControllerTest {
         fun `adding a meal with an invalid name that is associated with a user, returns a 400 response`() {
             // Arrange
             // add a user and meal to the database
-            val addUserResponse = addUser(VALID_NAME, VALID_EMAIL, VALID_PASSWORD)
+            val addUserResponse = requests.addUser(VALID_NAME, VALID_EMAIL, VALID_PASSWORD)
             val addedUser: User = jsonToObject(addUserResponse.body.toString())
 
             // Act - attempt to add meal associated with user that has an invalid name
-            val addMealResponse = addMealByUserId(INVALID_MEAL_NAME, addedUser.id)
+            val addMealResponse = requests.addMealByUserId(INVALID_MEAL_NAME, addedUser.id)
 
             // Assert -  verify return code
             assertEquals(400, addMealResponse.status)
 
             // After - restore the db to previous state by deleting the added user
-            val deleteUserResponse = deleteUser(addedUser.id)
+            val deleteUserResponse = requests.deleteUser(addedUser.id)
             assertEquals(204, deleteUserResponse.status)
         }
 
@@ -167,20 +181,20 @@ class MealControllerTest {
         fun `associating an already existing meal with a user, returns a 201 response`() {
             // Arrange
             // add a user and meal to the database
-            val addUserResponse = addUser(VALID_NAME, VALID_EMAIL, VALID_PASSWORD)
+            val addUserResponse = requests.addUser(VALID_NAME, VALID_EMAIL, VALID_PASSWORD)
             val addedUser: User = jsonToObject(addUserResponse.body.toString())
-            val addMealResponse = addMeal(VALID_MEAL_NAME)
+            val addMealResponse = requests.addMeal(VALID_MEAL_NAME)
 
             // Act - associate the same meal with a user
-            val addUserMealResponse = addMealByUserId(VALID_MEAL_NAME, addedUser.id)
+            val addUserMealResponse = requests.addMealByUserId(VALID_MEAL_NAME, addedUser.id)
 
             // Assert - verify return code
             assertEquals(201, addUserMealResponse.status)
 
             // After - restore the db to previous state by deleting the added user and meal
             val addedMeal: Meal = jsonToObject(addMealResponse.body.toString())
-            val deleteMealResponse = deleteMeal(addedMeal.id)
-            val deleteUserResponse = deleteUser(addedUser.id)
+            val deleteMealResponse = requests.deleteMeal(addedMeal.id)
+            val deleteUserResponse = requests.deleteUser(addedUser.id)
             assertEquals(204, deleteMealResponse.status)
             assertEquals(204, deleteUserResponse.status)
         }
@@ -191,43 +205,43 @@ class MealControllerTest {
         @Test
         fun `deleting a meal when it doesn't exist, returns a 404 response`() {
             // Act & Assert - attempt to delete an meal that doesn't exist
-            assertEquals(404, deleteMeal(Integer.MIN_VALUE).status)
+            assertEquals(404, requests.deleteMeal(Integer.MIN_VALUE).status)
         }
 
         @Test
         fun `deleting a meal when it exists, returns a 204 response`() {
             // Arrange - add the meal that we plan to do a delete on
-            val addMealResponse = addMeal(VALID_MEAL_NAME)
+            val addMealResponse = requests.addMeal(VALID_MEAL_NAME)
             val addedMeal: Meal = jsonToObject(addMealResponse.body.toString())
 
             // Act & Assert - delete the added meal and assert a 204 is returned
-            assertEquals(204, deleteMeal(addedMeal.id).status)
+            assertEquals(204, requests.deleteMeal(addedMeal.id).status)
 
             // Act & Assert - attempt to retrieve the deleted meal --> 404 response
-            assertEquals(404, retrieveMealById(addedMeal.id).status)
+            assertEquals(404, requests.retrieveMealById(addedMeal.id).status)
         }
 
         @Test
         fun `deleting meals by user when user id doesn't exist, returns a 404 response`() {
             // Act & Assert - attempt to delete an activity that doesn't exist
-            assertEquals(404, deleteMealsByUserId(Integer.MIN_VALUE).status)
+            assertEquals(404, requests.deleteMealsByUserId(Integer.MIN_VALUE).status)
         }
 
         @Test
         fun `deleting meals by user when user id exists, returns a 204 response`() {
             // Arrange
             // add a user and meal to the database
-            val addUserResponse = addUser(VALID_NAME, VALID_EMAIL, VALID_PASSWORD)
+            val addUserResponse = requests.addUser(VALID_NAME, VALID_EMAIL, VALID_PASSWORD)
             val addedUser: User = jsonToObject(addUserResponse.body.toString())
-            val addMealResponse = addMealByUserId(VALID_MEAL_NAME, addedUser.id)
+            val addMealResponse = requests.addMealByUserId(VALID_MEAL_NAME, addedUser.id)
 
             // Act & Assert - delete the activity and verify status
-            assertEquals(204, deleteMealsByUserId(addedUser.id).status)
+            assertEquals(204, requests.deleteMealsByUserId(addedUser.id).status)
 
             // After - restore the db to previous state by deleting the added user
-            val deleteUserResponse = deleteUser(addedUser.id)
+            val deleteUserResponse = requests.deleteUser(addedUser.id)
             val addedMeal: Meal = jsonToObject(addMealResponse.body.toString())
-            val deleteMealResponse = deleteMeal(addedMeal.id)
+            val deleteMealResponse = requests.deleteMeal(addedMeal.id)
             assertEquals(204, deleteUserResponse.status)
             assertEquals(204, deleteMealResponse.status)
         }
@@ -236,14 +250,14 @@ class MealControllerTest {
         fun `deleting user meal by meal id when meal id doesn't exist, returns a 404 response`() {
             // Arrange
             // add a user to the database
-            val addUserResponse = addUser(VALID_NAME, VALID_EMAIL, VALID_PASSWORD)
+            val addUserResponse = requests.addUser(VALID_NAME, VALID_EMAIL, VALID_PASSWORD)
             val addedUser: User = jsonToObject(addUserResponse.body.toString())
 
             // Act & Assert - attempt to delete an activity that doesn't exist
-            assertEquals(404, deleteUserMealByMealId(addedUser.id, Integer.MIN_VALUE).status)
+            assertEquals(404, requests.deleteUserMealByMealId(addedUser.id, Integer.MIN_VALUE).status)
 
             // After - restore the db to previous state by deleting the added user
-            val deleteUserResponse = deleteUser(addedUser.id)
+            val deleteUserResponse = requests.deleteUser(addedUser.id)
             assertEquals(204, deleteUserResponse.status)
         }
 
@@ -251,80 +265,19 @@ class MealControllerTest {
         fun ` deleting user meal by meal id when meal id exists, returns a 204 response`() {
             // Arrange
             // add a user and meal to the database
-            val addUserResponse = addUser(VALID_NAME, VALID_EMAIL, VALID_PASSWORD)
+            val addUserResponse = requests.addUser(VALID_NAME, VALID_EMAIL, VALID_PASSWORD)
             val addedUser: User = jsonToObject(addUserResponse.body.toString())
-            val addMealResponse = addMealByUserId(VALID_MEAL_NAME, addedUser.id)
+            val addMealResponse = requests.addMealByUserId(VALID_MEAL_NAME, addedUser.id)
             val addedMeal: Meal = jsonToObject(addMealResponse.body.toString())
 
             // Act & Assert - delete the activity and verify status
-            assertEquals(204, deleteUserMealByMealId(addedUser.id, addedMeal.id).status)
+            assertEquals(204, requests.deleteUserMealByMealId(addedUser.id, addedMeal.id).status)
 
             // After - restore the db to previous state by deleting the added user and meal
-            val deleteUserResponse = deleteUser(addedUser.id)
-            val deleteMealResponse = deleteMeal(addedMeal.id)
+            val deleteUserResponse = requests.deleteUser(addedUser.id)
+            val deleteMealResponse = requests.deleteMeal(addedMeal.id)
             assertEquals(204, deleteUserResponse.status)
             assertEquals(204, deleteMealResponse.status)
         }
-    }
-
-    // helper function to retrieve a test meal from the database by meal id
-    private fun retrieveMealById(id: Int): HttpResponse<String> {
-        return Unirest.get("$origin/api/meals/$id").asString()
-    }
-
-    // helper function to retrieve a test meal from the database by meal id
-    private fun retrieveMealByUserId(id: Int): HttpResponse<String> {
-        return Unirest.get("$origin/api/users/$id/meals").asString()
-    }
-
-    // helper function to add a test meal to the database
-    private fun addMeal(name: String): HttpResponse<JsonNode> {
-        return Unirest.post("$origin/api/meals")
-            .body("{\"name\":\"$name\"}")
-            .asJson()
-    }
-
-    // helper function to add a test meal associated with a user to the database
-    private fun addMealByUserId(
-        name: String,
-        userId: Int,
-    ): HttpResponse<JsonNode> {
-        return Unirest.post("$origin/api/users/$userId/meals")
-            .body("{\"name\":\"$name\"}")
-            .asJson()
-    }
-
-    // helper function to delete a test meal from the database
-    private fun deleteMeal(id: Int): HttpResponse<String> {
-        return Unirest.delete("$origin/api/meals/$id").asString()
-    }
-
-    // helper function to delete all meals associated with a user from the database
-    private fun deleteMealsByUserId(id: Int): HttpResponse<String> {
-        return Unirest.delete("$origin/api/users/$id/meals").asString()
-    }
-
-    // helper function to delete a meal associated with a user from the database
-    private fun deleteUserMealByMealId(
-        userId: Int,
-        mealId: Int,
-    ): HttpResponse<String> {
-        return Unirest.delete("$origin/api/users/$userId/meals/$mealId").asString()
-    }
-
-    // helper function to add a test user to the database
-    private fun addUser(
-        name: String,
-        email: String,
-        password: String,
-    ): HttpResponse<JsonNode> {
-        return Unirest.post("$origin/api/users")
-            .body("{\"name\":\"$name\", \"email\":\"$email\", \"password\":\"$password\"}")
-            .asJson()
-    }
-
-    // helper function to delete a test user from the database
-    private fun deleteUser(id: Int): HttpResponse<String> {
-        return Unirest.delete("$origin/api/users/$id").asString()
     }
 }

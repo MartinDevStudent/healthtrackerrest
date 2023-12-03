@@ -16,18 +16,15 @@ import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
-// retrieving some test data from Fixtures
-val ingredients1 = ingredients[0]
-val ingredients2 = ingredients[1]
-val ingredients3 = ingredients[2]
-val ingredient1 = ingredients[0]
-val ingredient2 = ingredients[1]
-val ingredient3 = ingredients[2]
-val meal1 = meals[0]
-val meal2 = meals[1]
-val meal3 = meals[2]
-
 class IngredientDAOTest {
+    // retrieving some test data from Fixtures
+    private val ingredient1 = ingredients[0]
+    private val ingredient2 = ingredients[1]
+    private val ingredient3 = ingredients[2]
+    private val meal1 = meals[0]
+    private val meal2 = meals[1]
+    private val meal3 = meals[2]
+
     companion object {
         // Make a connection to a local, in memory H2 database.
         @BeforeAll
@@ -111,9 +108,9 @@ class IngredientDAOTest {
 
                 // Act & Assert
                 assertEquals(3, ingredientDAO.getAll().size)
-                assertEquals(ingredients1, ingredientDAO.findByIngredientId(ingredients1.id))
-                assertEquals(ingredients2, ingredientDAO.findByIngredientId(ingredients2.id))
-                assertEquals(ingredients3, ingredientDAO.findByIngredientId(ingredients3.id))
+                assertEquals(ingredient1, ingredientDAO.findByIngredientId(ingredient1.id))
+                assertEquals(ingredient2, ingredientDAO.findByIngredientId(ingredient2.id))
+                assertEquals(ingredient3, ingredientDAO.findByIngredientId(ingredient3.id))
             }
         }
     }
@@ -130,12 +127,12 @@ class IngredientDAOTest {
     internal fun populateIngredientTable(): IngredientDAO {
         SchemaUtils.create(Ingredients)
         val ingredientDAO = IngredientDAO()
-        ingredientDAO.save(ingredients1)
-        ingredientDAO.save(ingredients2)
-        ingredientDAO.save(ingredients3)
-        ingredientDAO.associateIngredientWithMeal(ingredients1.id, meal1.id)
-        ingredientDAO.associateIngredientWithMeal(ingredients2.id, meal2.id)
-        ingredientDAO.associateIngredientWithMeal(ingredients3.id, meal3.id)
+        ingredientDAO.save(ingredient1)
+        ingredientDAO.save(ingredient2)
+        ingredientDAO.save(ingredient3)
+        ingredientDAO.associateIngredientWithMeal(ingredient1.id, meal1.id)
+        ingredientDAO.associateIngredientWithMeal(ingredient2.id, meal2.id)
+        ingredientDAO.associateIngredientWithMeal(ingredient3.id, meal3.id)
         return ingredientDAO
     }
 }

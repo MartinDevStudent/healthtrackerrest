@@ -27,7 +27,7 @@
                 <div class="input-group-prepend">
                   <span class="input-group-text" id="input-activity-duration">Duration</span>
                 </div>
-                <input type="number" class="form-control" v-model="formData.duration" name="duration" placeholder="Duration" type="number" step=".01"/>
+                <input class="form-control" v-model="formData.duration" name="duration" placeholder="Duration" type="number" step=".01"/>
               </div>
               <div class="input-group mb-3">
                 <div class="input-group-prepend">
@@ -140,12 +140,4 @@ app.component("activity-overview", {
     },
   }
 });
-</script>
-<script setup>
-</script>
-<script setup>
-</script>
-<script setup>
-</script>
-<script setup>
 </script>

@@ -16,12 +16,12 @@ import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
-// retrieving some test data from Fixtures
-val user1 = users[0]
-val user2 = users[1]
-val user3 = users[2]
-
 class UserDAOTest {
+    // retrieving some test data from Fixtures
+    private val user1 = users[0]
+    private val user2 = users[1]
+    private val user3 = users[2]
+
     companion object {
         // Make a connection to a local, in memory H2 database.
         @BeforeAll
