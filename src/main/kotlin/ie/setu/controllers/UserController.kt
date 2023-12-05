@@ -3,7 +3,7 @@ package ie.setu.controllers
 import ie.setu.domain.repository.UserDAO
 import ie.setu.domain.user.CreateUserDTO
 import ie.setu.domain.user.User
-import ie.setu.utils.DTOMappingUtilities.userToUserResponseDto
+import ie.setu.domain.user.UserResponseDTO
 import ie.setu.utils.authentication.hashPassword
 import io.javalin.http.Context
 import jsonToObject
@@ -28,7 +28,11 @@ object UserController {
         } else {
             ctx.status(404)
         }
-        ctx.json(users.map { userToUserResponseDto(it) })
+        ctx.json(
+            users.map {
+                UserResponseDTO.fromUser(it)
+            },
+        )
     }
 
     /**
@@ -39,7 +43,7 @@ object UserController {
     fun getUserByUserId(ctx: Context) {
         val user = userDao.findById(ctx.pathParam("user-id").toInt())
         if (user != null) {
-            ctx.json(userToUserResponseDto(user))
+            ctx.json(UserResponseDTO.fromUser(user))
             ctx.status(200)
         } else {
             ctx.status(404)
@@ -54,7 +58,7 @@ object UserController {
     fun getUserByEmail(ctx: Context) {
         val user = userDao.findByEmail(ctx.pathParam("email"))
         if (user != null) {
-            ctx.json(userToUserResponseDto(user))
+            ctx.json(UserResponseDTO.fromUser(user))
             ctx.status(200)
         } else {
             ctx.status(404)
@@ -82,7 +86,7 @@ object UserController {
         val userId = userDao.save(user)
         user.id = userId
 
-        ctx.json(userToUserResponseDto(user))
+        ctx.json(UserResponseDTO.fromUser(user))
         ctx.status(201)
     }
 
@@ -118,7 +122,7 @@ object UserController {
         }
 
         if ((userDao.update(id = userId, user = user!!)) != 0) {
-            ctx.json(userToUserResponseDto(user))
+            ctx.json(UserResponseDTO.fromUser(user))
             ctx.status(204)
         } else {
             ctx.status(404)
