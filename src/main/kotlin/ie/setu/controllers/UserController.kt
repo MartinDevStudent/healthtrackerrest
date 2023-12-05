@@ -28,9 +28,11 @@ object UserController {
         } else {
             ctx.status(404)
         }
-        ctx.json(users.map {
-            UserResponseDTO.fromUser(it)
-        })
+        ctx.json(
+            users.map {
+                UserResponseDTO.fromUser(it)
+            },
+        )
     }
 
     /**
