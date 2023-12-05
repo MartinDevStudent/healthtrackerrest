@@ -5,6 +5,7 @@
       <p> View <a :href="'/users'">all ingredients</a>.</p>
     </div>
     <div class="card bg-light mb-3" v-if="!noIngredientFound">
+      <img v-bind:src="caloriesUrl" />
       <div ref="table_div">
       </div>
       <div class="card-header">
@@ -104,16 +105,40 @@ app.component("ingredient-profile", {
   data: () => ({
     ingredient: null,
     noIngredientFound: false,
+    caloriesUrl: null,
   }),
   created: function () {
-    const ingredientId = this.$javalin.pathParams["ingredient-id"];
-    const url = `/api/ingredients/${ingredientId}`
-    axios.get(url)
-      .then(res => this.ingredient = res.data)
+    this.fetchIngredients()
+    this.fetchCharts()
+  },
+  methods: {
+    fetchIngredients: function () {
+      const ingredientId = this.$javalin.pathParams["ingredient-id"];
+      const url = `/api/ingredients/${ingredientId}`
+      axios.get(url)
+        .then(res => this.ingredient = res.data)
+        .catch(() => {
+          console.error("No activity found for id passed in the path parameter: " + error)
+          this.noIngredientFound = true
+        });
+    },
+    fetchCharts: function () {
+      axios.post('https://quickchart.io/chart', {
+        backgroundColor: "transparent",
+        width: 500,
+        height: 300,
+        format: "png",
+        chart: "{type:'bar',data:{labels:['January','February','March','April','May'],datasets:[{label:'Dogs',data:[50,60,70,180,190]}]},options:{scales:{yAxes:[{ticks:{callback:function(value){return'$'+value;}}}]}}}"
+      },
+      {
+        responseType: "blob"
+      })
+      .then(res => this.caloriesUrl =
+          URL.createObjectURL(new Blob([res.data], { type: "image/png" })))
       .catch(() => {
-        console.error("No activity found for id passed in the path parameter: " + error)
-        this.noIngredientFound = true
+        console.error("Issue retrieving chart");
       });
+    }
   }
 });
 </script>
