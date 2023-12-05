@@ -5,6 +5,8 @@
       <p> View <a :href="'/users'">all ingredients</a>.</p>
     </div>
     <div class="card bg-light mb-3" v-if="!noIngredientFound">
+      <div ref="table_div">
+      </div>
       <div class="card-header">
         <div class="row">
           <div class="col-6"> Ingredient Profile </div>
@@ -12,83 +14,83 @@
       </div>
       <div class="card-body">
         <form>
-          <div class="input-group mb-3">
-            <div class="input-group-prepend">
-              <span class="input-group-text" id="input-ingredient-id">Ingredient ID</span>
+          <div class="mb-3 row">
+            <label for="id" class="col-sm-3 col-form-label">Ingredient ID</label>
+            <div class="col-sm-15">
+              <input type="text" readonly class="form-control-plaintext" id="id" v-model="ingredient.id">
             </div>
-            <input type="number" class="form-control" v-model="ingredient.id" name="id" readonly/>
           </div>
-          <div class="input-group mb-3">
-            <div class="input-group-prepend">
-              <span class="input-group-text" id="input-ingredient-name">Name</span>
+          <div class="mb-3 row">
+            <label for="name" class="col-sm-3 col-form-label">Name</label>
+            <div class="col-sm-15">
+              <input type="text" readonly class="form-control-plaintext" id="name" v-model="ingredient.name">
             </div>
-            <input type="text" class="form-control" v-model="ingredient.name" name="name" readonly/>
           </div>
-          <div class="input-group mb-3">
-            <div class="input-group-prepend">
-              <span class="input-group-text" id="input-ingredient-calories">Calories</span>
+          <div class="mb-3 row">
+            <label for="calories" class="col-sm-3 col-form-label">Calories</label>
+            <div class="col-sm-15">
+              <input type="text" readonly class="form-control-plaintext" id="calories" v-model="ingredient.calories">
             </div>
-            <input type="number" step=".01" class="form-control" v-model="ingredient.calories" name="calories" readonly/>
           </div>
-          <div class="input-group mb-3">
-            <div class="input-group-prepend">
-              <span class="input-group-text" id="input-ingredient-servingSizeG">Serving size (g)</span>
+          <div class="mb-3 row">
+            <label for="servingSizeG" class="col-sm-3 col-form-label">Serving size (g)</label>
+            <div class="col-sm-15">
+              <input type="text" readonly class="form-control-plaintext" id="calories" v-model="ingredient.servingSizeG">
             </div>
-            <input type="number" step=".01" class="form-control" v-model="ingredient.servingSizeG" name="servingSizeG" readonly/>
           </div>
-          <div class="input-group mb-3">
-            <div class="input-group-prepend">
-              <span class="input-group-text" id="input-ingredient-fatTotalG">Fat total (g)</span>
+          <div class="mb-3 row">
+            <label for="fatTotalG" class="col-sm-3 col-form-label">Fat total (g)</label>
+            <div class="col-sm-15">
+              <input type="text" readonly class="form-control-plaintext" id="fatTotalG" v-model="ingredient.fatTotalG">
             </div>
-            <input type="number" step=".01" class="form-control" v-model="ingredient.fatTotalG" name="fatTotalG" readonly/>
           </div>
-          <div class="input-group mb-3">
-            <div class="input-group-prepend">
-              <span class="input-group-text" id="input-ingredient-fatSaturatedG">Fat saturated (g)</span>
+          <div class="mb-3 row">
+            <label for="fatSaturatedG" class="col-sm-3 col-form-label">Fat saturated (g)</label>
+            <div class="col-sm-15">
+              <input type="text" readonly class="form-control-plaintext" id="fatSaturatedG" v-model="ingredient.fatSaturatedG">
             </div>
-            <input type="number" step=".01" class="form-control" v-model="ingredient.fatSaturatedG" name="fatSaturatedG" readonly/>
           </div>
-          <div class="input-group mb-3">
-            <div class="input-group-prepend">
-              <span class="input-group-text" id="input-ingredient-proteinG">Protein (g)</span>
+          <div class="mb-3 row">
+            <label for="proteinG" class="col-sm-3 col-form-label">Protein (g)</label>
+            <div class="col-sm-15">
+              <input type="text" readonly class="form-control-plaintext" id="proteinG" v-model="ingredient.proteinG">
             </div>
-            <input type="number" step=".01" class="form-control" v-model="ingredient.proteinG" name="proteinG" readonly/>
           </div>
-          <div class="input-group mb-3">
-            <div class="input-group-prepend">
-              <span class="input-group-text" id="input-ingredient-sodiumMg">Sodium (Mg)</span>
+          <div class="mb-3 row">
+            <label for="sodiumMg" class="col-sm-3 col-form-label">Sodium (Mg)</label>
+            <div class="col-sm-15">
+              <input type="text" readonly class="form-control-plaintext" id="sodiumMg" v-model="ingredient.sodiumMg">
             </div>
-            <input type="number" class="form-control" v-model="ingredient.sodiumMg" name="sodiumMg" readonly/>
           </div>
-          <div class="input-group mb-3">
-            <div class="input-group-prepend">
-              <span class="input-group-text" id="input-ingredient-potassiumMg">Potassium (Mg)</span>
+          <div class="mb-3 row">
+            <label for="potassiumMg" class="col-sm-3 col-form-label">Potassium (Mg)</label>
+            <div class="col-sm-15">
+              <input type="text" readonly class="form-control-plaintext" id="potassiumMg" v-model="ingredient.potassiumMg">
             </div>
-            <input type="number" class="form-control" v-model="ingredient.potassiumMg" name="potassiumMg" readonly/>
           </div>
-          <div class="input-group mb-3">
-            <div class="input-group-prepend">
-              <span class="input-group-text" id="input-ingredient-cholesterolMg">Cholesterol (Mg)</span>
+          <div class="mb-3 row">
+            <label for="cholesterolMg" class="col-sm-3 col-form-label">Cholesterol (Mg)</label>
+            <div class="col-sm-15">
+              <input type="text" readonly class="form-control-plaintext" id="cholesterolMg" v-model="ingredient.cholesterolMg">
             </div>
-            <input type="number" class="form-control" v-model="ingredient.cholesterolMg" name="cholesterolMg" readonly/>
           </div>
-          <div class="input-group mb-3">
-            <div class="input-group-prepend">
-              <span class="input-group-text" id="input-ingredient-carbohydratesTotalG">Carbohydrates Total (g)</span>
+          <div class="mb-3 row">
+            <label for="carbohydratesTotalG" class="col-sm-3 col-form-label">Carbohydrates Total (g)</label>
+            <div class="col-sm-15">
+              <input type="text" readonly class="form-control-plaintext" id="carbohydratesTotalG" v-model="ingredient.carbohydratesTotalG">
             </div>
-            <input type="number" step=".01" class="form-control" v-model="ingredient.carbohydratesTotalG" name="carbohydratesTotalG" readonly/>
           </div>
-          <div class="input-group mb-3">
-            <div class="input-group-prepend">
-              <span class="input-group-text" id="input-ingredient-fiberG">Fiber (g)</span>
+          <div class="mb-3 row">
+            <label for="fiberG" class="col-sm-3 col-form-label">Fiber (g)</label>
+            <div class="col-sm-15">
+              <input type="text" readonly class="form-control-plaintext" id="fiberG" v-model="ingredient.fiberG">
             </div>
-            <input type="number" step=".01" class="form-control" v-model="ingredient.fiberG" name="fiberG" readonly/>
           </div>
-          <div class="input-group mb-3">
-            <div class="input-group-prepend">
-              <span class="input-group-text" id="input-ingredient-sugarG">Sugar (g)</span>
+          <div class="mb-3 row">
+            <label for="sugarG" class="col-sm-3 col-form-label">Sugar (g)</label>
+            <div class="col-sm-15">
+              <input type="text" readonly class="form-control-plaintext" id="sugarG" v-model="ingredient.sugarG">
             </div>
-            <input type="number" step=".01" class="form-control" v-model="ingredient.sugarG" name="sugarG" readonly/>
           </div>
         </form>
       </div>
