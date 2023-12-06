@@ -128,7 +128,7 @@ app.component("ingredient-profile", {
         width: 500,
         height: 300,
         format: "png",
-        chart: "{type:'bar',data:{labels:['January','February','March','April','May'],datasets:[{label:'Dogs',data:[50,60,70,180,190]}]},options:{scales:{yAxes:[{ticks:{callback:function(value){return'$'+value;}}}]}}}"
+        chart: this.getChartString(),
       },
       {
         responseType: "blob"
@@ -138,7 +138,28 @@ app.component("ingredient-profile", {
       .catch(() => {
         console.error("Issue retrieving chart");
       });
-    }
+    },
+    getChartString: () => `{
+      type: 'bar',
+      data: {
+        labels: ['January', 'February', 'March', 'April', 'May'],
+        datasets: [{
+          label: 'Dogs',
+          data: [ 50, 60, 70, 180, 190 ]
+        }]
+      },
+      options: {
+        scales: {
+          yAxes: [{
+            ticks: {
+              callback: function(value) {
+                return '$' + value;
+              }
+            }
+          }],
+        },
+      },
+    }`
   }
 });
 </script>
