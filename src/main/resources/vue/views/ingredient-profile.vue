@@ -133,33 +133,35 @@ app.component("ingredient-profile", {
       {
         responseType: "blob"
       })
-      .then(res => this.caloriesUrl =
-          URL.createObjectURL(new Blob([res.data], { type: "image/png" })))
+      .then(res => this.caloriesUrl = URL.createObjectURL(new Blob([res.data], { type: "image/png" })))
       .catch(() => {
         console.error("Issue retrieving chart");
       });
     },
     getChartString: () => `{
-      type: 'bar',
+      type: 'gauge',
       data: {
-        labels: ['January', 'February', 'March', 'April', 'May'],
-        datasets: [{
-          label: 'Dogs',
-          data: [ 50, 60, 70, 180, 190 ]
-        }]
+        datasets: [
+          {
+            value: 50,
+            data: [20, 40, 60],
+            backgroundColor: ['green', 'orange', 'red'],
+            borderWidth: 2,
+          },
+        ],
       },
       options: {
-        scales: {
-          yAxes: [{
-            ticks: {
-              callback: function(value) {
-                return '$' + value;
-              }
-            }
-          }],
+        valueLabel: {
+          fontSize: 22,
+          backgroundColor: 'transparent',
+          color: '#000',
+          formatter: function (value, context) {
+            return value + ' mph';
+          },
+          bottomMarginPercentage: 10,
         },
       },
     }`
-  }
+  },
 });
 </script>
