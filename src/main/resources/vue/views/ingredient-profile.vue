@@ -104,12 +104,14 @@ app.component("ingredient-profile", {
   template: "#ingredient-profile",
   data: () => ({
     ingredient: null,
+    recommendedDailyAllowances: null,
     noIngredientFound: false,
     caloriesUrl: null,
   }),
-  created: function () {
-    this.fetchIngredients()
-    this.fetchCharts()
+  created: async function () {
+    await this.fetchIngredients()
+    await this.fetchRdas()
+    await this.fetchCharts()
   },
   methods: {
     fetchIngredients: async function () {
@@ -119,22 +121,31 @@ app.component("ingredient-profile", {
       try {
         const res = await axios.get(url)
         this.ingredient = res.data
-      } catch {
-        console.error("No activity found for id passed in the path parameter: " + error)
+      } catch(error) {
+        console.error("No ingredient found for id passed in the path parameter: " + error)
+        this.noIngredientFound = true
+      }
+    },
+    fetchRdas: async function () {
+      try {
+        const res = await axios.get(`/api/ingredients/rda`)
+        this.recommendedDailyAllowances = res.data
+      } catch(error) {
+        console.error("Issue retrieving RDA information: " + error)
         this.noIngredientFound = true
       }
     },
     fetchCharts: async function () {
-      this.caloriesUrl = await this.fetchChart(40, 'mg')
+      this.caloriesUrl = await this.fetchChart(this.ingredient.calories, 'g', this.recommendedDailyAllowances.calories)
     },
-    fetchChart: async function (value, unit) {
+    fetchChart: async function (value, unit, recommendedDailyAllowance) {
       try {
         const res = await axios.post('https://quickchart.io/chart', {
           backgroundColor: "transparent",
           width: 500,
           height: 300,
           format: "png",
-          chart: this.getChartString(value, unit),
+          chart: this.getChartString(value, unit, recommendedDailyAllowance),
         },
         {
           responseType: "blob"
@@ -145,30 +156,32 @@ app.component("ingredient-profile", {
         console.error("Issue retrieving chart");
       }
     },
-    getChartString: (value, unit) => `{
-      type: 'gauge',
-      data: {
-        datasets: [
-          {
-            value: ${value},
-            data: [20, 40, 60],
-            backgroundColor: ['green', 'orange', 'red'],
-            borderWidth: 2,
-          },
-        ],
-      },
-      options: {
-        valueLabel: {
-          fontSize: 22,
-          backgroundColor: 'transparent',
-          color: '#000',
-          formatter: function (value, context) {
-            return value + ' ${unit}';
-          },
-          bottomMarginPercentage: 10,
+    getChartString: (value, unit, recommendedDailyAllowance) => {
+      const percentageOfRda = (value / recommendedDailyAllowance) * 100;
+
+      return `{
+        type: 'gauge',
+        data: {
+          datasets: [
+            {
+              value: ${percentageOfRda},
+              data: [20, 40, 60],
+              backgroundColor: ['green', 'orange', 'red'],
+              borderWidth: 2,
+            },
+          ],
         },
-      },
-    }`
+        options: {
+          valueLabel: {
+            fontSize: 22,
+            backgroundColor: 'transparent',
+            color: '#000',
+            formatter: () => ${value} + ' ${unit}',
+            bottomMarginPercentage: 10,
+          },
+        },
+      }`
+    }
   },
 });
 </script>
