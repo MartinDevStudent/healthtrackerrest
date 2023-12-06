@@ -112,38 +112,45 @@ app.component("ingredient-profile", {
     this.fetchCharts()
   },
   methods: {
-    fetchIngredients: function () {
-      const ingredientId = this.$javalin.pathParams["ingredient-id"];
-      const url = `/api/ingredients/${ingredientId}`
-      axios.get(url)
-        .then(res => this.ingredient = res.data)
-        .catch(() => {
-          console.error("No activity found for id passed in the path parameter: " + error)
-          this.noIngredientFound = true
-        });
+    fetchIngredients: async function () {
+      ingredientId = this.$javalin.pathParams["ingredient-id"];
+      url = `/api/ingredients/${ingredientId}`
+
+      try {
+        const res = await axios.get(url)
+        this.ingredient = res.data
+      } catch {
+        console.error("No activity found for id passed in the path parameter: " + error)
+        this.noIngredientFound = true
+      }
     },
-    fetchCharts: function () {
-      axios.post('https://quickchart.io/chart', {
-        backgroundColor: "transparent",
-        width: 500,
-        height: 300,
-        format: "png",
-        chart: this.getChartString(),
-      },
-      {
-        responseType: "blob"
-      })
-      .then(res => this.caloriesUrl = URL.createObjectURL(new Blob([res.data], { type: "image/png" })))
-      .catch(() => {
+    fetchCharts: async function () {
+      this.caloriesUrl = await this.fetchChart(40, 'mg')
+    },
+    fetchChart: async function (value, unit) {
+      try {
+        const res = await axios.post('https://quickchart.io/chart', {
+          backgroundColor: "transparent",
+          width: 500,
+          height: 300,
+          format: "png",
+          chart: this.getChartString(value, unit),
+        },
+        {
+          responseType: "blob"
+        })
+
+        return URL.createObjectURL(new Blob([res.data], { type: "image/png" }))
+      } catch {
         console.error("Issue retrieving chart");
-      });
+      }
     },
-    getChartString: () => `{
+    getChartString: (value, unit) => `{
       type: 'gauge',
       data: {
         datasets: [
           {
-            value: 50,
+            value: ${value},
             data: [20, 40, 60],
             backgroundColor: ['green', 'orange', 'red'],
             borderWidth: 2,
@@ -156,7 +163,7 @@ app.component("ingredient-profile", {
           backgroundColor: 'transparent',
           color: '#000',
           formatter: function (value, context) {
-            return value + ' mph';
+            return value + ' ${unit}';
           },
           bottomMarginPercentage: 10,
         },
