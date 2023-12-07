@@ -5,94 +5,58 @@
       <p> View <a :href="'/users'">all ingredients</a>.</p>
     </div>
     <div class="card bg-light mb-3" v-if="!noIngredientFound">
-      <div ref="table_div">
-      </div>
       <div class="card-header">
         <div class="row">
-          <div class="col-6"> Ingredient Profile </div>
+          <div class="col-6">
+            {{ this.ingredient.name[0].toUpperCase() + this.ingredient.name.slice(1).toLowerCase() }} Nutritional Profile ({{ this.ingredient.servingSize == null ? 100 : this.ingredient.servingSize }}g serving size)
+          </div>
         </div>
       </div>
       <div class="card-body">
-        <form>
-          <div class="mb-3 row">
-            <label for="id" class="col-sm-3 col-form-label">Ingredient ID</label>
-            <div class="col-sm-15">
-              <input type="text" readonly class="form-control-plaintext" id="id" v-model="ingredient.id">
+        <div class="container text-center">
+          <div class="row">
+            <div class="col">
+              <img v-bind:src="caloriesUrl" alt="Calories chart" />
+              <p><strong>Calories (grams)</strong></p>
+            </div>
+            <div class="col">
+              <img v-bind:src="fatTotalGUrl" alt="Total fat chart" />
+              <p><strong>Total fat (grams)</strong></p>
+            </div>
+            <div class="col">
+              <img v-bind:src="fatSaturatedGUrl" alt="Saturated fat chart" />
+              <p><strong>Saturated fat (grams)</strong></p>
             </div>
           </div>
-          <div class="mb-3 row">
-            <label for="name" class="col-sm-3 col-form-label">Name</label>
-            <div class="col-sm-15">
-              <input type="text" readonly class="form-control-plaintext" id="name" v-model="ingredient.name">
+          <div class="row">
+            <div class="col">
+              <img v-bind:src="proteinGUrl" alt="Protein chart" />
+              <p><strong>Protein (grams)</strong></p>
+            </div>
+            <div class="col">
+              <img v-bind:src="sodiumMgUrl" alt="Sodium chart" />
+              <p><strong>Sodium (milligrams)</strong></p>
+            </div>
+            <div class="col">
+              <img v-bind:src="potassiumMgUrl" alt="Potassium chart" />
+              <p><strong>Potassium (milligrams)</strong></p>
             </div>
           </div>
-          <div class="mb-3 row">
-            <label for="calories" class="col-sm-3 col-form-label">Calories</label>
-            <div class="col-sm-15">
-              <input type="text" readonly class="form-control-plaintext" id="calories" v-model="ingredient.calories">
+          <div class="row">
+            <div class="col">
+              <img v-bind:src="carbohydratesTotalGUrl" alt=" chart" />
+              <p><strong>Carbohydrates (grams)</strong></p>
+            </div>
+            <div class="col">
+              <img v-bind:src="fiberGUrl" alt="Fiber chart" />
+              <p><strong>Fiber (grams)</strong></p>
+            </div>
+            <div class="col">
+              <img v-bind:src="sugarGUrl" alt="Sugar chart" />
+              <p><strong>Sugar (grams)</strong></p>
             </div>
           </div>
-          <div class="mb-3 row">
-            <label for="servingSizeG" class="col-sm-3 col-form-label">Serving size (g)</label>
-            <div class="col-sm-15">
-              <input type="text" readonly class="form-control-plaintext" id="calories" v-model="ingredient.servingSizeG">
-            </div>
-          </div>
-          <div class="mb-3 row">
-            <label for="fatTotalG" class="col-sm-3 col-form-label">Fat total (g)</label>
-            <div class="col-sm-15">
-              <input type="text" readonly class="form-control-plaintext" id="fatTotalG" v-model="ingredient.fatTotalG">
-            </div>
-          </div>
-          <div class="mb-3 row">
-            <label for="fatSaturatedG" class="col-sm-3 col-form-label">Fat saturated (g)</label>
-            <div class="col-sm-15">
-              <input type="text" readonly class="form-control-plaintext" id="fatSaturatedG" v-model="ingredient.fatSaturatedG">
-            </div>
-          </div>
-          <div class="mb-3 row">
-            <label for="proteinG" class="col-sm-3 col-form-label">Protein (g)</label>
-            <div class="col-sm-15">
-              <input type="text" readonly class="form-control-plaintext" id="proteinG" v-model="ingredient.proteinG">
-            </div>
-          </div>
-          <div class="mb-3 row">
-            <label for="sodiumMg" class="col-sm-3 col-form-label">Sodium (Mg)</label>
-            <div class="col-sm-15">
-              <input type="text" readonly class="form-control-plaintext" id="sodiumMg" v-model="ingredient.sodiumMg">
-            </div>
-          </div>
-          <div class="mb-3 row">
-            <label for="potassiumMg" class="col-sm-3 col-form-label">Potassium (Mg)</label>
-            <div class="col-sm-15">
-              <input type="text" readonly class="form-control-plaintext" id="potassiumMg" v-model="ingredient.potassiumMg">
-            </div>
-          </div>
-          <div class="mb-3 row">
-            <label for="cholesterolMg" class="col-sm-3 col-form-label">Cholesterol (Mg)</label>
-            <div class="col-sm-15">
-              <input type="text" readonly class="form-control-plaintext" id="cholesterolMg" v-model="ingredient.cholesterolMg">
-            </div>
-          </div>
-          <div class="mb-3 row">
-            <label for="carbohydratesTotalG" class="col-sm-3 col-form-label">Carbohydrates Total (g)</label>
-            <div class="col-sm-15">
-              <input type="text" readonly class="form-control-plaintext" id="carbohydratesTotalG" v-model="ingredient.carbohydratesTotalG">
-            </div>
-          </div>
-          <div class="mb-3 row">
-            <label for="fiberG" class="col-sm-3 col-form-label">Fiber (g)</label>
-            <div class="col-sm-15">
-              <input type="text" readonly class="form-control-plaintext" id="fiberG" v-model="ingredient.fiberG">
-            </div>
-          </div>
-          <div class="mb-3 row">
-            <label for="sugarG" class="col-sm-3 col-form-label">Sugar (g)</label>
-            <div class="col-sm-15">
-              <input type="text" readonly class="form-control-plaintext" id="sugarG" v-model="ingredient.sugarG">
-            </div>
-          </div>
-        </form>
+        </div>
       </div>
     </div>
   </app-layout>
@@ -103,17 +67,117 @@ app.component("ingredient-profile", {
   template: "#ingredient-profile",
   data: () => ({
     ingredient: null,
+    rda: null,
     noIngredientFound: false,
+    caloriesUrl: null,
+    fatTotalGUrl: null,
+    fatSaturatedGUrl: null,
+    proteinGUrl: null,
+    sodiumMgUrl: null,
+    potassiumMgUrl: null,
+    cholesterolMgUrl: null,
+    carbohydratesTotalGUrl: null,
+    fiberGUrl: null,
+    sugarGUrl: null,
   }),
-  created: function () {
-    const ingredientId = this.$javalin.pathParams["ingredient-id"];
-    const url = `/api/ingredients/${ingredientId}`
-    axios.get(url)
-      .then(res => this.ingredient = res.data)
-      .catch(() => {
-        console.error("No activity found for id passed in the path parameter: " + error)
+  created: async function () {
+    await this.fetchIngredients()
+    await this.fetchRdas()
+    await this.fetchCharts()
+  },
+  methods: {
+    fetchIngredients: async function () {
+      const ingredientId = this.$javalin.pathParams["ingredient-id"];
+
+      try {
+        const res = await axios.get(`/api/ingredients/${ingredientId}`)
+        this.ingredient = res.data
+      } catch(error) {
+        console.error("No ingredient found for id passed in the path parameter: " + error)
         this.noIngredientFound = true
-      });
-  }
+      }
+    },
+    fetchRdas: async function () {
+      try {
+        const res = await axios.get(`/api/ingredients/rda`)
+        this.rda = res.data
+      } catch(error) {
+        console.error("Issue retrieving RDA information: " + error)
+        this.noIngredientFound = true
+      }
+    },
+    fetchCharts: async function () {
+      const grams = 'g';
+      const milliGrams = 'mg';
+      const {
+        calories,
+        fatTotalG,
+        fatSaturatedG,
+        proteinG,
+        sodiumMg,
+        potassiumMg,
+        cholesterolMg,
+        carbohydratesTotalG,
+        fiberG,
+        sugarG, } = this.ingredient;
+
+      this.caloriesUrl = await this.fetchChart(calories, grams, this.rda.calories)
+      this.fatTotalGUrl = await this.fetchChart(fatTotalG, grams, this.rda.fatTotalGUrl)
+      this.fatSaturatedGUrl = await this.fetchChart(fatSaturatedG, grams, this.rda.fatSaturatedG)
+      this.proteinGUrl = await this.fetchChart(proteinG, grams, this.rda.proteinG)
+      this.sodiumMgUrl = await this.fetchChart(sodiumMg, milliGrams, this.rda.sodiumMg)
+      this.potassiumMgUrl = await this.fetchChart(potassiumMg, milliGrams, this.rda.potassiumMg)
+      this.cholesterolMgUrl = await this.fetchChart(cholesterolMg, milliGrams, this.rda.cholesterolMg)
+      this.carbohydratesTotalGUrl = await this.fetchChart(carbohydratesTotalG, grams, this.rda.carbohydratesTotalG)
+      this.fiberGUrl = await this.fetchChart(fiberG, grams, this.rda.fiberG)
+      this.sugarGUrl = await this.fetchChart(sugarG, grams, this.rda.sugarG)
+    },
+
+    fetchChart: async function (value, unit, recommendedDailyAllowance) {
+      try {
+        const res = await axios.post('https://quickchart.io/chart', {
+          backgroundColor: "transparent",
+          width: 133,
+          height: 80,
+          format: "png",
+          chart: this.getChartString(value, unit, recommendedDailyAllowance),
+        },
+        {
+          responseType: "blob"
+        })
+
+        return this.parseBlobToImageUrl(res.data)
+      } catch {
+        console.error("Issue retrieving chart");
+      }
+    },
+    getChartString: (value, unit, recommendedDailyAllowance) => {
+      const percentageOfRda = (value / recommendedDailyAllowance) * 100;
+
+      return `{
+        type: 'gauge',
+        data: {
+          datasets: [
+            {
+              value: ${percentageOfRda},
+              data: [20, 40, 60],
+              backgroundColor: ['green', 'orange', 'red'],
+              borderWidth: 2,
+            },
+          ],
+        },
+        options: {
+          valueLabel: {
+            fontSize: 10,
+            backgroundColor: 'transparent',
+            color: '#000',
+            formatter: () => ${value} + ' ${unit}',
+            bottomMarginPercentage: 10,
+          },
+        },
+      }`
+    },
+    parseBlobToImageUrl: (imageData) => URL.createObjectURL(new Blob([imageData], {type: "image/png"})),
+  },
 });
 </script>
