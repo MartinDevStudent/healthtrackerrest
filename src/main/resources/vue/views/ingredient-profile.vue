@@ -16,43 +16,43 @@
         <div class="container text-center">
           <div class="row">
             <div class="col">
-              <img v-bind:src="caloriesUrl" />
+              <img v-bind:src="caloriesUrl" alt="Calories chart" />
               <p><strong>Calories (grams)</strong></p>
             </div>
             <div class="col">
-              <img v-bind:src="fatTotalGUrl" />
+              <img v-bind:src="fatTotalGUrl" alt="Total fat chart" />
               <p><strong>Total fat (grams)</strong></p>
             </div>
             <div class="col">
-              <img v-bind:src="fatSaturatedGUrl" />
+              <img v-bind:src="fatSaturatedGUrl" alt="Saturated fat chart" />
               <p><strong>Saturated fat (grams)</strong></p>
             </div>
           </div>
           <div class="row">
             <div class="col">
-              <img v-bind:src="proteinGUrl" />
+              <img v-bind:src="proteinGUrl" alt="Protein chart" />
               <p><strong>Protein (grams)</strong></p>
             </div>
             <div class="col">
-              <img v-bind:src="sodiumMgUrl" />
+              <img v-bind:src="sodiumMgUrl" alt="Sodium chart" />
               <p><strong>Sodium (milligrams)</strong></p>
             </div>
             <div class="col">
-              <img v-bind:src="potassiumMgUrl" />
+              <img v-bind:src="potassiumMgUrl" alt="Potassium chart" />
               <p><strong>Potassium (milligrams)</strong></p>
             </div>
           </div>
           <div class="row">
             <div class="col">
-              <img v-bind:src="carbohydratesTotalGUrl" />
+              <img v-bind:src="carbohydratesTotalGUrl" alt=" chart" />
               <p><strong>Carbohydrates (grams)</strong></p>
             </div>
             <div class="col">
-              <img v-bind:src="fiberGUrl" />
+              <img v-bind:src="fiberGUrl" alt="Fiber chart" />
               <p><strong>Fiber (grams)</strong></p>
             </div>
             <div class="col">
-              <img v-bind:src="sugarGUrl" />
+              <img v-bind:src="sugarGUrl" alt="Sugar chart" />
               <p><strong>Sugar (grams)</strong></p>
             </div>
           </div>
