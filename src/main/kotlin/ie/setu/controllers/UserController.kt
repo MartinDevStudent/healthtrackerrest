@@ -41,7 +41,10 @@ class UserController : CrudHandler {
      *
      * @param ctx The context for handling the HTTP request and response.
      */
-    override fun getOne(ctx: Context, resourceId: String) {
+    override fun getOne(
+        ctx: Context,
+        resourceId: String,
+    ) {
         val user = userDao.findById(resourceId.toInt())
         if (user != null) {
             ctx.json(UserResponseDTO.fromUser(user))
@@ -96,7 +99,10 @@ class UserController : CrudHandler {
      *
      * @param ctx The context for handling the HTTP request and response.
      */
-    override fun delete(ctx: Context, resourceId: String) {
+    override fun delete(
+        ctx: Context,
+        resourceId: String,
+    ) {
         if (userDao.delete(resourceId.toInt()) != 0) {
             ctx.status(204)
         } else {
@@ -109,7 +115,10 @@ class UserController : CrudHandler {
      *
      * @param ctx The context for handling the HTTP request and response.
      */
-    override fun update(ctx: Context, resourceId: String) {
+    override fun update(
+        ctx: Context,
+        resourceId: String,
+    ) {
         val userId = resourceId.toInt()
         val userDto: CreateUserDTO = jsonToObject(ctx.body())
 
