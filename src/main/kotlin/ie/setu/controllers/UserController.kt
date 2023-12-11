@@ -14,7 +14,7 @@ import jsonToObject
  *
  * This object provides functionality for retrieving, adding, updating, and deleting user information.
  */
-class UserController : CrudHandler {
+object UserController : CrudHandler {
     private val userDao = UserDAO()
 
     /**

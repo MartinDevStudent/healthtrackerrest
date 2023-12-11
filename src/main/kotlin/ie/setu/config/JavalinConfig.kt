@@ -11,7 +11,6 @@ import io.javalin.Javalin
 import io.javalin.apibuilder.ApiBuilder.crud
 import io.javalin.apibuilder.ApiBuilder.delete
 import io.javalin.apibuilder.ApiBuilder.get
-import io.javalin.apibuilder.ApiBuilder.patch
 import io.javalin.apibuilder.ApiBuilder.path
 import io.javalin.apibuilder.ApiBuilder.post
 import io.javalin.http.Context
@@ -79,15 +78,7 @@ class JavalinConfig {
     private fun registerRoutes(app: Javalin) {
         app.routes {
             // Activities
-            path("api/activities") {
-                get(ActivityController::getAllActivities, Roles.ANYONE)
-                post(ActivityController::addActivity, Roles.ANYONE)
-                path("{activity-id}") {
-                    get(ActivityController::getActivityByActivityId, Roles.ANYONE)
-                    delete(ActivityController::deleteActivity, Roles.ANYONE)
-                    patch(ActivityController::updateActivity, Roles.ANYONE)
-                }
-            }
+            crud("api/activities/{activity-id}", ActivityController, Roles.ANYONE)
 
             // Login
             path("api/login") {
@@ -122,10 +113,7 @@ class JavalinConfig {
             }
 
             // User
-            crud("api/users/{user-id}", UserController(), Roles.ANYONE)
-            path("api/users/email/{email-id}") {
-                get(UserController()::getUserByEmail, Roles.ANYONE) // TODO: check this works
-            }
+            crud("api/users/{user-id}", UserController, Roles.ANYONE)
             path("api/users/{user-id}") {
                 path("activities") {
                     get(ActivityController::getActivitiesByUserId, Roles.ANYONE)
@@ -139,6 +127,9 @@ class JavalinConfig {
                         delete(MealController::deleteUserMealByMealId, Roles.ANYONE)
                     }
                 }
+            }
+            path("api/users/email/{email-id}") {
+                get(UserController::getUserByEmail, Roles.ANYONE) // TODO: check this works
             }
 
             // Frontend
