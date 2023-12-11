@@ -132,6 +132,7 @@ class JavalinConfig {
                 get(UserController::getUserByEmail, Roles.ANYONE) // TODO: check this works
             }
 
+
             // Frontend
             get(VueComponent("<home-page></home-page>"), Roles.ANYONE)
             path("activities") {
