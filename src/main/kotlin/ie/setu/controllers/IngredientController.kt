@@ -22,7 +22,7 @@ object IngredientController {
      *
      * @param ctx The context object containing request and response information.
      */
-    fun getAllIngredients(ctx: Context) {
+    fun getAll(ctx: Context) {
         val ingredients = ingredientDao.getAll()
         if (ingredients.size != 0) {
             ctx.json(ingredients)
@@ -41,7 +41,7 @@ object IngredientController {
      *
      * @param ctx The context object containing the ingredient ID as a path parameter.
      */
-    fun getIngredientByIngredientId(ctx: Context) {
+    fun getOne(ctx: Context) {
         val ingredient = ingredientDao.findByIngredientId(ctx.pathParam("ingredient-id").toInt())
         if (ingredient != null) {
             ctx.json(ingredient)

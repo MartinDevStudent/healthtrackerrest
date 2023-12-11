@@ -90,22 +90,22 @@ class JavalinConfig {
 
             // Ingredients
             path("api/ingredients") {
-                get(IngredientController::getAllIngredients, Roles.ANYONE)
+                get(IngredientController::getAll, Roles.ANYONE)
                 path("rda") {
                     get(IngredientController::getRecommendedDailyAllowances, Roles.ANYONE)
                 }
                 path("{ingredient-id}") {
-                    get(IngredientController::getIngredientByIngredientId, Roles.ANYONE)
+                    get(IngredientController::getOne, Roles.ANYONE)
                 }
             }
 
             // Meals
             path("api/meals") {
-                get(MealController::getAllMeals, Roles.ANYONE)
-                post(MealController::addMeal, Roles.ANYONE)
+                get(MealController::getAll, Roles.ANYONE)
+                post(MealController::create, Roles.ANYONE)
                 path("{meal-id}") {
-                    get(MealController::getMealByMealId, Roles.ANYONE)
-                    delete(MealController::deleteMeal, Roles.ANYONE)
+                    get(MealController::getOne, Roles.ANYONE)
+                    delete(MealController::delete, Roles.ANYONE)
                     path("ingredients") {
                         get(MealController::getIngredientsByMealId, Roles.ANYONE)
                     }
@@ -116,20 +116,20 @@ class JavalinConfig {
             crud("api/users/{user-id}", UserController, Roles.ANYONE)
             path("api/users/{user-id}") {
                 path("activities") {
-                    get(ActivityController::getActivitiesByUserId, Roles.ANYONE)
-                    delete(ActivityController::deleteActivitiesByUserId, Roles.ANYONE)
+                    get(ActivityController::getByUserId, Roles.ANYONE)
+                    delete(ActivityController::deleteByUserId, Roles.ANYONE)
                 }
                 path("meals") {
-                    get(MealController::getMealsByUserId, Roles.ANYONE)
-                    post(MealController::addUserMeal, Roles.ANYONE)
+                    get(MealController::getByUserId, Roles.ANYONE)
+                    post(MealController::createUserMeal, Roles.ANYONE)
                     delete(MealController::deleteUserMealsByUserId, Roles.ANYONE)
                     path("{meal-id}") {
                         delete(MealController::deleteUserMealByMealId, Roles.ANYONE)
                     }
                 }
             }
-            path("api/users/email/{email-id}") {
-                get(UserController::getUserByEmail, Roles.ANYONE) // TODO: check this works
+            path("api/users/email/{email-address}") {
+                get(UserController::getByEmailAddress, Roles.ANYONE) // TODO: check this works
             }
 
             // Frontend

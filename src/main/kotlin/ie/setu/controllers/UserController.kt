@@ -59,8 +59,8 @@ object UserController : CrudHandler {
      *
      * @param ctx The context for handling the HTTP request and response.
      */
-    fun getUserByEmail(ctx: Context) {
-        val user = userDao.findByEmail(ctx.pathParam("email-id"))
+    fun getByEmailAddress(ctx: Context) {
+        val user = userDao.findByEmail(ctx.pathParam("email-address"))
         if (user != null) {
             ctx.json(UserResponseDTO.fromUser(user))
             ctx.status(200)
