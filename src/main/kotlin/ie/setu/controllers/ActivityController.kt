@@ -8,7 +8,7 @@ import io.javalin.http.Context
 import jsonToObject
 import mapObjectWithDateToJson
 
-object ActivityController  : CrudHandler {
+object ActivityController : CrudHandler {
     private val activityDao = ActivityDAO()
     private val userDao = UserDAO()
 
@@ -48,7 +48,10 @@ object ActivityController  : CrudHandler {
      * @param ctx         The context object to which the response is sent.
      * @param resourceId  The resource ID used to identify the specific activity.
      */
-    override fun getOne(ctx: Context, resourceId: String) {
+    override fun getOne(
+        ctx: Context,
+        resourceId: String,
+    ) {
         val activity = activityDao.findByActivityId(resourceId.toInt())
         if (activity != null) {
             ctx.json(mapObjectWithDateToJson(activity))
@@ -114,7 +117,10 @@ object ActivityController  : CrudHandler {
      * @param ctx         The context object to which the response is sent.
      * @param resourceId  The resource ID used to identify the activity to be updated.
      */
-    override fun update(ctx: Context, resourceId: String) {
+    override fun update(
+        ctx: Context,
+        resourceId: String,
+    ) {
         val foundActivity: Activity = jsonToObject(ctx.body())
 
         if ((activityDao.update(id = resourceId.toInt(), activity = foundActivity)) != 0) {
@@ -137,7 +143,10 @@ object ActivityController  : CrudHandler {
      * @param ctx         The context object to which the response is sent.
      * @param resourceId  The resource ID used to identify the activity to be deleted.
      */
-    override fun delete(ctx: Context, resourceId: String) {
+    override fun delete(
+        ctx: Context,
+        resourceId: String,
+    ) {
         if (activityDao.delete(resourceId.toInt()) != 0) {
             ctx.status(204)
         } else {
