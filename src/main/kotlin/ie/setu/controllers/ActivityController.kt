@@ -66,7 +66,7 @@ object ActivityController : CrudHandler {
      *
      * @param ctx The context for handling the HTTP request and response.
      */
-    fun getActivitiesByUserId(ctx: Context) {
+    fun getByUserId(ctx: Context) {
         val activities = activityDao.findByUserId(ctx.pathParam("user-id").toInt())
         if (activities.isNotEmpty()) {
             ctx.json(mapObjectWithDateToJson(activities))
@@ -159,7 +159,7 @@ object ActivityController : CrudHandler {
      *
      * @param ctx The context for handling the HTTP request and response.
      */
-    fun deleteActivitiesByUserId(ctx: Context) {
+    fun deleteByUserId(ctx: Context) {
         if (activityDao.deleteByUserId(ctx.pathParam("user-id").toInt()) != 0) {
             ctx.status(204)
         } else {

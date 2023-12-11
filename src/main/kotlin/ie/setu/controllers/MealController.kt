@@ -17,7 +17,7 @@ object MealController {
      *
      * @param ctx The context for handling the HTTP request and response.
      */
-    fun getAllMeals(ctx: Context) {
+    fun getAll(ctx: Context) {
         val meals = mealDao.getAll()
         if (meals.isNotEmpty()) {
             ctx.json(meals)
@@ -32,7 +32,7 @@ object MealController {
      *
      * @param ctx The context for handling the HTTP request and response.
      */
-    fun getMealByMealId(ctx: Context) {
+    fun getOne(ctx: Context) {
         val meal = mealDao.findByMealId(ctx.pathParam("meal-id").toInt())
         if (meal != null) {
             ctx.json(meal)
@@ -47,7 +47,7 @@ object MealController {
      *
      * @param ctx The Javalin context object representing the HTTP request and response.
      */
-    fun getMealsByUserId(ctx: Context) {
+    fun getByUserId(ctx: Context) {
         val meals = mealDao.findByUserId(ctx.pathParam("user-id").toInt())
         if (meals.isNotEmpty()) {
             ctx.json(meals)
@@ -87,7 +87,7 @@ object MealController {
      *
      * @param ctx The context object containing the HTTP request body with the meal data.
      */
-    fun addMeal(ctx: Context) {
+    fun create(ctx: Context) {
         val mapper = jacksonObjectMapper()
         val mealDto = mapper.readValue<Meal>(ctx.body())
 
@@ -125,7 +125,7 @@ object MealController {
      * @param ctx The Javalin context object representing the HTTP request and response.
      * @throws NumberFormatException If the "user-id" path parameter cannot be converted to an integer.
      */
-    fun addUserMeal(ctx: Context) {
+    fun createUserMeal(ctx: Context) {
         val userId = ctx.pathParam("user-id").toInt()
         val mapper = jacksonObjectMapper()
         val mealDto = mapper.readValue<Meal>(ctx.body())
@@ -169,7 +169,7 @@ object MealController {
      *
      * @param ctx The context object containing the meal ID as a path parameter.
      */
-    fun deleteMeal(ctx: Context) {
+    fun delete(ctx: Context) {
         if (mealDao.delete(ctx.pathParam("meal-id").toInt()) != 0) {
             ctx.status(204)
         } else {
