@@ -8,6 +8,7 @@ import ie.setu.controllers.UserController
 import ie.setu.utils.authentication.JwtProvider
 import ie.setu.utils.authentication.decodeJWT
 import io.javalin.Javalin
+import io.javalin.apibuilder.ApiBuilder.crud
 import io.javalin.apibuilder.ApiBuilder.delete
 import io.javalin.apibuilder.ApiBuilder.get
 import io.javalin.apibuilder.ApiBuilder.patch
@@ -77,6 +78,7 @@ class JavalinConfig {
      */
     private fun registerRoutes(app: Javalin) {
         app.routes {
+            // Activities
             path("api/activities") {
                 get(ActivityController::getAllActivities, Roles.ANYONE)
                 post(ActivityController::addActivity, Roles.ANYONE)
@@ -86,12 +88,16 @@ class JavalinConfig {
                     patch(ActivityController::updateActivity, Roles.ANYONE)
                 }
             }
+
+            // Login
             path("api/login") {
                 post(AuthenticationController::login, Roles.ANYONE)
                 path("validate") {
                     get(AuthenticationController::validate, Roles.USER)
                 }
             }
+
+            // Ingredients
             path("api/ingredients") {
                 get(IngredientController::getAllIngredients, Roles.ANYONE)
                 path("rda") {
@@ -101,6 +107,8 @@ class JavalinConfig {
                     get(IngredientController::getIngredientByIngredientId, Roles.ANYONE)
                 }
             }
+
+            // Meals
             path("api/meals") {
                 get(MealController::getAllMeals, Roles.ANYONE)
                 post(MealController::addMeal, Roles.ANYONE)
@@ -112,31 +120,28 @@ class JavalinConfig {
                     }
                 }
             }
-            path("api/users") {
-                get(UserController::getAllUsers, Roles.ANYONE)
-                post(UserController::addUser, Roles.ANYONE)
-                path("{user-id}") {
-                    get(UserController::getUserByUserId, Roles.ANYONE)
-                    delete(UserController::deleteUser, Roles.ANYONE)
-                    patch(UserController::updateUser, Roles.ANYONE)
-                    path("activities") {
-                        get(ActivityController::getActivitiesByUserId, Roles.ANYONE)
-                        delete(ActivityController::deleteActivitiesByUserId, Roles.ANYONE)
-                    }
-                    path("meals") {
-                        get(MealController::getMealsByUserId, Roles.ANYONE)
-                        post(MealController::addUserMeal, Roles.ANYONE)
-                        delete(MealController::deleteUserMealsByUserId, Roles.ANYONE)
-                        path("{meal-id}") {
-                            delete(MealController::deleteUserMealByMealId, Roles.ANYONE)
-                        }
-                    }
+
+            // User
+            crud("api/users/{user-id}", UserController(), Roles.ANYONE)
+            path("api/users/email/{email-id}") {
+                get(UserController()::getUserByEmail, Roles.ANYONE) // TODO: check this works
+            }
+            path("api/users/{user-id}") {
+                path("activities") {
+                    get(ActivityController::getActivitiesByUserId, Roles.ANYONE)
+                    delete(ActivityController::deleteActivitiesByUserId, Roles.ANYONE)
                 }
-                path("email/{email}") {
-                    get(UserController::getUserByEmail, Roles.ANYONE)
+                path("meals") {
+                    get(MealController::getMealsByUserId, Roles.ANYONE)
+                    post(MealController::addUserMeal, Roles.ANYONE)
+                    delete(MealController::deleteUserMealsByUserId, Roles.ANYONE)
+                    path("{meal-id}") {
+                        delete(MealController::deleteUserMealByMealId, Roles.ANYONE)
+                    }
                 }
             }
 
+            // Frontend
             get(VueComponent("<home-page></home-page>"), Roles.ANYONE)
             path("activities") {
                 get(VueComponent("<activity-overview></activity-overview>"), Roles.ANYONE)
@@ -149,7 +154,6 @@ class JavalinConfig {
             path("login") {
                 get(VueComponent("<login-page></login-page>"), Roles.ANYONE)
             }
-
             path("meals") {
                 get(VueComponent("<meal-overview></meal-overview>"), Roles.ANYONE)
                 path("{meal-id}") {
