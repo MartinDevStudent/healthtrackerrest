@@ -84,7 +84,7 @@ class JavalinConfig {
             path("api/login") {
                 post(AuthenticationController::login, Roles.ANYONE)
                 path("validate") {
-                    get(AuthenticationController::validate, Roles.ANYONE)
+                    get(AuthenticationController::validate, Roles.USER, Roles.ADMIN)
                 }
             }
 
