@@ -46,15 +46,24 @@
       };
     },
     methods: {
-      login() {
-        axios.post("/api/login", {
-          email: this.formData.email,
-          password: this.formData.password,
-        }, {
-          headers: { "Content-Type": "application/json"}
-        })
-          .then(res => store.setToken(res.data.jwt))
-          .catch(() => alert("Error while logging in"));
+      async login() {
+        try {
+          const res = await axios.post("/api/login", {
+            email: this.formData.email,
+            password: this.formData.password,
+          }, {
+            headers: { "Content-Type": "application/json"}
+          })
+
+          if (res.status < 400) {
+            store.setToken(res.data.jwt)
+            alert("You have logged in!")
+          } else {
+            alert("Invalid login details")
+          }
+        } catch {
+          alert("Error while logging in")
+        }
       },
       validate() {
         axios.get("/api/login/validate", {
