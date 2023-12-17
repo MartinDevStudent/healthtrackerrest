@@ -28,6 +28,7 @@
               <a class="nav-link" href="/ingredients">Ingredient</a>
             </li>
           </ul>
+          <button class="btn btn-outline-success me-2" type="button"><a href="/login">Login</a></button>
         </div>
       </nav>
       <!--End of nav bar-->
@@ -43,7 +44,15 @@
 </template>
 
 <script>
-app.component("app-layout", {template: "#app-layout"});
+  app.component("app-layout",
+  {
+    template: "#app-layout",
+    computed: {
+      token: function () {
+        return store.token
+      }
+    }
+  });
 </script>
 
 <style>
