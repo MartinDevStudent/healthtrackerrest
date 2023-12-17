@@ -57,6 +57,7 @@
 
           if (res.status < 400) {
             store.setToken(res.data.jwt)
+            localStorage.setItem("token", JSON.stringify(res.data.jwt));
             alert("You have logged in!")
           } else {
             alert("Invalid login details")

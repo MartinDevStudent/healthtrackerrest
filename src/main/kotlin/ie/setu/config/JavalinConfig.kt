@@ -78,13 +78,13 @@ class JavalinConfig {
     private fun registerRoutes(app: Javalin) {
         app.routes {
             // Activities
-            crud("api/activities/{activity-id}", ActivityController, Roles.ANYONE)
+            crud("api/activities/{activity-id}", ActivityController, Roles.USER)
 
             // Login
             path("api/login") {
                 post(AuthenticationController::login, Roles.ANYONE)
                 path("validate") {
-                    get(AuthenticationController::validate, Roles.USER)
+                    get(AuthenticationController::validate, Roles.ANYONE)
                 }
             }
 

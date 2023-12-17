@@ -84,16 +84,20 @@ app.component("activity-overview", {
     activities: [],
     users: [],
     formData: [],
-    hideForm :true,
+    hideForm: true,
+    token: null,
   }),
   created() {
+    this.getToken();
     this.fetchActivities();
     this.fetchUsers();
   },
   methods: {
     fetchActivities: async function () {
       try {
-        const res = await axios.get("/api/activities")
+        const res = await axios.get("/api/activities", {
+          headers: { "Authorization": `Bearer ${this.token}`}
+        })
         this.activities = res.data
       } catch(error) {
         if (error.response.status !== 404) {
@@ -108,7 +112,9 @@ app.component("activity-overview", {
         const url = `/api/activities/${activityId}`;
 
         try {
-          const res = await axios.delete(url)
+          const res = await axios.delete(url, {
+            headers: { "Authorization": `Bearer ${this.token}`}
+          })
 
           //delete from the local state so Vue will reload list automatically
           this.activities.splice(index, 1).push(res.data)
@@ -121,15 +127,17 @@ app.component("activity-overview", {
       const url = `/api/activities`;
 
       try {
-        const response = await axios.post(url, {
+        const res = await axios.post(url, {
             description: this.formData.description,
             duration: this.formData.duration,
             calories: this.formData.calories,
             started: this.formData.started,
             userId: this.formData.userId
+        }, {
+          headers: { "Authorization": `Bearer ${this.token}`}
         })
 
-        this.activities.push(response.data)
+        this.activities.push(res.data)
         this.hideForm= true;
       } catch(error)  {
         console.error(error)
@@ -142,7 +150,10 @@ app.component("activity-overview", {
       } catch {
         alert("Error while fetching users")
       }
+    },
+    getToken: function () {
+      this.token = JSON.parse(localStorage.getItem("token"))
     }
-  }
+  },
 });
 </script>
