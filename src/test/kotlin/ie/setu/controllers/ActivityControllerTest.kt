@@ -35,19 +35,19 @@ class ActivityControllerTest {
     private var jwtToken: String = ""
 
     @BeforeEach
-    fun deleteUserIfExists() {
+    fun createTestUser() {
         val response = requests.retrieveUserByEmail(VALID_EMAIL)
 
         if (response.status == 200) {
             val retrievedUser: User = jsonToObject(response.body.toString())
             requests.deleteUser(retrievedUser.id)
         }
+
+        requests.addUser(VALID_NAME, VALID_EMAIL, VALID_PASSWORD)
     }
 
     @BeforeEach
-    fun generateValidJwtToken() {
-        requests.addUser(VALID_NAME, VALID_EMAIL, VALID_PASSWORD)
-
+    fun fetchAuthenticationToken() {
         val loginResponse = requests.login(VALID_EMAIL, VALID_PASSWORD)
         val jwtDTO: JwtDTO = jsonToObject(loginResponse.body.toString())
 
