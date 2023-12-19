@@ -54,15 +54,13 @@ app.component("meal-profile", {
     noMealFound: false,
     ingredients: [],
   }),
-  created: function () {
+  created() {
     const mealId = this.$javalin.pathParams["meal-id"];
     const url = `/api/meals/${mealId}`
-    axios.get(url)
-      .then(res => this.meal = res.data)
-      .catch(() => {
-        console.error("No meal found for id passed in the path parameter: " + error)
-        this.noMealFound = true
-      })
+
+    this.getToken()
+    this.getMeal(url)
+
     axios.get(url + `/ingredients`)
       .then(res => this.ingredients = res.data)
         .catch(error => {
@@ -70,6 +68,17 @@ app.component("meal-profile", {
         })
     },
     methods: {
+      async getMeal(url) {
+        try {
+          const res = await axios.get(url,{
+            headers: { "Authorization": `Bearer ${this.token}`}
+          })
+          this.meal = res.data
+        } catch {
+          console.error("No meal found for id passed in the path parameter: " + error)
+          this.noMealFound = true
+        }
+      },
       async deleteMeal() {
         if (confirm('Are you sure you want to delete this meal? This action cannot be undone.', 'Warning')) {
           const mealId = this.$javalin.pathParams["meal-id"];
@@ -86,6 +95,9 @@ app.component("meal-profile", {
             console.error(error)
           }
         }
+      },
+      getToken() {
+        this.token = JSON.parse(localStorage.getItem("token"))
       },
     }
 
