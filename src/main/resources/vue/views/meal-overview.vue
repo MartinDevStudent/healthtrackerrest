@@ -24,7 +24,7 @@
                 <input type="text" class="form-control" v-model="formData.name" name="name" placeholder="Name"/>
               </div>
             </form>
-            <button rel="tooltip" title="Update" class="btn btn-info btn-simple btn-link" @click="addMeal()">Add Meal</button>
+            <button rel="tooltip" title="Update" class="btn btn-info btn-simple btn-link" @click="this.addMeal()">Add Meal</button>
           </div>
         </div>
       </div>
@@ -91,19 +91,19 @@ app.component("meal-overview", {
         }
       }
     },
-    addMeal() {
+    async addMeal() {
       const url = `/api/meals`;
-      axios.post(url,
-        {
-          name: this.formData.name,
+
+      try {
+        const res = await axios.post(url,
+          { name: this.formData.name },
+          { headers: { "Authorization": `Bearer ${this.token}`}
         })
-        .then(response => {
-          this.meals.push(response.data)
-          this.hideForm= true;
-        })
-        .catch(error => {
-          alert("Invalid name for meal")
-        })
+        this.meals.push(res.data)
+        this.hideForm= true;
+      } catch {
+        alert("Invalid name for meal")
+      }
     },
     getToken() {
       this.token = JSON.parse(localStorage.getItem("token"))
