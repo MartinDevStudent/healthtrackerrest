@@ -95,7 +95,7 @@ fun io.javalin.Javalin.registerRoutes() {
                 get(
                     "ingredients",
                     VueComponent("<meal-ingredient-overview></meal-ingredient-overview>"),
-                    Roles.ANYONE
+                    Roles.ANYONE,
                 )
             }
         }
@@ -106,7 +106,7 @@ fun io.javalin.Javalin.registerRoutes() {
                 get(
                     "activities",
                     VueComponent("<user-activity-overview></user-activity-overview>"),
-                    Roles.ANYONE
+                    Roles.ANYONE,
                 )
             }
         }
