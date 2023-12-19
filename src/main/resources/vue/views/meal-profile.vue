@@ -60,12 +60,7 @@ app.component("meal-profile", {
 
     this.getToken()
     this.getMeal(url)
-
-    axios.get(url + `/ingredients`)
-      .then(res => this.ingredients = res.data)
-        .catch(error => {
-          console.error("No ingredients in this meal: " + error)
-        })
+    this.getIngredientsByMealId(url)
     },
     methods: {
       async getMeal(url) {
@@ -74,9 +69,19 @@ app.component("meal-profile", {
             headers: { "Authorization": `Bearer ${this.token}`}
           })
           this.meal = res.data
-        } catch {
+        } catch(error) {
           console.error("No meal found for id passed in the path parameter: " + error)
           this.noMealFound = true
+        }
+      },
+      async getIngredientsByMealId(baseUrl) {
+        try {
+          const res = await axios.get(baseUrl + `/ingredients`,{
+            headers: { "Authorization": `Bearer ${this.token}`}
+          })
+          this.ingredients = res.data
+        } catch(error) {
+          console.error("No ingredients in this meal: " + error)
         }
       },
       async deleteMeal() {
