@@ -8,6 +8,9 @@ import ie.setu.helpers.IntegrationTestHelper
 import ie.setu.helpers.ServerContainer
 import ie.setu.helpers.VALID_EMAIL
 import ie.setu.helpers.VALID_MEAL_NAME
+import ie.setu.helpers.VALID_NAME
+import ie.setu.helpers.VALID_PASSWORD
+import ie.setu.utils.authentication.JwtDTO
 import jsonToObject
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotEquals
@@ -22,6 +25,27 @@ class IngredientControllerTest {
     private val app = ServerContainer.instance
     private val origin = "http://localhost:" + app.port()
     private val requests = IntegrationTestHelper(origin)
+    private var jwtToken: String = ""
+
+    @BeforeEach
+    fun createTestUser() {
+        val response = requests.retrieveUserByEmail(VALID_EMAIL)
+
+        if (response.status == 200) {
+            val retrievedUser: User = jsonToObject(response.body.toString())
+            requests.deleteUser(retrievedUser.id)
+        }
+
+        requests.addUser(VALID_NAME, VALID_EMAIL, VALID_PASSWORD)
+    }
+
+    @BeforeEach
+    fun fetchAuthenticationToken() {
+        val loginResponse = requests.login(VALID_EMAIL, VALID_PASSWORD)
+        val jwtDTO: JwtDTO = jsonToObject(loginResponse.body.toString())
+
+        jwtToken = jwtDTO.jwt
+    }
 
     /**
      * Ensures that a user with the valid email does not exist in the system before each test.
@@ -65,7 +89,7 @@ class IngredientControllerTest {
         @Test
         fun `getting an ingredient by id when id exists, returns a 200 response`() {
             // Arrange - add the meal to retrieve ingredient
-            val addMealResponse = requests.addMeal(VALID_MEAL_NAME)
+            val addMealResponse = requests.addMeal(VALID_MEAL_NAME, jwtToken)
             val addedMeal: Meal = jsonToObject(addMealResponse.body.toString())
             val addedIngredientsResponse = requests.retrieveIngredientByMealId(addedMeal.id)
             val addedIngredients: ArrayList<Ingredient> = jsonToObject(addedIngredientsResponse.body.toString())
@@ -75,7 +99,7 @@ class IngredientControllerTest {
             assertEquals(200, retrieveResponse.status)
 
             // After - restore the db to previous state by deleting the added meal
-            val deleteMealResponse = requests.deleteMeal(addedMeal.id)
+            val deleteMealResponse = requests.deleteMeal(addedMeal.id, jwtToken)
             assertEquals(204, deleteMealResponse.status)
         }
 
@@ -94,7 +118,7 @@ class IngredientControllerTest {
         @Test
         fun `getting ingredients by meal id when meal exists, returns a 200 response`() {
             // Arrange - add the meal and ingredients
-            val addMealResponse = requests.addMeal(VALID_MEAL_NAME)
+            val addMealResponse = requests.addMeal(VALID_MEAL_NAME, jwtToken)
             val addedMeal: Meal = jsonToObject(addMealResponse.body.toString())
 
             // Assert - retrieve the ingredients from the database and verify return code
@@ -102,7 +126,7 @@ class IngredientControllerTest {
             assertEquals(200, retrieveResponse.status)
 
             // After - restore the db to previous state by deleting the added meal
-            val deleteMealResponse = requests.deleteMeal(addedMeal.id)
+            val deleteMealResponse = requests.deleteMeal(addedMeal.id, jwtToken)
             assertEquals(204, deleteMealResponse.status)
         }
 
