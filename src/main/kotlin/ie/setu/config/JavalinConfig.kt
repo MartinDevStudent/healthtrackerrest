@@ -5,13 +5,12 @@ import ie.setu.utils.authentication.decodeJWT
 import io.javalin.Javalin
 import io.javalin.http.Context
 import io.javalin.json.JavalinJackson
-import javalinjwt.JWTAccessManager
 import jsonObjectMapper
 
 class JavalinConfig {
     val app =
         Javalin.create { config ->
-            config.accessManager(JWTAccessManager("level", rolesMapping, Roles.ANYONE))
+            config.accessManager(AccessManagerConfig())
             // Added this jsonMapper for our integration tests - serialise objects to json
             config.jsonMapper(JavalinJackson(jsonObjectMapper()))
             config.staticFiles.enableWebjars()
