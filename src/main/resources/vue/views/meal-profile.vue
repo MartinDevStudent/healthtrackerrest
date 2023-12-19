@@ -70,21 +70,23 @@ app.component("meal-profile", {
         })
     },
     methods: {
-      deleteMeal: function () {
-        if (confirm("Do you really want to delete?")) {
+      async deleteMeal() {
+        if (confirm('Are you sure you want to delete this meal? This action cannot be undone.', 'Warning')) {
           const mealId = this.$javalin.pathParams["meal-id"];
-          const url = `/api/meals/${mealId}`
-          axios.delete(url)
-            .then( _ => {
-              alert("Meal deleted")
-              //display the /meals endpoint
-              window.location.href = '/meals';
+          const url = `/api/meals/${mealId}`;
+
+          try {
+            await axios.delete(url, {
+              headers: { "Authorization": `Bearer ${this.token}`}
             })
-            .catch(function (error) {
-              console.error(error)
-            });
+            alert("Meal deleted")
+            //display the /meals endpoint
+            window.location.href = '/meals';
+          } catch(error) {
+            console.error(error)
+          }
         }
-      }
+      },
     }
 
 });

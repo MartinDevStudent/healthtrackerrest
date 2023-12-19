@@ -74,18 +74,21 @@ app.component("meal-overview", {
         }
       }
     },
-    deleteMeal(meal, index) {
+    async deleteMeal(meal, index) {
       if (confirm('Are you sure you want to delete this meal? This action cannot be undone.', 'Warning')) {
         //user confirmed delete
         const mealId = meal.id;
         const url = `/api/meals/${mealId}`;
-        axios.delete(url)
-          .then(response =>
-              //delete from the local state so Vue will reload list automatically
-              this.meals.splice(index, 1).push(response.data))
-          .catch(function (error) {
-            console.error(error)
-          });
+
+        try {
+          const res = await axios.delete(url, {
+            headers: { "Authorization": `Bearer ${this.token}`}
+          })
+          //delete from the local state so Vue will reload list automatically
+          this.meals.splice(index, 1).push(res.data)
+        } catch(error) {
+          console.error(error)
+        }
       }
     },
     addMeal() {
