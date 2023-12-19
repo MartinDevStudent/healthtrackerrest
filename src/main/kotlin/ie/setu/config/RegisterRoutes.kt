@@ -18,8 +18,8 @@ import io.javalin.vue.VueComponent
  * This method defines various RESTful API endpoints and associates them with corresponding controller methods.
  * It also specifies the required roles for accessing each endpoint.
  */
-fun io.javalin.Javalin.registerRoutes() {
-    this.routes {
+fun registerRoutes(app: io.javalin.Javalin) {
+    app.routes {
         // Activities
         crud("api/activities/{activity-id}", ActivityController, Roles.USER)
 

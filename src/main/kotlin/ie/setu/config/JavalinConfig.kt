@@ -25,7 +25,7 @@ class JavalinConfig {
     fun startJavalinService(): Javalin {
         app.start(getRemoteAssignedPort())
         app.before(JwtProvider.decodeHandler)
-        app.registerRoutes()
+        registerRoutes(app)
         return app
     }
 
@@ -38,7 +38,7 @@ class JavalinConfig {
      */
     fun getJavalinService(): Javalin {
         app.before(JwtProvider.decodeHandler)
-        app.registerRoutes()
+        registerRoutes(app)
         return app
     }
 
