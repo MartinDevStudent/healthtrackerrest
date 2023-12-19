@@ -54,18 +54,27 @@ app.component("meal-overview", {
   data: () => ({
     meals: [],
     formData: [],
-    hideForm :true,
+    hideForm: true,
+    token: null
   }),
   created() {
-    this.fetchMeals();
+    this.getToken();
+    this.getMeals();
   },
   methods: {
-    fetchMeals: function () {
-      axios.get("/api/meals")
-        .then(res => this.meals = res.data)
-        .catch(() => alert("Error while fetching meals"));
+    async getMeals() {
+      try {
+        const res = await axios.get("/api/meals",{
+          headers: { "Authorization": `Bearer ${this.token}`}
+        })
+        this.meals = res.data
+      } catch(error) {
+        if (error.response.status) {
+          alert("Error while fetching meals")
+        }
+      }
     },
-    deleteMeal: function (meal, index) {
+    deleteMeal(meal, index) {
       if (confirm('Are you sure you want to delete this meal? This action cannot be undone.', 'Warning')) {
         //user confirmed delete
         const mealId = meal.id;
@@ -79,7 +88,7 @@ app.component("meal-overview", {
           });
       }
     },
-    addMeal: function () {
+    addMeal() {
       const url = `/api/meals`;
       axios.post(url,
         {
@@ -92,7 +101,10 @@ app.component("meal-overview", {
         .catch(error => {
           alert("Invalid name for meal")
         })
-    }
+    },
+    getToken() {
+      this.token = JSON.parse(localStorage.getItem("token"))
+    },
   }
 });
 </script>
