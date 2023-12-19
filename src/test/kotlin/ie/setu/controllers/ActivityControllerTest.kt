@@ -58,13 +58,20 @@ class ActivityControllerTest {
     inner class CreateActivities {
         @Test
         fun `adding an activity with correct details returns a 201 response`() {
-
             val response = requests.retrieveUserByEmail(VALID_EMAIL)
             val retrievedUser: User = jsonToObject(response.body.toString())
 
             // Arrange & Act & Assert
             // add the activity and verify return code (using fixture data)
-            val addActivityResponse = requests.addActivity(VALID_DESCRIPTION, VALID_DURATION, VALID_CALORIES, validStarted, retrievedUser.id, jwtToken)
+            val addActivityResponse =
+                requests.addActivity(
+                    VALID_DESCRIPTION,
+                    VALID_DURATION,
+                    VALID_CALORIES,
+                    validStarted,
+                    retrievedUser.id,
+                    jwtToken,
+                )
             val retrievedActivity: Activity = jsonToObject(addActivityResponse.body.toString())
             assertEquals(201, addActivityResponse.status)
 
@@ -90,7 +97,15 @@ class ActivityControllerTest {
             val userId = Integer.MIN_VALUE
 
             // Act
-            val addActivityResponse = requests.addActivity(VALID_DESCRIPTION, VALID_DURATION, VALID_CALORIES, validStarted, userId, jwtToken)
+            val addActivityResponse =
+                requests.addActivity(
+                    VALID_DESCRIPTION,
+                    VALID_DURATION,
+                    VALID_CALORIES,
+                    validStarted,
+                    userId,
+                    jwtToken,
+                )
 
             // Assert
             assertEquals(404, requests.retrieveUserById(userId).status)
@@ -129,7 +144,15 @@ class ActivityControllerTest {
             // Arrange - retrieve the user and add the activity
             val retrievedUserResponse = requests.retrieveUserByEmail(VALID_EMAIL)
             val retrievedUser: User = jsonToObject(retrievedUserResponse.body.toString())
-            val addActivityResponse = requests.addActivity(VALID_DESCRIPTION, VALID_DURATION, VALID_CALORIES, validStarted, retrievedUser.id, jwtToken)
+            val addActivityResponse =
+                requests.addActivity(
+                    VALID_DESCRIPTION,
+                    VALID_DURATION,
+                    VALID_CALORIES,
+                    validStarted,
+                    retrievedUser.id,
+                    jwtToken,
+                )
             val addedActivity: Activity = jsonToObject(addActivityResponse.body.toString())
 
             // Assert - retrieve the user's activities from the database and verify return code
@@ -157,7 +180,15 @@ class ActivityControllerTest {
             // Arrange - retrieve the user and activity
             val retrievedUserResponse = requests.retrieveUserByEmail(VALID_EMAIL)
             val retrievedUser: User = jsonToObject(retrievedUserResponse.body.toString())
-            val addActivityResponse = requests.addActivity(VALID_DESCRIPTION, VALID_DURATION, VALID_CALORIES, validStarted, retrievedUser.id, jwtToken)
+            val addActivityResponse =
+                requests.addActivity(
+                    VALID_DESCRIPTION,
+                    VALID_DURATION,
+                    VALID_CALORIES,
+                    validStarted,
+                    retrievedUser.id,
+                    jwtToken,
+                )
 
             // Assert - retrieve the user's activities from the database and verify return code
             val retrieveResponse = requests.retrieveActivitiesByUserId(retrievedUser.id)
@@ -200,7 +231,7 @@ class ActivityControllerTest {
                     UPDATED_CALORIES,
                     updatedStarted,
                     updateUser.id,
-                    jwtToken
+                    jwtToken,
                 ).status,
             )
 
@@ -230,7 +261,7 @@ class ActivityControllerTest {
                     UPDATED_CALORIES,
                     updatedStarted,
                     Integer.MIN_VALUE,
-                    jwtToken
+                    jwtToken,
                 ).status,
             )
         }
@@ -249,7 +280,15 @@ class ActivityControllerTest {
             // Arrange - add the activity that we plan to do a delete on
             val retrievedUserResponse = requests.retrieveUserByEmail(VALID_EMAIL)
             val retrievedUser: User = jsonToObject(retrievedUserResponse.body.toString())
-            val addActivityResponse = requests.addActivity(VALID_DESCRIPTION, VALID_DURATION, VALID_CALORIES, validStarted, retrievedUser.id, jwtToken)
+            val addActivityResponse =
+                requests.addActivity(
+                    VALID_DESCRIPTION,
+                    VALID_DURATION,
+                    VALID_CALORIES,
+                    validStarted,
+                    retrievedUser.id,
+                    jwtToken,
+                )
             val addedActivity: Activity = jsonToObject(addActivityResponse.body.toString())
 
             // Act & Assert - delete the added activity and assert a 204 is returned

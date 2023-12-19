@@ -72,7 +72,7 @@ class AddUserTest {
         app.stop() // Stop the Javalin server after each test
     }
 
-    fun login( client: HttpClient) {
+    fun login(client: HttpClient) {
         driver.get("${client.origin}/login")
         driver.findElement(By.name("email")).click()
         driver.findElement(By.name("email")).sendKeys("user@mail.com")
@@ -82,7 +82,7 @@ class AddUserTest {
 
         wait!!.until(ExpectedConditions.alertIsPresent())
 
-        assertThat(driver.switchTo().alert().text,).isEqualTo("You have logged in!")
+        assertThat(driver.switchTo().alert().text).isEqualTo("You have logged in!")
 
         driver.switchTo().alert().accept()
     }
