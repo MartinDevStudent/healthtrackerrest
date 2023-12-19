@@ -37,8 +37,11 @@ class IntegrationTestHelper(var origin: String) {
      *
      * @return HttpResponse<String> containing the server's response as a string.
      */
-    fun retrieveActivities(): HttpResponse<String> {
-        return Unirest.get("$origin/api/activities/").asString()
+    fun retrieveActivities(token: String): HttpResponse<String> {
+        return Unirest
+            .get("$origin/api/activities/")
+            .header("Authorization", "Bearer $token")
+            .asString()
     }
 
     /**
@@ -47,8 +50,14 @@ class IntegrationTestHelper(var origin: String) {
      * @param userId The unique identifier of the user whose activities are to be retrieved.
      * @return An HttpResponse containing the string representation of the activities.
      */
-    fun retrieveActivityById(id: Int): HttpResponse<String> {
-        return Unirest.get("$origin/api/activities/$id").asString()
+    fun retrieveActivityById(
+        id: Int,
+        token: String,
+    ): HttpResponse<String> {
+        return Unirest
+            .get("$origin/api/activities/$id")
+            .header("Authorization", "Bearer $token")
+            .asString()
     }
 
     /**
@@ -82,9 +91,11 @@ class IntegrationTestHelper(var origin: String) {
         calories: Int,
         started: DateTime,
         userId: Int,
+        token: String,
     ): HttpResponse<JsonNode> {
         @Suppress("ktlint:standard:max-line-length")
         return Unirest.post("$origin/api/activities")
+            .header("Authorization", "Bearer $token")
             .body(
                 "{\"description\":\"$description\", \"duration\":\"$duration\", \"calories\":\"$calories\", \"started\":\"$started\", \"userId\":\"$userId\"}",
             )
@@ -109,9 +120,11 @@ class IntegrationTestHelper(var origin: String) {
         calories: Int,
         started: DateTime,
         userId: Int,
+        token: String,
     ): HttpResponse<JsonNode> {
         @Suppress("ktlint:standard:max-line-length")
         return Unirest.patch("$origin/api/activities/$id")
+            .header("Authorization", "Bearer $token")
             .body(
                 "{\"id\":\"$id\", \"description\":\"$description\", \"duration\":\"$duration\", \"calories\":\"$calories\", \"started\":\"$started\", \"userId\":\"$userId\"}",
             )
@@ -124,8 +137,14 @@ class IntegrationTestHelper(var origin: String) {
      * @param id The ID of the activity to be deleted.
      * @return The HTTP response indicating the result of the delete operation.
      */
-    fun deleteActivity(id: Int): HttpResponse<String> {
-        return Unirest.delete("$origin/api/activities/$id").asString()
+    fun deleteActivity(
+        id: Int,
+        token: String,
+    ): HttpResponse<String> {
+        return Unirest
+            .delete("$origin/api/activities/$id")
+            .header("Authorization", "Bearer $token")
+            .asString()
     }
 
     /**
@@ -163,8 +182,8 @@ class IntegrationTestHelper(var origin: String) {
      * @return An `HttpResponse<String>` object containing the server's response as a string.
      * @throws UnirestException if an error occurs during the HTTP request.
      */
-    fun retrieveUserByEmail(email: String): HttpResponse<String> {
-        return Unirest.get("$origin/api/users/email/$email").asString()
+    fun retrieveUserByEmail(email: String): HttpResponse<JsonNode> {
+        return Unirest.get("$origin/api/users/email/$email").asJson()
     }
 
     /**

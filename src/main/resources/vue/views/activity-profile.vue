@@ -73,52 +73,67 @@ app.component("activity-profile", {
   data: () => ({
     activity: null,
     noActivityFound: false,
+    token: null,
   }),
   created: function () {
-    console.log(this.activity)
-    const activityId = this.$javalin.pathParams["activity-id"];
-    const url = `/api/activities/${activityId}`
-    axios.get(url)
-        .then(res => this.activity = res.data)
-        .catch(() => {
-          alert("Error while fetching user" + activityId)
-          this.noUserFound = true
-        });
+    this.getToken();
+    this.getActivity();
   },
   methods: {
-    updateActivity: function () {
+    getActivity: async function () {
       const activityId = this.$javalin.pathParams["activity-id"];
       const url = `/api/activities/${activityId}`
-      axios.patch(url,
-          {
-            description: this.activity.description,
-            duration: this.activity.duration,
-            calories: this.activity.calories,
-            started: this.activity.started,
-            userId: this.activity.userId,
-          })
-          .then(response => {
-            this.activity.push(response.data)
-          })
-          .catch(error => {
-            console.error(error)
-          })
-      alert("Activity updated!")
+
+      try {
+        const res = await axios.get(url, {
+          headers: { "Authorization": `Bearer ${this.token}`}
+        })
+        this.activity = res.data
+      } catch {
+        alert("Error while fetching user" + activityId)
+        this.noUserFound = true
+      }
     },
-    deleteActivity: function () {
+    updateActivity: async function () {
+      const activityId = this.$javalin.pathParams["activity-id"];
+      const url = `/api/activities/${activityId}`
+
+      try {
+        const res = await axios.patch(url, {
+          description: this.activity.description,
+          duration: this.activity.duration,
+          calories: this.activity.calories,
+          started: this.activity.started,
+          userId: this.activity.userId,
+        },{
+          headers: { "Authorization": `Bearer ${this.token}`}
+        });
+
+        this.activity.push(res.data)
+        alert("Activity updated!")
+      } catch(error) {
+        console.error(error)
+      }
+    },
+    deleteActivity: async function () {
       if (confirm("Do you really want to delete?")) {
         const activityId = this.$javalin.pathParams["activity-id"];
         const url = `/api/activities/${activityId}`
-        axios.delete(url)
-            .then( _ => {
-              alert("Activity deleted")
-              //display the /activities endpoint
-              window.location.href = '/activities';
-            })
-            .catch(function (error) {
-              console.error(error)
-            });
+
+        try {
+          await axios.delete(url,{
+            headers: { "Authorization": `Bearer ${this.token}`}
+          })
+
+          alert("Activity deleted");
+          window.location.href = '/activities';
+        } catch(error) {
+            console.error(error)
+        }
       }
+    },
+    getToken: function () {
+      this.token = JSON.parse(localStorage.getItem("token"))
     }
   }
 });

@@ -54,6 +54,7 @@ app.component('home-page',
         meals: [],
         users: [],
         ingredients: [],
+        token: null,
       }),
       created() {
         axios.get("/api/users")
@@ -64,12 +65,12 @@ app.component('home-page',
                 alert("Error while fetching users")
               }
             });
-        axios.get("/api/activities")
-            .then(res => this.activities = res.data)
+        axios.get("/api/ingredients")
+            .then(res => this.ingredients = res.data)
             .catch(function (error) {
               if (error.response.status !== 404)
               {
-                alert("Error while fetching activities")
+                alert("Error while fetching ingredients")
               }
             });
         axios.get("/api/meals")
@@ -80,14 +81,26 @@ app.component('home-page',
                 alert("Error while fetching meals")
               }
             });
-        axios.get("/api/ingredients")
-            .then(res => this.ingredients = res.data)
-            .catch(function (error) {
-              if (error.response.status !== 404)
-              {
-                alert("Error while fetching ingredients")
-              }
-            });
+
+        this.getToken()
+        this.getActivities()
+      },
+      methods: {
+        getActivities: async function () {
+          try {
+            const res = await axios.get("/api/activities",{
+              headers: { "Authorization": `Bearer ${this.token}`}
+            })
+            this.activities = res.data
+          } catch(error) {
+            if (error.response.status !== 404) {
+              alert("Error while fetching activities")
+            }
+          }
+        },
+        getToken: function () {
+          this.token = JSON.parse(localStorage.getItem("token"))
+        }
       }
     });
 </script>

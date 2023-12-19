@@ -5,6 +5,7 @@ import ie.setu.config.JavalinConfig
 import io.github.bonigarcia.wdm.WebDriverManager
 import io.github.bonigarcia.wdm.config.DriverManagerType
 import io.javalin.Javalin
+import io.javalin.testtools.HttpClient
 import io.javalin.testtools.JavalinTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
@@ -71,12 +72,29 @@ class AddUserTest {
         app.stop() // Stop the Javalin server after each test
     }
 
+    fun login(client: HttpClient) {
+        driver.get("${client.origin}/login")
+        driver.findElement(By.name("email")).click()
+        driver.findElement(By.name("email")).sendKeys("user@mail.com")
+        driver.findElement(By.name("password")).click()
+        driver.findElement(By.name("password")).sendKeys("password")
+        driver.findElement(By.cssSelector("button[title='Login']")).click()
+
+        wait!!.until(ExpectedConditions.alertIsPresent())
+
+        assertThat(driver.switchTo().alert().text).isEqualTo("You have logged in!")
+
+        driver.switchTo().alert().accept()
+    }
+
     /**
      * Test case for adding a user.
      */
     @Test
     fun addUser() {
         JavalinTest.test(app) { _, client ->
+            // Login to site
+            login(client)
 
             // Navigate to the home page and assert that the title is displayed.
             driver.get("${client.origin}/")
