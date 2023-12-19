@@ -1,3 +1,3 @@
 package ie.setu.utils.authentication
 
-class JwtResponse(var jwt: String)
+class JwtDTO(var jwt: String)
