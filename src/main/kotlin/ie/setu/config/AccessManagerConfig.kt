@@ -9,14 +9,15 @@ enum class Roles : RouteRole {
     ADMIN,
 }
 
-fun AccessManagerConfig(): JWTAccessManager {
-     var rolesMapping: HashMap<String?, RouteRole?> =
-        object : HashMap<String?, RouteRole?>() {
-            init {
-                put("user", Roles.USER)
-                put("admin", Roles.ADMIN)
+val accessManagerConfig: JWTAccessManager
+    get() {
+        val rolesMapping: HashMap<String?, RouteRole?> =
+            object : HashMap<String?, RouteRole?>() {
+                init {
+                    put("user", Roles.USER)
+                    put("admin", Roles.ADMIN)
+                }
             }
-        }
 
-    return JWTAccessManager("level", rolesMapping, Roles.ANYONE)
-}
+        return JWTAccessManager("level", rolesMapping, Roles.ANYONE)
+    }
