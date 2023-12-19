@@ -23,7 +23,7 @@
                 <input type="password" class="form-control" v-model="formData.password" name="password" placeholder="Password"/>
               </div>
             </form>
-            <button rel="tooltip" title="Update" class="btn btn-info btn-simple btn-link mr-2" @click="login()">Login</button>
+            <button rel="tooltip" title="Login" class="btn btn-info btn-simple btn-link mr-2" @click="login()">Login</button>
             <button rel="tooltip" title="Validate" class="btn btn-info btn-simple btn-link" @click="validate()">Validate</button>
           </div>
         </div>
@@ -59,6 +59,7 @@
             store.setToken(res.data.jwt)
             localStorage.setItem("token", JSON.stringify(res.data.jwt));
             alert("You have logged in!")
+            location.href = '/';
           } else {
             alert("Invalid login details")
           }
