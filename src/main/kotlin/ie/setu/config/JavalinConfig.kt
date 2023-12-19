@@ -48,6 +48,7 @@ class JavalinConfig {
      * @return The configured Javalin app instance.
      */
     fun getJavalinService(): Javalin {
+        app.before(JwtProvider.decodeHandler)
         registerRoutes(app)
         return app
     }
