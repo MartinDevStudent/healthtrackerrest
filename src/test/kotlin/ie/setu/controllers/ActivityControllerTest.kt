@@ -2,7 +2,6 @@ package ie.setu.controllers
 
 import ie.setu.config.DbConfig
 import ie.setu.domain.Activity
-import ie.setu.domain.user.JwtDTO
 import ie.setu.domain.user.User
 import ie.setu.helpers.IntegrationTestHelper
 import ie.setu.helpers.ServerContainer
@@ -18,6 +17,7 @@ import ie.setu.helpers.VALID_NAME
 import ie.setu.helpers.VALID_PASSWORD
 import ie.setu.helpers.updatedStarted
 import ie.setu.helpers.validStarted
+import ie.setu.utils.authentication.JwtDTO
 import jsonToObject
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotEquals

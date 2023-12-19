@@ -5,7 +5,7 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import ie.setu.domain.repository.UserDAO
 import ie.setu.domain.user.UserLoginDTO
 import ie.setu.utils.authentication.JwtProvider
-import ie.setu.utils.authentication.JwtResponse
+import ie.setu.utils.authentication.JwtDTO
 import ie.setu.utils.authentication.decodeJWT
 import ie.setu.utils.authentication.isCorrectPassword
 import io.javalin.http.Context
@@ -37,7 +37,7 @@ object AuthenticationController {
 
         if (isCorrectPassword) {
             val token = JwtProvider.provider.generateToken(user)
-            ctx.json(JwtResponse(token))
+            ctx.json(JwtDTO(token))
             ctx.status(200)
         } else {
             ctx.status(401)
