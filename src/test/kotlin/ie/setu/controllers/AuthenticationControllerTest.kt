@@ -8,6 +8,7 @@ import ie.setu.helpers.ServerContainer
 import ie.setu.helpers.VALID_EMAIL
 import ie.setu.helpers.VALID_NAME
 import ie.setu.helpers.VALID_PASSWORD
+import ie.setu.utils.authentication.JwtDTO
 import jsonToObject
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
@@ -28,11 +29,16 @@ class AuthenticationControllerTest {
      */
     @BeforeEach
     fun ensureUserDoesNotExist() {
-        val response = requests.retrieveUserByEmail(VALID_EMAIL)
+        val loginResponse = requests.login("admin@mail.com", "password")
+        val jwtDTO: JwtDTO = jsonToObject(loginResponse.body.toString())
 
-        if (response.status == 200) {
-            val retrievedUser: User = jsonToObject(response.body.toString())
-            requests.deleteUser(retrievedUser.id)
+        val token = jwtDTO.jwt
+
+        val retrieveUserResponse = requests.retrieveUserByEmail(VALID_EMAIL, token)
+
+        if (retrieveUserResponse.status == 200) {
+            val retrievedUser: User = jsonToObject(retrieveUserResponse.body.toString())
+            requests.deleteUser(retrievedUser.id, token)
         }
     }
 
@@ -41,24 +47,25 @@ class AuthenticationControllerTest {
         @Test
         fun `logging in with the incorrect details returns a 401 response`() {
             // Arrange - add a user to the database
-            val addUserResponse = requests.addUser(VALID_NAME, VALID_EMAIL, VALID_PASSWORD)
+            val addUserResponse = requests.register(VALID_NAME, VALID_EMAIL, VALID_PASSWORD)
             val addedUser: User = jsonToObject(addUserResponse.body.toString())
 
             // Arrange & Act & Assert
             // send the login request and verify return code (using fixture data)
-            val loginResponse = requests.login(VALID_EMAIL, INCORRECT_PASSWORD)
+            var loginResponse = requests.login(VALID_EMAIL, INCORRECT_PASSWORD)
             assertEquals(401, loginResponse.status)
 
             // After - restore the db to previous state by deleting the added user
-            val deleteUserResponse = requests.deleteUser(addedUser.id)
+            loginResponse = requests.login(VALID_EMAIL, VALID_PASSWORD)
+            val jwtDTO: JwtDTO = jsonToObject(loginResponse.body.toString())
+            val deleteUserResponse = requests.deleteUser(addedUser.id, jwtDTO.jwt)
             assertEquals(204, deleteUserResponse.status)
         }
 
         @Test
         fun `logging in with the correct details returns a 200 response`() {
-            // Arrange
-            // add a user to the database
-            val addUserResponse = requests.addUser(VALID_NAME, VALID_EMAIL, VALID_PASSWORD)
+            // Arrange - add a user to the database
+            val addUserResponse = requests.register(VALID_NAME, VALID_EMAIL, VALID_PASSWORD)
             val addedUser: User = jsonToObject(addUserResponse.body.toString())
 
             // Arrange & Act & Assert
@@ -67,7 +74,8 @@ class AuthenticationControllerTest {
             assertEquals(200, loginResponse.status)
 
             // After - restore the db to previous state by deleting the added user
-            val deleteUserResponse = requests.deleteUser(addedUser.id)
+            val jwtDTO: JwtDTO = jsonToObject(loginResponse.body.toString())
+            val deleteUserResponse = requests.deleteUser(addedUser.id, jwtDTO.jwt)
             assertEquals(204, deleteUserResponse.status)
         }
     }
