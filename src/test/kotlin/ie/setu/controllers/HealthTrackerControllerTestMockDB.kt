@@ -89,7 +89,10 @@ class HealthTrackerControllerTestMockDB {
             .asJson()
     }
 
-    private fun retrieveUserByEmail(email: String, token: String): HttpResponse<String> {
+    private fun retrieveUserByEmail(
+        email: String,
+        token: String,
+    ): HttpResponse<String> {
         return Unirest.get("$origin/api/users/email/$email")
             .header("Authorization", "Bearer $token")
             .asString()
