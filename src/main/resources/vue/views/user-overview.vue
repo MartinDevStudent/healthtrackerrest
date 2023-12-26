@@ -78,8 +78,8 @@ app.component("user-overview", {
   methods: {
     async getUsers() {
       try {
-        const response = await axios.get("/api/users",
-          { headers: { "Authorization": `Bearer ${this.token}`}
+        const response = await axios.get("/api/users", {
+          headers: { "Authorization": `Bearer ${this.token}` }
         })
         this.users = response.data
       } catch {
@@ -92,8 +92,8 @@ app.component("user-overview", {
         const userId = user.id;
 
         try {
-          const response = await axios.delete(`/api/users/${userId}`,
-            { headers: { "Authorization": `Bearer ${this.token}`}
+          const response = await axios.delete(`/api/users/${userId}`, {
+            headers: { "Authorization": `Bearer ${this.token}` }
           })
           //delete from the local state so Vue will reload list automatically
           this.users.splice(index, 1).push(response.data)
@@ -108,6 +108,8 @@ app.component("user-overview", {
           name: this.formData.name,
           email: this.formData.email,
           password: this.formData.password,
+        }, {
+          headers: { "Authorization": `Bearer ${this.token}` }
         })
         this.users.push(response.data)
         this.hideForm= true;
