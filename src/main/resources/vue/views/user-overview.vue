@@ -86,18 +86,21 @@ app.component("user-overview", {
         alert("Error while fetching users")
       }
     },
-    deleteUser: function (user, index) {
+    async deleteUser(user, index) {
       if (confirm('Are you sure you want to delete this user? This action cannot be undone.', 'Warning')) {
         //user confirmed delete
         const userId = user.id;
         const url = `/api/users/${userId}`;
-        axios.delete(url)
-            .then(response =>
-                //delete from the local state so Vue will reload list automatically
-                this.users.splice(index, 1).push(response.data))
-            .catch(function (error) {
-              console.error(error)
-            });
+
+        try {
+          const response = await axios.delete(url,
+            { headers: { "Authorization": `Bearer ${this.token}`}
+          })
+          //delete from the local state so Vue will reload list automatically
+          this.users.splice(index, 1).push(response.data)
+        } catch(error) {
+          console.error(error)
+        }
       }
     },
     addUser: function (){
