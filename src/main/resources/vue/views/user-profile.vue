@@ -85,18 +85,13 @@ app.component("user-profile", {
 
     this.getToken()
     this.getUser(url)
-
-    axios.get(url + `/activities`)
-      .then(res => this.activities = res.data)
-      .catch(error => {
-        console.error("No activities added yet (this is ok): " + error)
-      })
+    this.getUserActivities(url)
   },
   methods: {
     async getUser(url) {
       try {
-        const response = await axios.get(url,
-          { headers: { "Authorization": `Bearer ${this.token}`}
+        const response = await axios.get(url, {
+          headers: { "Authorization": `Bearer ${this.token}` }
         })
         this.user = response.data
       } catch(error) {
@@ -104,7 +99,17 @@ app.component("user-profile", {
         this.noUserFound = true
       }
     },
-    updateUser: function () {
+    async getUserActivities(baseUrl) {
+      try {
+        const response = await axios.get(baseUrl + `/activities`, {
+          headers: { "Authorization": `Bearer ${this.token}` }
+        })
+        this.activities = response.data
+      } catch(error) {
+        console.error("No activities added yet (this is ok): " + error)
+      }
+    },
+    updateUser() {
       const userId = this.$javalin.pathParams["user-id"];
       const url = `/api/users/${userId}`
       axios.patch(url,
