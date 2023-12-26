@@ -270,8 +270,10 @@ class IntegrationTestHelper(var origin: String) {
      * @param id The unique identifier of the meal.
      * @return An HttpResponse containing the ingredients as a JSON string.
      */
-    fun retrieveIngredientByMealId(id: Int): HttpResponse<String> {
-        return Unirest.get("$origin/api/meals/$id/ingredients").asString()
+    fun retrieveIngredientByMealId(id: Int, token: String): HttpResponse<String> {
+        return Unirest.get("$origin/api/meals/$id/ingredients")
+            .header("Authorization", "Bearer $token")
+            .asString()
     }
 
     /**
