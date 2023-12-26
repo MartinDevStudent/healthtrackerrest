@@ -17,12 +17,28 @@ app.component("user-activity-overview",{
   template: "#user-activity-overview",
   data: () => ({
     activities: [],
+    token: null
   }),
   created() {
-    const userId = this.$javalin.pathParams["user-id"];
-    axios.get(`/api/users/${userId}/activities`)
-        .then(res => this.activities = res.data)
-        .catch(() => alert("Error while fetching activities"));
+    this.getToken()
+    this.getUserActivities()
+  },
+  methods: {
+    async getUserActivities() {
+      const userId = this.$javalin.pathParams["user-id"]
+
+      try {
+        const response = await axios.get(`/api/users/${userId}/activities`, {
+          headers: {"Authorization": `Bearer ${this.token}`}
+        })
+        this.activities = response.data
+      } catch {
+        alert("Error while fetching activities")
+      }
+    },
+    getToken() {
+      this.token = JSON.parse(localStorage.getItem("token"))
+    },
   }
 });
 </script>

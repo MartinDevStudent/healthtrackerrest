@@ -21,7 +21,7 @@ import ie.setu.utils.authentication.JwtDTO
 import jsonToObject
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotEquals
-import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
@@ -34,19 +34,27 @@ class ActivityControllerTest {
     private val requests = IntegrationTestHelper(origin)
     private var jwtToken: String = ""
 
-    @BeforeEach
-    fun createTestUser() {
-        val response = requests.retrieveUserByEmail(VALID_EMAIL)
+    @BeforeAll
+    fun deleteUserIfExists() {
+        val loginResponse = requests.login("admin@mail.com", "password")
+        val jwtDTO: JwtDTO = jsonToObject(loginResponse.body.toString())
 
-        if (response.status == 200) {
-            val retrievedUser: User = jsonToObject(response.body.toString())
-            requests.deleteUser(retrievedUser.id)
+        val token = jwtDTO.jwt
+
+        val retrieveUserResponse = requests.retrieveUserByEmail(VALID_EMAIL, token)
+
+        if (retrieveUserResponse.status == 200) {
+            val retrievedUser: User = jsonToObject(retrieveUserResponse.body.toString())
+            requests.deleteUser(retrievedUser.id, jwtToken)
         }
-
-        requests.addUser(VALID_NAME, VALID_EMAIL, VALID_PASSWORD)
     }
 
-    @BeforeEach
+    @BeforeAll
+    fun createTestUser() {
+        requests.register(VALID_NAME, VALID_EMAIL, VALID_PASSWORD)
+    }
+
+    @BeforeAll
     fun fetchAuthenticationToken() {
         val loginResponse = requests.login(VALID_EMAIL, VALID_PASSWORD)
         val jwtDTO: JwtDTO = jsonToObject(loginResponse.body.toString())
@@ -58,7 +66,7 @@ class ActivityControllerTest {
     inner class CreateActivities {
         @Test
         fun `adding an activity with correct details returns a 201 response`() {
-            val response = requests.retrieveUserByEmail(VALID_EMAIL)
+            val response = requests.retrieveUserByEmail(VALID_EMAIL, jwtToken)
             val retrievedUser: User = jsonToObject(response.body.toString())
 
             // Arrange & Act & Assert
@@ -108,7 +116,7 @@ class ActivityControllerTest {
                 )
 
             // Assert
-            assertEquals(404, requests.retrieveUserById(userId).status)
+            assertEquals(404, requests.retrieveUserById(userId, jwtToken).status)
             assertEquals(404, addActivityResponse.status)
         }
     }
@@ -142,7 +150,7 @@ class ActivityControllerTest {
         @Test
         fun `getting an activity when activity id exists, returns a 200 response`() {
             // Arrange - retrieve the user and add the activity
-            val retrievedUserResponse = requests.retrieveUserByEmail(VALID_EMAIL)
+            val retrievedUserResponse = requests.retrieveUserByEmail(VALID_EMAIL, jwtToken)
             val retrievedUser: User = jsonToObject(retrievedUserResponse.body.toString())
             val addActivityResponse =
                 requests.addActivity(
@@ -169,7 +177,7 @@ class ActivityControllerTest {
             val id = Integer.MIN_VALUE
 
             // Act - attempt to retrieve the non-existent user from the database
-            val retrieveResponse = requests.retrieveActivitiesByUserId(id)
+            val retrieveResponse = requests.retrieveActivitiesByUserId(id, jwtToken)
 
             // Assert -  verify return code
             assertEquals(404, retrieveResponse.status)
@@ -178,7 +186,7 @@ class ActivityControllerTest {
         @Test
         fun `getting a user's activities when user id exists, returns a 200 response`() {
             // Arrange - retrieve the user and activity
-            val retrievedUserResponse = requests.retrieveUserByEmail(VALID_EMAIL)
+            val retrievedUserResponse = requests.retrieveUserByEmail(VALID_EMAIL, jwtToken)
             val retrievedUser: User = jsonToObject(retrievedUserResponse.body.toString())
             val addActivityResponse =
                 requests.addActivity(
@@ -191,7 +199,7 @@ class ActivityControllerTest {
                 )
 
             // Assert - retrieve the user's activities from the database and verify return code
-            val retrieveResponse = requests.retrieveActivitiesByUserId(retrievedUser.id)
+            val retrieveResponse = requests.retrieveActivitiesByUserId(retrievedUser.id, jwtToken)
             assertEquals(200, retrieveResponse.status)
 
             // After - restore the db to previous state by deleting the activity
@@ -205,16 +213,16 @@ class ActivityControllerTest {
         @Test
         fun `updating an activity when it exists, returns a 204 response`() {
             // Arrange - add the activity that we plan to do an update on and users associated with the activity
-            val originalUserResponse = requests.retrieveUserByEmail(VALID_EMAIL)
+            val originalUserResponse = requests.retrieveUserByEmail(VALID_EMAIL, jwtToken)
             val originalUser: User = jsonToObject(originalUserResponse.body.toString())
             val addActivityResponse =
                 requests.addActivity(VALID_DESCRIPTION, VALID_DURATION, VALID_CALORIES, validStarted, originalUser.id, jwtToken)
             val addedActivity: Activity = jsonToObject(addActivityResponse.body.toString())
 
-            var updateUserResponse = requests.retrieveUserByEmail(UPDATED_EMAIL)
+            var updateUserResponse = requests.retrieveUserByEmail(UPDATED_EMAIL, jwtToken)
 
             if (updateUserResponse.status != 200) {
-                updateUserResponse = requests.addUser(VALID_NAME, UPDATED_EMAIL, VALID_PASSWORD)
+                updateUserResponse = requests.register(VALID_NAME, UPDATED_EMAIL, VALID_PASSWORD)
             }
 
             val updateUser: User = jsonToObject(updateUserResponse.body.toString())
@@ -246,7 +254,7 @@ class ActivityControllerTest {
 
             // After - restore the db to previous state by deleting the added activity and users
             requests.deleteActivity(addedActivity.id, jwtDTO.jwt)
-            requests.deleteUser(updateUser.id)
+            requests.deleteUser(updateUser.id, jwtToken)
         }
 
         @Test
@@ -278,7 +286,7 @@ class ActivityControllerTest {
         @Test
         fun `deleting a activity when it exists, returns a 204 response`() {
             // Arrange - add the activity that we plan to do a delete on
-            val retrievedUserResponse = requests.retrieveUserByEmail(VALID_EMAIL)
+            val retrievedUserResponse = requests.retrieveUserByEmail(VALID_EMAIL, jwtToken)
             val retrievedUser: User = jsonToObject(retrievedUserResponse.body.toString())
             val addActivityResponse =
                 requests.addActivity(

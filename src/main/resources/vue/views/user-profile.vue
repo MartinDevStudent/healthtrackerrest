@@ -77,55 +77,74 @@ app.component("user-profile", {
     password: null,
     noUserFound: false,
     activities: [],
+    token: null
   }),
-  created: function () {
+  created() {
     const userId = this.$javalin.pathParams["user-id"];
     const url = `/api/users/${userId}`
-    axios.get(url)
-      .then(res => this.user = res.data)
-      .catch(error => {
-        console.error("No user found for id passed in the path parameter: " + error)
-        this.noUserFound = true
-      })
-    axios.get(url + `/activities`)
-      .then(res => this.activities = res.data)
-      .catch(error => {
-        console.error("No activities added yet (this is ok): " + error)
-      })
+
+    this.getToken()
+    this.getUser(url)
+    this.getUserActivities(url)
   },
   methods: {
-    updateUser: function () {
-      const userId = this.$javalin.pathParams["user-id"];
-      const url = `/api/users/${userId}`
-      axios.patch(url,
-          {
-            name: this.user.name,
-            email: this.user.email,
-            password: this.password
-          })
-          .then(response => {
-            this.user.push(response.data)
-          })
-          .catch(error => {
-            console.error(error)
-          })
-      alert("User updated!")
+    async getUser(url) {
+      try {
+        const response = await axios.get(url, {
+          headers: { "Authorization": `Bearer ${this.token}` }
+        })
+        this.user = response.data
+      } catch(error) {
+        console.error("No user found for id passed in the path parameter: " + error)
+        this.noUserFound = true
+      }
     },
-    deleteUser: function () {
+    async getUserActivities(baseUrl) {
+      try {
+        const response = await axios.get(baseUrl + `/activities`, {
+          headers: { "Authorization": `Bearer ${this.token}` }
+        })
+        this.activities = response.data
+      } catch(error) {
+        console.error("No activities added yet (this is ok): " + error)
+      }
+    },
+    async updateUser() {
+      const userId = this.$javalin.pathParams["user-id"];
+
+      try {
+        const response = await axios.patch(`/api/users/${userId}`, {
+          name: this.user.name,
+          email: this.user.email,
+          password: this.password
+        }, {
+          headers: { "Authorization": `Bearer ${this.token}` }
+        })
+        this.user.push(response.data)
+        alert("User updated!")
+      } catch(error) {
+        console.error(error)
+      }
+    },
+    async deleteUser() {
       if (confirm("Do you really want to delete?")) {
         const userId = this.$javalin.pathParams["user-id"];
-        const url = `/api/users/${userId}`
-        axios.delete(url)
-          .then( response => {
-            alert("User deleted")
-            //display the /users endpoint
-            window.location.href = '/users';
+
+        try {
+          await axios.delete(`/api/users/${userId}`, {
+            headers: { "Authorization": `Bearer ${this.token}` }
           })
-          .catch(function (error) {
-            console.error(error)
-          });
+          alert("User deleted")
+          //display the /users endpoint
+          window.location.href = '/users'
+        } catch(error) {
+          console.error(error)
+        }
       }
-    }
+    },
+    getToken() {
+      this.token = JSON.parse(localStorage.getItem("token"))
+    },
   }
 });
 </script>

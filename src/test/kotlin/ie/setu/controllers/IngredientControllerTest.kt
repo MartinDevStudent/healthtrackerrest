@@ -14,7 +14,7 @@ import ie.setu.utils.authentication.JwtDTO
 import jsonToObject
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotEquals
-import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
@@ -27,19 +27,27 @@ class IngredientControllerTest {
     private val requests = IntegrationTestHelper(origin)
     private var jwtToken: String = ""
 
-    @BeforeEach
-    fun createTestUser() {
-        val response = requests.retrieveUserByEmail(VALID_EMAIL)
+    @BeforeAll
+    fun deleteUserIfExists() {
+        val loginResponse = requests.login("admin@mail.com", "password")
+        val jwtDTO: JwtDTO = jsonToObject(loginResponse.body.toString())
 
-        if (response.status == 200) {
-            val retrievedUser: User = jsonToObject(response.body.toString())
-            requests.deleteUser(retrievedUser.id)
+        val token = jwtDTO.jwt
+
+        val retrieveUserResponse = requests.retrieveUserByEmail(VALID_EMAIL, token)
+
+        if (retrieveUserResponse.status == 200) {
+            val retrievedUser: User = jsonToObject(retrieveUserResponse.body.toString())
+            requests.deleteUser(retrievedUser.id, jwtToken)
         }
-
-        requests.addUser(VALID_NAME, VALID_EMAIL, VALID_PASSWORD)
     }
 
-    @BeforeEach
+    @BeforeAll
+    fun createTestUser() {
+        requests.register(VALID_NAME, VALID_EMAIL, VALID_PASSWORD)
+    }
+
+    @BeforeAll
     fun fetchAuthenticationToken() {
         val loginResponse = requests.login(VALID_EMAIL, VALID_PASSWORD)
         val jwtDTO: JwtDTO = jsonToObject(loginResponse.body.toString())

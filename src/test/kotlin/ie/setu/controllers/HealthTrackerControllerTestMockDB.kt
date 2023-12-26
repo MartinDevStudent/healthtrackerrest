@@ -6,6 +6,7 @@ import ie.setu.helpers.ServerContainer
 import ie.setu.helpers.VALID_EMAIL
 import ie.setu.helpers.VALID_NAME
 import ie.setu.helpers.VALID_PASSWORD
+import ie.setu.utils.authentication.JwtDTO
 import jsonToObject
 import kong.unirest.HttpResponse
 import kong.unirest.JsonNode
@@ -52,9 +53,13 @@ class HealthTrackerControllerTestMockDB {
             // Arrange - add the user to the h2 database
             val addResponse = addUser(VALID_NAME, VALID_EMAIL, VALID_PASSWORD)
             assertEquals(201, addResponse.status)
+            // Arrange - login and retrieve JWT token
+            val loginResponse = login(VALID_EMAIL, VALID_PASSWORD)
+            assertEquals(201, addResponse.status)
+            val jwtDTO: JwtDTO = jsonToObject(loginResponse.body.toString())
 
-            // Assert - retrieve the user from the fake database
-            val retrieveResponse = retrieveUserByEmail(VALID_EMAIL)
+            // Act - retrieve the user from the fake database
+            val retrieveResponse = retrieveUserByEmail(VALID_EMAIL, jwtDTO.jwt)
 
             // Assert - verify the return code and the contents of the retrieved user
             assertEquals(200, retrieveResponse.status)
@@ -70,12 +75,26 @@ class HealthTrackerControllerTestMockDB {
         email: String,
         password: String,
     ): HttpResponse<JsonNode> {
-        return Unirest.post("$origin/api/users")
+        return Unirest.post("$origin/api/login/register")
             .body("{\"name\":\"$name\", \"email\":\"$email\", \"password\":\"$password\"}")
             .asJson()
     }
 
-    private fun retrieveUserByEmail(email: String): HttpResponse<String> {
-        return Unirest.get("$origin/api/users/email/$email").asString()
+    fun login(
+        email: String,
+        password: String,
+    ): HttpResponse<JsonNode> {
+        return Unirest.post("$origin/api/login")
+            .body("{\"email\":\"$email\", \"password\":\"$password\"}")
+            .asJson()
+    }
+
+    private fun retrieveUserByEmail(
+        email: String,
+        token: String,
+    ): HttpResponse<String> {
+        return Unirest.get("$origin/api/users/email/$email")
+            .header("Authorization", "Bearer $token")
+            .asString()
     }
 }

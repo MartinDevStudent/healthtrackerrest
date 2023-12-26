@@ -32,6 +32,16 @@ class IntegrationTestHelper(var origin: String) {
             .asJson()
     }
 
+    fun register(
+        name: String,
+        email: String,
+        password: String,
+    ): HttpResponse<JsonNode> {
+        return Unirest.post("$origin/api/login/register")
+            .body("{\"name\":\"$name\", \"email\":\"$email\", \"password\":\"$password\"}")
+            .asJson()
+    }
+
     /**
      * Retrieves a list of all activities from the server.
      *
@@ -71,8 +81,13 @@ class IntegrationTestHelper(var origin: String) {
      * @return An `HttpResponse<String>` object containing the server's response as a string.
      * @throws UnirestException if an error occurs during the HTTP request.
      */
-    fun retrieveActivitiesByUserId(userId: Int): HttpResponse<String> {
-        return Unirest.get("$origin/api/users/$userId/activities").asString()
+    fun retrieveActivitiesByUserId(
+        userId: Int,
+        token: String,
+    ): HttpResponse<String> {
+        return Unirest.get("$origin/api/users/$userId/activities")
+            .header("Authorization", "Bearer $token")
+            .asString()
     }
 
     /**
@@ -152,8 +167,10 @@ class IntegrationTestHelper(var origin: String) {
      *
      * @return HttpResponse<String> containing the response data as a string.
      */
-    fun retrieveUsers(): HttpResponse<String> {
-        return Unirest.get("$origin/api/users/").asString()
+    fun retrieveUsers(token: String): HttpResponse<String> {
+        return Unirest.get("$origin/api/users/")
+            .header("Authorization", "Bearer $token")
+            .asString()
     }
 
     /**
@@ -167,8 +184,13 @@ class IntegrationTestHelper(var origin: String) {
      * @return An `HttpResponse<String>` object containing the server's response as a string.
      * @throws UnirestException if an error occurs during the HTTP request.
      */
-    fun retrieveUserById(id: Int): HttpResponse<String> {
-        return Unirest.get("$origin/api/users/$id").asString()
+    fun retrieveUserById(
+        id: Int,
+        token: String,
+    ): HttpResponse<String> {
+        return Unirest.get("$origin/api/users/$id")
+            .header("Authorization", "Bearer $token")
+            .asString()
     }
 
     /**
@@ -182,8 +204,13 @@ class IntegrationTestHelper(var origin: String) {
      * @return An `HttpResponse<String>` object containing the server's response as a string.
      * @throws UnirestException if an error occurs during the HTTP request.
      */
-    fun retrieveUserByEmail(email: String): HttpResponse<JsonNode> {
-        return Unirest.get("$origin/api/users/email/$email").asJson()
+    fun retrieveUserByEmail(
+        email: String,
+        token: String,
+    ): HttpResponse<JsonNode> {
+        return Unirest.get("$origin/api/users/email/$email")
+            .header("Authorization", "Bearer $token")
+            .asJson()
     }
 
     /**
@@ -198,9 +225,11 @@ class IntegrationTestHelper(var origin: String) {
         name: String,
         email: String,
         password: String,
+        token: String,
     ): HttpResponse<JsonNode> {
         return Unirest.post("$origin/api/users")
             .body("{\"name\":\"$name\", \"email\":\"$email\", \"password\":\"$password\"}")
+            .header("Authorization", "Bearer $token")
             .asJson()
     }
 
@@ -224,8 +253,10 @@ class IntegrationTestHelper(var origin: String) {
         name: String,
         email: String,
         password: String,
+        token: String,
     ): HttpResponse<JsonNode> {
         return Unirest.patch("$origin/api/users/$id")
+            .header("Authorization", "Bearer $token")
             .body("{\"name\":\"$name\", \"email\":\"$email\", \"password\":\"$password\"}")
             .asJson()
     }
@@ -236,8 +267,13 @@ class IntegrationTestHelper(var origin: String) {
      * @param id The unique identifier of the user to be deleted.
      * @return HttpResponse<String> The response from the server after attempting to delete the user.
      */
-    fun deleteUser(id: Int): HttpResponse<String> {
-        return Unirest.delete("$origin/api/users/$id").asString()
+    fun deleteUser(
+        id: Int,
+        token: String,
+    ): HttpResponse<String> {
+        return Unirest.delete("$origin/api/users/$id")
+            .header("Authorization", "Bearer $token")
+            .asString()
     }
 
     /**
@@ -334,8 +370,13 @@ class IntegrationTestHelper(var origin: String) {
      * @param id The unique identifier of the user.
      * @return An HttpResponse containing the JSON string of the retrieved meals.
      */
-    fun retrieveMealByUserId(id: Int): HttpResponse<String> {
-        return Unirest.get("$origin/api/users/$id/meals").asString()
+    fun retrieveMealByUserId(
+        id: Int,
+        token: String,
+    ): HttpResponse<String> {
+        return Unirest.get("$origin/api/users/$id/meals")
+            .header("Authorization", "Bearer $token")
+            .asString()
     }
 
     /**
@@ -370,9 +411,11 @@ class IntegrationTestHelper(var origin: String) {
     fun addMealByUserId(
         name: String,
         userId: Int,
+        token: String,
     ): HttpResponse<JsonNode> {
         return Unirest.post("$origin/api/users/$userId/meals")
             .body("{\"name\":\"$name\"}")
+            .header("Authorization", "Bearer $token")
             .asJson()
     }
 
@@ -402,8 +445,13 @@ class IntegrationTestHelper(var origin: String) {
      * @return An `HttpResponse<String>` object containing the server's response as a string.
      * @throws UnirestException if an error occurs during the HTTP request.
      */
-    fun deleteMealsByUserId(id: Int): HttpResponse<String> {
-        return Unirest.delete("$origin/api/users/$id/meals").asString()
+    fun deleteMealsByUserId(
+        id: Int,
+        token: String,
+    ): HttpResponse<String> {
+        return Unirest.delete("$origin/api/users/$id/meals")
+            .header("Authorization", "Bearer $token")
+            .asString()
     }
 
     /**
@@ -421,7 +469,10 @@ class IntegrationTestHelper(var origin: String) {
     fun deleteUserMealByMealId(
         userId: Int,
         mealId: Int,
+        token: String,
     ): HttpResponse<String> {
-        return Unirest.delete("$origin/api/users/$userId/meals/$mealId").asString()
+        return Unirest.delete("$origin/api/users/$userId/meals/$mealId")
+            .header("Authorization", "Bearer $token")
+            .asString()
     }
 }

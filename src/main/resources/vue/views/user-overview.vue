@@ -63,53 +63,63 @@
 </template>
 <script>
 
-
 app.component("user-overview", {
   template: "#user-overview",
   data: () => ({
     users: [],
     formData: [],
     hideForm :true,
+    token: null
   }),
   created() {
-    this.fetchUsers();
+    this.getToken()
+    this.getUsers()
   },
   methods: {
-    fetchUsers: function () {
-      axios.get("/api/users")
-          .then(res => this.users = res.data)
-          .catch(() => alert("Error while fetching users"));
+    async getUsers() {
+      try {
+        const response = await axios.get("/api/users", {
+          headers: { "Authorization": `Bearer ${this.token}` }
+        })
+        this.users = response.data
+      } catch {
+        alert("Error while fetching users")
+      }
     },
-    deleteUser: function (user, index) {
+    async deleteUser(user, index) {
       if (confirm('Are you sure you want to delete this user? This action cannot be undone.', 'Warning')) {
         //user confirmed delete
         const userId = user.id;
-        const url = `/api/users/${userId}`;
-        axios.delete(url)
-            .then(response =>
-                //delete from the local state so Vue will reload list automatically
-                this.users.splice(index, 1).push(response.data))
-            .catch(function (error) {
-              console.error(error)
-            });
+
+        try {
+          const response = await axios.delete(`/api/users/${userId}`, {
+            headers: { "Authorization": `Bearer ${this.token}` }
+          })
+          //delete from the local state so Vue will reload list automatically
+          this.users.splice(index, 1).push(response.data)
+        } catch(error) {
+          console.error(error)
+        }
       }
     },
-    addUser: function (){
-      const url = `/api/users`;
-      axios.post(url,
-        {
+    async addUser() {
+      try {
+        const response = await axios.post(`/api/users`, {
           name: this.formData.name,
           email: this.formData.email,
           password: this.formData.password,
+        }, {
+          headers: { "Authorization": `Bearer ${this.token}` }
         })
-        .then(response => {
-          this.users.push(response.data)
-          this.hideForm= true;
-        })
-        .catch(error => {
-          console.error(error)
-        })
-    }
+        this.users.push(response.data)
+        this.hideForm= true;
+      } catch(error) {
+        console.error(error)
+      }
+    },
+    getToken() {
+      this.token = JSON.parse(localStorage.getItem("token"))
+    },
   }
 });
 </script>
