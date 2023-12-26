@@ -29,6 +29,9 @@ fun registerRoutes(app: io.javalin.Javalin) {
             path("validate") {
                 get(AuthenticationController::validate, Roles.USER, Roles.ADMIN)
             }
+            path("register") {
+                post(UserController::create, Roles.ANYONE)
+            }
         }
 
         // Ingredients
@@ -56,23 +59,23 @@ fun registerRoutes(app: io.javalin.Javalin) {
         }
 
         // User
-        crud("api/users/{user-id}", UserController, Roles.USER)
+        crud("api/users/{user-id}", UserController, Roles.USER, Roles.ADMIN)
         path("api/users/{user-id}") {
             path("activities") {
-                get(ActivityController::getByUserId, Roles.USER)
-                delete(ActivityController::deleteByUserId, Roles.USER)
+                get(ActivityController::getByUserId, Roles.USER, Roles.ADMIN)
+                delete(ActivityController::deleteByUserId, Roles.USER, Roles.ADMIN)
             }
             path("meals") {
-                get(MealController::getByUserId, Roles.USER)
-                post(MealController::createUserMeal, Roles.USER)
-                delete(MealController::deleteUserMealsByUserId, Roles.USER)
+                get(MealController::getByUserId, Roles.USER, Roles.ADMIN)
+                post(MealController::createUserMeal, Roles.USER, Roles.ADMIN)
+                delete(MealController::deleteUserMealsByUserId, Roles.USER, Roles.ADMIN)
                 path("{meal-id}") {
-                    delete(MealController::deleteUserMealByMealId, Roles.USER)
+                    delete(MealController::deleteUserMealByMealId, Roles.USER, Roles.ADMIN)
                 }
             }
         }
         path("api/users/email/{email-address}") {
-            get(UserController::getByEmailAddress, Roles.ANYONE) // TODO: check this works
+            get(UserController::getByEmailAddress, Roles.USER, Roles.ADMIN)
         }
 
         // Frontend
