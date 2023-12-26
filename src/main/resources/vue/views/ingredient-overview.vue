@@ -31,21 +31,28 @@ app.component("ingredient-overview", {
   template: "#ingredient-overview",
   data: () => ({
     ingredients: [],
+    token: null,
   }),
   created() {
-    this.fetchIngredients();
+    this.getToken()
+    this.getIngredients()
   },
   methods: {
-    fetchIngredients: function () {
-      axios.get("/api/ingredients")
-        .then(res => this.ingredients = res.data)
-        .catch(function (error) {
-          if (error.response.status !== 404)
-          {
-            alert("Error while fetching ingredients")
-          }
-        });
-    }
+    async getIngredients() {
+      try {
+        const response = await axios.get("/api/ingredients", {
+          headers: { "Authorization": `Bearer ${this.token}`}
+        })
+        this.ingredients = response.data
+      } catch (error) {
+        if (error.response.status !== 404) {
+          alert("Error while fetching ingredients")
+        }
+      }
+    },
+    getToken() {
+      this.token = JSON.parse(localStorage.getItem("token"))
+    },
   }
 });
 </script>
