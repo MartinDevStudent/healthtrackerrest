@@ -1,10 +1,10 @@
 <template id="ingredient-profile">
   <app-layout>
-    <div v-if="noIngredientFound">
+    <div v-if="!ingredientFound">
       <p> We're sorry, we were not able to retrieve this ingredient.</p>
       <p> View <a :href="'/users'">all ingredients</a>.</p>
     </div>
-    <div class="card bg-light mb-3" v-if="!noIngredientFound">
+    <div class="card bg-light mb-3" v-else>
       <div class="card-header">
         <div class="row">
           <div class="col-6">
@@ -68,7 +68,7 @@ app.component("ingredient-profile", {
   data: () => ({
     ingredient: null,
     rda: null,
-    noIngredientFound: false,
+    ingredientFound: false,
     caloriesUrl: null,
     fatTotalGUrl: null,
     fatSaturatedGUrl: null,
@@ -79,34 +79,40 @@ app.component("ingredient-profile", {
     carbohydratesTotalGUrl: null,
     fiberGUrl: null,
     sugarGUrl: null,
+    token: null
   }),
-  created: async function () {
-    await this.fetchIngredients()
-    await this.fetchRdas()
-    await this.fetchCharts()
+  async created() {
+    this.getToken()
+    await this.getIngredient()
+    await this.getRdas()
+    await this.getCharts()
   },
   methods: {
-    fetchIngredients: async function () {
+    async getIngredient() {
       const ingredientId = this.$javalin.pathParams["ingredient-id"];
 
       try {
-        const res = await axios.get(`/api/ingredients/${ingredientId}`)
-        this.ingredient = res.data
+        const response = await axios.get(`/api/ingredients/${ingredientId}`, {
+          headers: { "Authorization": `Bearer ${this.token}`}
+        })
+        this.ingredient = response.data
+        this.ingredientFound = true
       } catch(error) {
         console.error("No ingredient found for id passed in the path parameter: " + error)
-        this.noIngredientFound = true
       }
     },
-    fetchRdas: async function () {
+    async getRdas() {
       try {
-        const res = await axios.get(`/api/ingredients/rda`)
-        this.rda = res.data
+        const response = await axios.get(`/api/ingredients/rda`, {
+          headers: { "Authorization": `Bearer ${this.token}`}
+        })
+        this.rda = response.data
+        this.ingredientFound = true
       } catch(error) {
         console.error("Issue retrieving RDA information: " + error)
-        this.noIngredientFound = true
       }
     },
-    fetchCharts: async function () {
+    async getCharts() {
       const grams = 'g';
       const milliGrams = 'mg';
       const {
@@ -121,21 +127,20 @@ app.component("ingredient-profile", {
         fiberG,
         sugarG, } = this.ingredient;
 
-      this.caloriesUrl = await this.fetchChart(calories, grams, this.rda.calories)
-      this.fatTotalGUrl = await this.fetchChart(fatTotalG, grams, this.rda.fatTotalGUrl)
-      this.fatSaturatedGUrl = await this.fetchChart(fatSaturatedG, grams, this.rda.fatSaturatedG)
-      this.proteinGUrl = await this.fetchChart(proteinG, grams, this.rda.proteinG)
-      this.sodiumMgUrl = await this.fetchChart(sodiumMg, milliGrams, this.rda.sodiumMg)
-      this.potassiumMgUrl = await this.fetchChart(potassiumMg, milliGrams, this.rda.potassiumMg)
-      this.cholesterolMgUrl = await this.fetchChart(cholesterolMg, milliGrams, this.rda.cholesterolMg)
-      this.carbohydratesTotalGUrl = await this.fetchChart(carbohydratesTotalG, grams, this.rda.carbohydratesTotalG)
-      this.fiberGUrl = await this.fetchChart(fiberG, grams, this.rda.fiberG)
-      this.sugarGUrl = await this.fetchChart(sugarG, grams, this.rda.sugarG)
+      this.caloriesUrl = await this.getChart(calories, grams, this.rda.calories)
+      this.fatTotalGUrl = await this.getChart(fatTotalG, grams, this.rda.fatTotalGUrl)
+      this.fatSaturatedGUrl = await this.getChart(fatSaturatedG, grams, this.rda.fatSaturatedG)
+      this.proteinGUrl = await this.getChart(proteinG, grams, this.rda.proteinG)
+      this.sodiumMgUrl = await this.getChart(sodiumMg, milliGrams, this.rda.sodiumMg)
+      this.potassiumMgUrl = await this.getChart(potassiumMg, milliGrams, this.rda.potassiumMg)
+      this.cholesterolMgUrl = await this.getChart(cholesterolMg, milliGrams, this.rda.cholesterolMg)
+      this.carbohydratesTotalGUrl = await this.getChart(carbohydratesTotalG, grams, this.rda.carbohydratesTotalG)
+      this.fiberGUrl = await this.getChart(fiberG, grams, this.rda.fiberG)
+      this.sugarGUrl = await this.getChart(sugarG, grams, this.rda.sugarG)
     },
-
-    fetchChart: async function (value, unit, recommendedDailyAllowance) {
+    async getChart(value, unit, recommendedDailyAllowance) {
       try {
-        const res = await axios.post('https://quickchart.io/chart', {
+        const response = await axios.post('https://quickchart.io/chart', {
           backgroundColor: "transparent",
           width: 133,
           height: 80,
@@ -146,12 +151,12 @@ app.component("ingredient-profile", {
           responseType: "blob"
         })
 
-        return this.parseBlobToImageUrl(res.data)
+        return this.parseBlobToImageUrl(response.data)
       } catch {
         console.error("Issue retrieving chart");
       }
     },
-    getChartString: (value, unit, recommendedDailyAllowance) => {
+    getChartString(value, unit, recommendedDailyAllowance) {
       const percentageOfRda = (value / recommendedDailyAllowance) * 100;
 
       return `{
@@ -178,6 +183,9 @@ app.component("ingredient-profile", {
       }`
     },
     parseBlobToImageUrl: (imageData) => URL.createObjectURL(new Blob([imageData], {type: "image/png"})),
+    getToken() {
+      this.token = JSON.parse(localStorage.getItem("token"))
+    },
   },
 });
 </script>
