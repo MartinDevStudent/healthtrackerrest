@@ -90,10 +90,9 @@ app.component("user-overview", {
       if (confirm('Are you sure you want to delete this user? This action cannot be undone.', 'Warning')) {
         //user confirmed delete
         const userId = user.id;
-        const url = `/api/users/${userId}`;
 
         try {
-          const response = await axios.delete(url,
+          const response = await axios.delete(`/api/users/${userId}`,
             { headers: { "Authorization": `Bearer ${this.token}`}
           })
           //delete from the local state so Vue will reload list automatically

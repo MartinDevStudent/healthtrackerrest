@@ -111,10 +111,9 @@ app.component("user-profile", {
     },
     async updateUser() {
       const userId = this.$javalin.pathParams["user-id"];
-      const url = `/api/users/${userId}`
 
       try {
-        const response = await axios.patch(url, {
+        const response = await axios.patch(`/api/users/${userId}`, {
           name: this.user.name,
           email: this.user.email,
           password: this.password
@@ -127,19 +126,20 @@ app.component("user-profile", {
         console.error(error)
       }
     },
-    deleteUser: function () {
+    async deleteUser() {
       if (confirm("Do you really want to delete?")) {
         const userId = this.$javalin.pathParams["user-id"];
-        const url = `/api/users/${userId}`
-        axios.delete(url)
-          .then( response => {
-            alert("User deleted")
-            //display the /users endpoint
-            window.location.href = '/users';
+
+        try {
+          await axios.delete(`/api/users/${userId}`, {
+            headers: { "Authorization": `Bearer ${this.token}` }
           })
-          .catch(function (error) {
-            console.error(error)
-          });
+          alert("User deleted")
+          //display the /users endpoint
+          window.location.href = '/users'
+        } catch(error) {
+          console.error(error)
+        }
       }
     },
     getToken() {
