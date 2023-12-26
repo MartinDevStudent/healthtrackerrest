@@ -56,18 +56,18 @@ fun registerRoutes(app: io.javalin.Javalin) {
         }
 
         // User
-        crud("api/users/{user-id}", UserController, Roles.ANYONE)
+        crud("api/users/{user-id}", UserController, Roles.USER)
         path("api/users/{user-id}") {
             path("activities") {
-                get(ActivityController::getByUserId, Roles.ANYONE)
-                delete(ActivityController::deleteByUserId, Roles.ANYONE)
+                get(ActivityController::getByUserId, Roles.USER)
+                delete(ActivityController::deleteByUserId, Roles.USER)
             }
             path("meals") {
-                get(MealController::getByUserId, Roles.ANYONE)
-                post(MealController::createUserMeal, Roles.ANYONE)
-                delete(MealController::deleteUserMealsByUserId, Roles.ANYONE)
+                get(MealController::getByUserId, Roles.USER)
+                post(MealController::createUserMeal, Roles.USER)
+                delete(MealController::deleteUserMealsByUserId, Roles.USER)
                 path("{meal-id}") {
-                    delete(MealController::deleteUserMealByMealId, Roles.ANYONE)
+                    delete(MealController::deleteUserMealByMealId, Roles.USER)
                 }
             }
         }
