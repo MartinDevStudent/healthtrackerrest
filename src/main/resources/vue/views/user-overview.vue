@@ -103,21 +103,18 @@ app.component("user-overview", {
         }
       }
     },
-    addUser: function (){
-      const url = `/api/users`;
-      axios.post(url,
-        {
+    async addUser() {
+      try {
+        const response = await axios.post(`/api/users`, {
           name: this.formData.name,
           email: this.formData.email,
           password: this.formData.password,
         })
-        .then(response => {
-          this.users.push(response.data)
-          this.hideForm= true;
-        })
-        .catch(error => {
-          console.error(error)
-        })
+        this.users.push(response.data)
+        this.hideForm= true;
+      } catch(error) {
+        console.error(error)
+      }
     },
     getToken() {
       this.token = JSON.parse(localStorage.getItem("token"))
