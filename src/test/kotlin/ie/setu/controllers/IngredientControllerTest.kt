@@ -74,17 +74,15 @@ class IngredientControllerTest {
 
         @Test
         fun `getting an ingredient by id when id exists, returns a 200 response`() {
-            // Arrange - add the meal to retrieve ingredient
-            val meal: Meal
-
+            // Arrange - add/ retrieve the meal to retrieve ingredient
             val allMealsResponse = requests.retrieveMeals(jwtToken)
             val allMeals: List<Meal> = jsonToObject(allMealsResponse.body.toString())
 
-            if (allMeals.any { x -> x.name == VALID_MEAL_NAME }) {
-                meal = allMeals.first { x -> x.name == VALID_MEAL_NAME }
+            val meal = if (allMeals.any { x -> x.name == VALID_MEAL_NAME }) {
+                allMeals.first { x -> x.name == VALID_MEAL_NAME }
             } else {
                 val addMealResponse = requests.addMeal(VALID_MEAL_NAME, jwtToken)
-                meal = jsonToObject(addMealResponse.body.toString())
+                jsonToObject(addMealResponse.body.toString())
             }
 
             val addedIngredientsResponse = requests.retrieveIngredientByMealId(meal.id, jwtToken)
@@ -114,15 +112,22 @@ class IngredientControllerTest {
         @Test
         fun `getting ingredients by meal id when meal exists, returns a 200 response`() {
             // Arrange - add the meal and ingredients
-            val addMealResponse = requests.addMeal(VALID_MEAL_NAME, jwtToken)
-            val addedMeal: Meal = jsonToObject(addMealResponse.body.toString())
+            val allMealsResponse = requests.retrieveMeals(jwtToken)
+            val allMeals: List<Meal> = jsonToObject(allMealsResponse.body.toString())
+
+            val meal = if (allMeals.any { x -> x.name == VALID_MEAL_NAME }) {
+                allMeals.first { x -> x.name == VALID_MEAL_NAME }
+            } else {
+                val addMealResponse = requests.addMeal(VALID_MEAL_NAME, jwtToken)
+                jsonToObject(addMealResponse.body.toString())
+            }
 
             // Assert - retrieve the ingredients from the database and verify return code
-            val retrieveResponse = requests.retrieveIngredientByMealId(addedMeal.id, jwtToken)
+            val retrieveResponse = requests.retrieveIngredientByMealId(meal.id, jwtToken)
             assertEquals(200, retrieveResponse.status)
 
             // After - restore the db to previous state by deleting the added meal
-            val deleteMealResponse = requests.deleteMeal(addedMeal.id, jwtToken)
+            val deleteMealResponse = requests.deleteMeal(meal.id, jwtToken)
             assertEquals(204, deleteMealResponse.status)
         }
 
