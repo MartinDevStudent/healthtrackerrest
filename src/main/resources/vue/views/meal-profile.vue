@@ -56,7 +56,7 @@ app.component("meal-profile", {
     token: null
   }),
   created() {
-    const mealId = this.$javalin.pathParams["meal-id"];
+    const mealId = this.$javalin.pathParams["meal-id"]
     const url = `/api/meals/${mealId}`
 
     this.getToken()
@@ -67,12 +67,12 @@ app.component("meal-profile", {
       async getMeal(url) {
         try {
           const response = await axios.get(url, {
-            headers: { "Authorization": `Bearer ${this.token}`}
+            headers: { "Authorization": `Bearer ${this.token}` }
           })
           this.meal = response.data
         } catch(error) {
           if (error.response.status === 401) {
-            location.href = '/login';
+            location.href = '/login'
           } else {
             console.error("No meal found for id passed in the path parameter: " + error)
             this.noMealFound = true
@@ -95,7 +95,7 @@ app.component("meal-profile", {
 
           try {
             await axios.delete(`/api/meals/${mealId}`, {
-              headers: { "Authorization": `Bearer ${this.token}`}
+              headers: { "Authorization": `Bearer ${this.token}` }
             })
             alert("Meal deleted")
             //display the /meals endpoint
