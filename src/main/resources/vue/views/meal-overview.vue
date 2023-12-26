@@ -24,7 +24,7 @@
                 <input type="text" class="form-control" v-model="formData.name" name="name" placeholder="Name"/>
               </div>
             </form>
-            <button rel="tooltip" title="Update" class="btn btn-info btn-simple btn-link" @click="addMeal()">Add Meal</button>
+            <button rel="tooltip" title="Update" class="btn btn-info btn-simple btn-link" @click="this.addMeal()">Add Meal</button>
           </div>
         </div>
       </div>
@@ -54,45 +54,60 @@ app.component("meal-overview", {
   data: () => ({
     meals: [],
     formData: [],
-    hideForm :true,
+    hideForm: true,
+    token: null
   }),
   created() {
-    this.fetchMeals();
+    this.getToken();
+    this.getMeals();
   },
   methods: {
-    fetchMeals: function () {
-      axios.get("/api/meals")
-        .then(res => this.meals = res.data)
-        .catch(() => alert("Error while fetching meals"));
+    async getMeals() {
+      try {
+        const res = await axios.get("/api/meals",{
+          headers: { "Authorization": `Bearer ${this.token}`}
+        })
+        this.meals = res.data
+      } catch(error) {
+        if (error.response.status) {
+          alert("Error while fetching meals")
+        }
+      }
     },
-    deleteMeal: function (meal, index) {
+    async deleteMeal(meal, index) {
       if (confirm('Are you sure you want to delete this meal? This action cannot be undone.', 'Warning')) {
         //user confirmed delete
         const mealId = meal.id;
         const url = `/api/meals/${mealId}`;
-        axios.delete(url)
-          .then(response =>
-              //delete from the local state so Vue will reload list automatically
-              this.meals.splice(index, 1).push(response.data))
-          .catch(function (error) {
-            console.error(error)
-          });
+
+        try {
+          const res = await axios.delete(url, {
+            headers: { "Authorization": `Bearer ${this.token}`}
+          })
+          //delete from the local state so Vue will reload list automatically
+          this.meals.splice(index, 1).push(res.data)
+        } catch(error) {
+          console.error(error)
+        }
       }
     },
-    addMeal: function () {
+    async addMeal() {
       const url = `/api/meals`;
-      axios.post(url,
-        {
-          name: this.formData.name,
+
+      try {
+        const res = await axios.post(url,
+          { name: this.formData.name },
+          { headers: { "Authorization": `Bearer ${this.token}`}
         })
-        .then(response => {
-          this.meals.push(response.data)
-          this.hideForm= true;
-        })
-        .catch(error => {
-          alert("Invalid name for meal")
-        })
-    }
+        this.meals.push(res.data)
+        this.hideForm= true;
+      } catch {
+        alert("Invalid name for meal")
+      }
+    },
+    getToken() {
+      this.token = JSON.parse(localStorage.getItem("token"))
+    },
   }
 });
 </script>

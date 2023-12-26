@@ -1,6 +1,7 @@
 package ie.setu.config
 
 import io.javalin.security.RouteRole
+import javalinjwt.JWTAccessManager
 
 enum class Roles : RouteRole {
     ANYONE,
@@ -8,10 +9,15 @@ enum class Roles : RouteRole {
     ADMIN,
 }
 
-var rolesMapping: HashMap<String?, RouteRole?> =
-    object : HashMap<String?, RouteRole?>() {
-        init {
-            put("user", Roles.USER)
-            put("admin", Roles.ADMIN)
-        }
+val accessManagerConfig: JWTAccessManager
+    get() {
+        val rolesMapping: HashMap<String?, RouteRole?> =
+            object : HashMap<String?, RouteRole?>() {
+                init {
+                    put("user", Roles.USER)
+                    put("admin", Roles.ADMIN)
+                }
+            }
+
+        return JWTAccessManager("level", rolesMapping, Roles.ANYONE)
     }

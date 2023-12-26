@@ -44,13 +44,13 @@ fun registerRoutes(app: io.javalin.Javalin) {
 
         // Meals
         path("api/meals") {
-            get(MealController::getAll, Roles.ANYONE)
-            post(MealController::create, Roles.ANYONE)
+            get(MealController::getAll, Roles.USER)
+            post(MealController::create, Roles.USER)
             path("{meal-id}") {
-                get(MealController::getOne, Roles.ANYONE)
-                delete(MealController::delete, Roles.ANYONE)
+                get(MealController::getOne, Roles.USER)
+                delete(MealController::delete, Roles.USER)
                 path("ingredients") {
-                    get(MealController::getIngredientsByMealId, Roles.ANYONE)
+                    get(MealController::getIngredientsByMealId, Roles.USER)
                 }
             }
         }

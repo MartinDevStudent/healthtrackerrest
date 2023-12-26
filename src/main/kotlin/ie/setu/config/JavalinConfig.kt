@@ -1,22 +1,18 @@
 package ie.setu.config
 
 import ie.setu.utils.authentication.JwtProvider
-import ie.setu.utils.authentication.decodeJWT
 import io.javalin.Javalin
-import io.javalin.http.Context
 import io.javalin.json.JavalinJackson
-import javalinjwt.JWTAccessManager
 import jsonObjectMapper
 
 class JavalinConfig {
     val app =
         Javalin.create { config ->
-            config.accessManager(JWTAccessManager("level", rolesMapping, Roles.ANYONE))
+            config.accessManager(accessManagerConfig)
             // Added this jsonMapper for our integration tests - serialise objects to json
             config.jsonMapper(JavalinJackson(jsonObjectMapper()))
             config.staticFiles.enableWebjars()
-            config.vue.vueAppName = "app" // only required for Vue 3, is defined in layout.html
-            config.vue.stateFunction = { ctx -> mapOf("user" to currentUser(ctx)) }
+            config.vue.configure()
         }.apply {
             exception(Exception::class.java) { e, _ -> e.printStackTrace() }
             error(404) { ctx -> ctx.json("404 : Not Found") }
@@ -54,9 +50,5 @@ class JavalinConfig {
         } else {
             7000
         }
-    }
-
-    private fun currentUser(ctx: Context): String? {
-        return if (ctx.basicAuthCredentials() != null) decodeJWT(ctx).getClaim("name").asString() else null
     }
 }

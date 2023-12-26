@@ -8,6 +8,9 @@ import ie.setu.helpers.IntegrationTestHelper
 import ie.setu.helpers.ServerContainer
 import ie.setu.helpers.VALID_EMAIL
 import ie.setu.helpers.VALID_MEAL_NAME
+import ie.setu.helpers.VALID_NAME
+import ie.setu.helpers.VALID_PASSWORD
+import ie.setu.utils.authentication.JwtDTO
 import jsonToObject
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotEquals
@@ -22,19 +25,26 @@ class IngredientControllerTest {
     private val app = ServerContainer.instance
     private val origin = "http://localhost:" + app.port()
     private val requests = IntegrationTestHelper(origin)
+    private var jwtToken: String = ""
 
-    /**
-     * Ensures that a user with the valid email does not exist in the system before each test.
-     * If a user is found, they are deleted to maintain a clean state for tests.
-     */
     @BeforeEach
-    fun ensureUserDoesNotExist() {
+    fun createTestUser() {
         val response = requests.retrieveUserByEmail(VALID_EMAIL)
 
         if (response.status == 200) {
             val retrievedUser: User = jsonToObject(response.body.toString())
             requests.deleteUser(retrievedUser.id)
         }
+
+        requests.addUser(VALID_NAME, VALID_EMAIL, VALID_PASSWORD)
+    }
+
+    @BeforeEach
+    fun fetchAuthenticationToken() {
+        val loginResponse = requests.login(VALID_EMAIL, VALID_PASSWORD)
+        val jwtDTO: JwtDTO = jsonToObject(loginResponse.body.toString())
+
+        jwtToken = jwtDTO.jwt
     }
 
     @Nested
@@ -64,10 +74,19 @@ class IngredientControllerTest {
 
         @Test
         fun `getting an ingredient by id when id exists, returns a 200 response`() {
-            // Arrange - add the meal to retrieve ingredient
-            val addMealResponse = requests.addMeal(VALID_MEAL_NAME)
-            val addedMeal: Meal = jsonToObject(addMealResponse.body.toString())
-            val addedIngredientsResponse = requests.retrieveIngredientByMealId(addedMeal.id)
+            // Arrange - add/ retrieve the meal to retrieve ingredient
+            val allMealsResponse = requests.retrieveMeals(jwtToken)
+            val allMeals: List<Meal> = jsonToObject(allMealsResponse.body.toString())
+
+            val meal =
+                if (allMeals.any { x -> x.name == VALID_MEAL_NAME }) {
+                    allMeals.first { x -> x.name == VALID_MEAL_NAME }
+                } else {
+                    val addMealResponse = requests.addMeal(VALID_MEAL_NAME, jwtToken)
+                    jsonToObject(addMealResponse.body.toString())
+                }
+
+            val addedIngredientsResponse = requests.retrieveIngredientByMealId(meal.id, jwtToken)
             val addedIngredients: ArrayList<Ingredient> = jsonToObject(addedIngredientsResponse.body.toString())
 
             // Assert - retrieve the added ingredient from the database and verify return code
@@ -75,7 +94,7 @@ class IngredientControllerTest {
             assertEquals(200, retrieveResponse.status)
 
             // After - restore the db to previous state by deleting the added meal
-            val deleteMealResponse = requests.deleteMeal(addedMeal.id)
+            val deleteMealResponse = requests.deleteMeal(meal.id, jwtToken)
             assertEquals(204, deleteMealResponse.status)
         }
 
@@ -85,7 +104,7 @@ class IngredientControllerTest {
             val id = Integer.MIN_VALUE
 
             // Act - attempt to retrieve the ingredients using the non-existent meal from the database
-            val retrieveResponse = requests.retrieveIngredientByMealId(id)
+            val retrieveResponse = requests.retrieveIngredientByMealId(id, jwtToken)
 
             // Assert -  verify return code
             assertEquals(404, retrieveResponse.status)
@@ -94,15 +113,23 @@ class IngredientControllerTest {
         @Test
         fun `getting ingredients by meal id when meal exists, returns a 200 response`() {
             // Arrange - add the meal and ingredients
-            val addMealResponse = requests.addMeal(VALID_MEAL_NAME)
-            val addedMeal: Meal = jsonToObject(addMealResponse.body.toString())
+            val allMealsResponse = requests.retrieveMeals(jwtToken)
+            val allMeals: List<Meal> = jsonToObject(allMealsResponse.body.toString())
+
+            val meal =
+                if (allMeals.any { x -> x.name == VALID_MEAL_NAME }) {
+                    allMeals.first { x -> x.name == VALID_MEAL_NAME }
+                } else {
+                    val addMealResponse = requests.addMeal(VALID_MEAL_NAME, jwtToken)
+                    jsonToObject(addMealResponse.body.toString())
+                }
 
             // Assert - retrieve the ingredients from the database and verify return code
-            val retrieveResponse = requests.retrieveIngredientByMealId(addedMeal.id)
+            val retrieveResponse = requests.retrieveIngredientByMealId(meal.id, jwtToken)
             assertEquals(200, retrieveResponse.status)
 
             // After - restore the db to previous state by deleting the added meal
-            val deleteMealResponse = requests.deleteMeal(addedMeal.id)
+            val deleteMealResponse = requests.deleteMeal(meal.id, jwtToken)
             assertEquals(204, deleteMealResponse.status)
         }
 

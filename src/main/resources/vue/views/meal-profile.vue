@@ -54,37 +54,56 @@ app.component("meal-profile", {
     noMealFound: false,
     ingredients: [],
   }),
-  created: function () {
+  created() {
     const mealId = this.$javalin.pathParams["meal-id"];
     const url = `/api/meals/${mealId}`
-    axios.get(url)
-      .then(res => this.meal = res.data)
-      .catch(() => {
-        console.error("No meal found for id passed in the path parameter: " + error)
-        this.noMealFound = true
-      })
-    axios.get(url + `/ingredients`)
-      .then(res => this.ingredients = res.data)
-        .catch(error => {
-          console.error("No ingredients in this meal: " + error)
-        })
+
+    this.getToken()
+    this.getMeal(url)
+    this.getIngredientsByMealId(url)
     },
     methods: {
-      deleteMeal: function () {
-        if (confirm("Do you really want to delete?")) {
-          const mealId = this.$javalin.pathParams["meal-id"];
-          const url = `/api/meals/${mealId}`
-          axios.delete(url)
-            .then( _ => {
-              alert("Meal deleted")
-              //display the /meals endpoint
-              window.location.href = '/meals';
-            })
-            .catch(function (error) {
-              console.error(error)
-            });
+      async getMeal(url) {
+        try {
+          const res = await axios.get(url,{
+            headers: { "Authorization": `Bearer ${this.token}`}
+          })
+          this.meal = res.data
+        } catch(error) {
+          console.error("No meal found for id passed in the path parameter: " + error)
+          this.noMealFound = true
         }
-      }
+      },
+      async getIngredientsByMealId(baseUrl) {
+        try {
+          const res = await axios.get(baseUrl + `/ingredients`,{
+            headers: { "Authorization": `Bearer ${this.token}`}
+          })
+          this.ingredients = res.data
+        } catch(error) {
+          console.error("No ingredients in this meal: " + error)
+        }
+      },
+      async deleteMeal() {
+        if (confirm('Are you sure you want to delete this meal? This action cannot be undone.', 'Warning')) {
+          const mealId = this.$javalin.pathParams["meal-id"];
+          const url = `/api/meals/${mealId}`;
+
+          try {
+            await axios.delete(url, {
+              headers: { "Authorization": `Bearer ${this.token}`}
+            })
+            alert("Meal deleted")
+            //display the /meals endpoint
+            window.location.href = '/meals';
+          } catch(error) {
+            console.error(error)
+          }
+        }
+      },
+      getToken() {
+        this.token = JSON.parse(localStorage.getItem("token"))
+      },
     }
 
 });

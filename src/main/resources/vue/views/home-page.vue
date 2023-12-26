@@ -73,20 +73,13 @@ app.component('home-page',
                 alert("Error while fetching ingredients")
               }
             });
-        axios.get("/api/meals")
-            .then(res => this.meals = res.data)
-            .catch(function (error) {
-              if (error.response.status !== 404)
-              {
-                alert("Error while fetching meals")
-              }
-            });
 
         this.getToken()
         this.getActivities()
+        this.getMeals()
       },
       methods: {
-        getActivities: async function () {
+        async getActivities() {
           try {
             const res = await axios.get("/api/activities",{
               headers: { "Authorization": `Bearer ${this.token}`}
@@ -98,7 +91,19 @@ app.component('home-page',
             }
           }
         },
-        getToken: function () {
+        async getMeals() {
+          try {
+            const res = await axios.get("/api/meals",{
+              headers: { "Authorization": `Bearer ${this.token}`}
+            })
+            this.meals = res.data
+          } catch(error) {
+            if (error.response.status !== 404) {
+              alert("Error while fetching meals")
+            }
+          }
+        },
+        getToken() {
           this.token = JSON.parse(localStorage.getItem("token"))
         }
       }

@@ -9,7 +9,6 @@
       </ul>
     </div>
   </app-layout>
-
 </template>
 
 <script>
@@ -17,12 +16,27 @@ app.component("meal-ingredient-overview",{
   template: "#meal-ingredient-overview",
   data: () => ({
     ingredients: [],
+    token: null
   }),
   created() {
-    const mealId = this.$javalin.pathParams["meal-id"];
-    axios.get(`/api/meals/${mealId}/ingredients`)
-        .then(res => this.ingredients = res.data)
-        .catch(() => alert("Error while fetching ingredients"));
+    this.getToken()
+    this.getMealIngredients()
+  },
+  methods: {
+    async getMealIngredients() {
+      const mealId = this.$javalin.pathParams["meal-id"];
+      try {
+        const response = await axios.get(`/api/meals/${mealId}/ingredients`, {
+          headers: { "Authorization": `Bearer ${this.token}` }
+        })
+        this.ingredients = response.data
+      } catch {
+        alert("Error while fetching ingredients")
+      }
+    },
+    getToken() {
+      this.token = JSON.parse(localStorage.getItem("token"))
+    },
   }
 });
 </script>
