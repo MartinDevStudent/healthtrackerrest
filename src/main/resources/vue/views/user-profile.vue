@@ -109,22 +109,23 @@ app.component("user-profile", {
         console.error("No activities added yet (this is ok): " + error)
       }
     },
-    updateUser() {
+    async updateUser() {
       const userId = this.$javalin.pathParams["user-id"];
       const url = `/api/users/${userId}`
-      axios.patch(url,
-          {
-            name: this.user.name,
-            email: this.user.email,
-            password: this.password
-          })
-          .then(response => {
-            this.user.push(response.data)
-          })
-          .catch(error => {
-            console.error(error)
-          })
-      alert("User updated!")
+
+      try {
+        const response = await axios.patch(url, {
+          name: this.user.name,
+          email: this.user.email,
+          password: this.password
+        }, {
+          headers: { "Authorization": `Bearer ${this.token}` }
+        })
+        this.user.push(response.data)
+        alert("User updated!")
+      } catch(error) {
+        console.error(error)
+      }
     },
     deleteUser: function () {
       if (confirm("Do you really want to delete?")) {
