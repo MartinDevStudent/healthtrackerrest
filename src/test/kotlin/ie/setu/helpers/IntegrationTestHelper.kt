@@ -245,8 +245,10 @@ class IntegrationTestHelper(var origin: String) {
      *
      * @return An HttpResponse containing the JSON response with the list of ingredients.
      */
-    fun retrieveIngredients(): HttpResponse<String> {
-        return Unirest.get("$origin/api/ingredients/").asString()
+    fun retrieveIngredients(token: String): HttpResponse<String> {
+        return Unirest.get("$origin/api/ingredients/")
+            .header("Authorization", "Bearer $token")
+            .asString()
     }
 
     /**
@@ -260,8 +262,13 @@ class IntegrationTestHelper(var origin: String) {
      * @return An `HttpResponse<String>` object containing the server's response as a string.
      * @throws UnirestException if an error occurs during the HTTP request.
      */
-    fun retrieveIngredientById(id: Int): HttpResponse<String> {
-        return Unirest.get("$origin/api/ingredients/$id").asString()
+    fun retrieveIngredientById(
+        id: Int,
+        token: String,
+    ): HttpResponse<String> {
+        return Unirest.get("$origin/api/ingredients/$id")
+            .header("Authorization", "Bearer $token")
+            .asString()
     }
 
     /**
@@ -289,8 +296,10 @@ class IntegrationTestHelper(var origin: String) {
      * @return An `HttpResponse<String>` object containing the server's response as a string.
      * @throws UnirestException if an error occurs during the HTTP request.
      */
-    fun retrieveRecommendedDailyAllowances(): HttpResponse<String> {
-        return Unirest.get("$origin/api/ingredients/rda").asString()
+    fun retrieveRecommendedDailyAllowances(token: String): HttpResponse<String> {
+        return Unirest.get("$origin/api/ingredients/rda")
+            .header("Authorization", "Bearer $token")
+            .asString()
     }
 
     /**

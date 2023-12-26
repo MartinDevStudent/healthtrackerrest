@@ -65,10 +65,10 @@ app.component("meal-profile", {
     methods: {
       async getMeal(url) {
         try {
-          const res = await axios.get(url,{
+          const response = await axios.get(url, {
             headers: { "Authorization": `Bearer ${this.token}`}
           })
-          this.meal = res.data
+          this.meal = response.data
         } catch(error) {
           console.error("No meal found for id passed in the path parameter: " + error)
           this.noMealFound = true
@@ -76,10 +76,10 @@ app.component("meal-profile", {
       },
       async getIngredientsByMealId(baseUrl) {
         try {
-          const res = await axios.get(baseUrl + `/ingredients`,{
+          const response = await axios.get(baseUrl + `/ingredients`,{
             headers: { "Authorization": `Bearer ${this.token}`}
           })
-          this.ingredients = res.data
+          this.ingredients = response.data
         } catch(error) {
           console.error("No ingredients in this meal: " + error)
         }

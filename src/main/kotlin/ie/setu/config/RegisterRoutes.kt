@@ -33,12 +33,12 @@ fun registerRoutes(app: io.javalin.Javalin) {
 
         // Ingredients
         path("api/ingredients") {
-            get(IngredientController::getAll, Roles.ANYONE)
+            get(IngredientController::getAll, Roles.USER)
             path("rda") {
-                get(IngredientController::getRecommendedDailyAllowances, Roles.ANYONE)
+                get(IngredientController::getRecommendedDailyAllowances, Roles.USER)
             }
             path("{ingredient-id}") {
-                get(IngredientController::getOne, Roles.ANYONE)
+                get(IngredientController::getOne, Roles.USER)
             }
         }
 

@@ -65,23 +65,16 @@ app.component('home-page',
                 alert("Error while fetching users")
               }
             });
-        axios.get("/api/ingredients")
-            .then(res => this.ingredients = res.data)
-            .catch(function (error) {
-              if (error.response.status !== 404)
-              {
-                alert("Error while fetching ingredients")
-              }
-            });
 
         this.getToken()
         this.getActivities()
         this.getMeals()
+        this.getIngredients()
       },
       methods: {
         async getActivities() {
           try {
-            const res = await axios.get("/api/activities",{
+            const res = await axios.get("/api/activities", {
               headers: { "Authorization": `Bearer ${this.token}`}
             })
             this.activities = res.data
@@ -93,13 +86,25 @@ app.component('home-page',
         },
         async getMeals() {
           try {
-            const res = await axios.get("/api/meals",{
+            const res = await axios.get("/api/meals", {
               headers: { "Authorization": `Bearer ${this.token}`}
             })
             this.meals = res.data
           } catch(error) {
             if (error.response.status !== 404) {
               alert("Error while fetching meals")
+            }
+          }
+        },
+        async getIngredients() {
+          try {
+            const response = await axios.get("/api/ingredients", {
+              headers: { "Authorization": `Bearer ${this.token}`}
+            })
+            this.ingredients = response.data
+          } catch (error) {
+            if (error.response.status !== 404) {
+              alert("Error while fetching ingredients")
             }
           }
         },
