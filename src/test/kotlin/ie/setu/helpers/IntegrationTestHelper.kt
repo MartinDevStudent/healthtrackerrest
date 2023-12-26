@@ -305,7 +305,10 @@ class IntegrationTestHelper(var origin: String) {
      * @param id The unique identifier of the meal to be retrieved.
      * @return An HttpResponse containing the meal data as a string.
      */
-    fun retrieveMealById(id: Int, token: String): HttpResponse<String> {
+    fun retrieveMealById(
+        id: Int,
+        token: String,
+    ): HttpResponse<String> {
         return Unirest.get("$origin/api/meals/$id")
             .header("Authorization", "Bearer $token")
             .asString()
@@ -327,7 +330,10 @@ class IntegrationTestHelper(var origin: String) {
      * @param name The name of the meal to be added.
      * @return An HttpResponse containing the JsonNode of the created meal.
      */
-    fun addMeal(name: String, token: String): HttpResponse<JsonNode> {
+    fun addMeal(
+        name: String,
+        token: String,
+    ): HttpResponse<JsonNode> {
         return Unirest.post("$origin/api/meals")
             .header("Authorization", "Bearer $token")
             .body("{\"name\":\"$name\"}")
@@ -362,7 +368,10 @@ class IntegrationTestHelper(var origin: String) {
      * @param id The unique identifier of the meal to be deleted.
      * @return An HttpResponse containing the result of the deletion request.
      */
-    fun deleteMeal(id: Int, token: String): HttpResponse<String> {
+    fun deleteMeal(
+        id: Int,
+        token: String,
+    ): HttpResponse<String> {
         return Unirest.delete("$origin/api/meals/$id")
             .header("Authorization", "Bearer $token")
             .asString()
