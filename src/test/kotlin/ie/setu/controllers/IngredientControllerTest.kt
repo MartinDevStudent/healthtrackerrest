@@ -51,7 +51,7 @@ class IngredientControllerTest {
     inner class ReadIngredients {
         @Test
         fun `getting all ingredients from the database returns 200 or 404 response`() {
-            val response = requests.retrieveIngredients()
+            val response = requests.retrieveIngredients(jwtToken)
             if (response.status == 200) {
                 val retrievedIngredients: ArrayList<Ingredient> = jsonToObject(response.body.toString())
                 assertNotEquals(0, retrievedIngredients.size)
@@ -66,7 +66,7 @@ class IngredientControllerTest {
             val id = Integer.MIN_VALUE
 
             // Act - attempt to retrieve the non-existent ingredient from the database
-            val retrieveResponse = requests.retrieveIngredientById(id)
+            val retrieveResponse = requests.retrieveIngredientById(id, jwtToken)
 
             // Assert -  verify return code
             assertEquals(404, retrieveResponse.status)
@@ -90,7 +90,7 @@ class IngredientControllerTest {
             val addedIngredients: ArrayList<Ingredient> = jsonToObject(addedIngredientsResponse.body.toString())
 
             // Assert - retrieve the added ingredient from the database and verify return code
-            val retrieveResponse = requests.retrieveIngredientById(addedIngredients[0].id)
+            val retrieveResponse = requests.retrieveIngredientById(addedIngredients[0].id, jwtToken)
             assertEquals(200, retrieveResponse.status)
 
             // After - restore the db to previous state by deleting the added meal
@@ -136,7 +136,7 @@ class IngredientControllerTest {
         @Test
         fun `getting recommended daily allowances, returns a 200 response`() {
             // Act - attempt to retrieve the ingredients using the non-existent meal from the database
-            val retrieveResponse = requests.retrieveRecommendedDailyAllowances()
+            val retrieveResponse = requests.retrieveRecommendedDailyAllowances(jwtToken)
 
             // Assert -  verify return code
             assertEquals(200, retrieveResponse.status)
