@@ -82,8 +82,12 @@ app.component("user-overview", {
           headers: { "Authorization": `Bearer ${this.token}` }
         })
         this.users = response.data
-      } catch {
-        alert("Error while fetching users")
+      } catch(error) {
+        if (error.response.status === 401) {
+          location.href = '/login'
+        } else {
+          alert("Error while fetching users")
+        }
       }
     },
     async deleteUser(user, index) {
