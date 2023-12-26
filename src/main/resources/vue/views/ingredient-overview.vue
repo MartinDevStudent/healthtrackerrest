@@ -45,7 +45,9 @@ app.component("ingredient-overview", {
         })
         this.ingredients = response.data
       } catch (error) {
-        if (error.response.status !== 404) {
+        if (error.response.status === 401) {
+          location.href = '/login';
+        } else if (error.response.status !== 404) {
           alert("Error while fetching ingredients")
         }
       }

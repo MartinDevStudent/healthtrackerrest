@@ -100,7 +100,7 @@ app.component("activity-overview", {
         })
         this.activities = response.data
       } catch(error) {
-        if (error.response.status !== 404) {
+        if (error.response.status === 404) {
           alert("Error while fetching activities")
         } else if (error.response.status !== 401) {
           location.href = '/login';

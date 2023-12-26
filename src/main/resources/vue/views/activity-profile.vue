@@ -89,7 +89,7 @@ app.component("activity-profile", {
         })
         this.activity = response.data
       } catch(error) {
-        if (error.response.status !== 401) {
+        if (error.response.status === 401) {
           location.href = '/login';
         } else {
           alert("Error while fetching user" + activityId)
