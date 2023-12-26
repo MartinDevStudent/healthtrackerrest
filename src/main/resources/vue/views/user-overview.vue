@@ -63,22 +63,28 @@
 </template>
 <script>
 
-
 app.component("user-overview", {
   template: "#user-overview",
   data: () => ({
     users: [],
     formData: [],
     hideForm :true,
+    token: null
   }),
   created() {
-    this.fetchUsers();
+    this.getToken()
+    this.getUsers()
   },
   methods: {
-    fetchUsers: function () {
-      axios.get("/api/users")
-          .then(res => this.users = res.data)
-          .catch(() => alert("Error while fetching users"));
+    async getUsers() {
+      try {
+        const response = await axios.get("/api/users",
+          { headers: { "Authorization": `Bearer ${this.token}`}
+        })
+        this.users = response.data
+      } catch {
+        alert("Error while fetching users")
+      }
     },
     deleteUser: function (user, index) {
       if (confirm('Are you sure you want to delete this user? This action cannot be undone.', 'Warning')) {
@@ -109,7 +115,10 @@ app.component("user-overview", {
         .catch(error => {
           console.error(error)
         })
-    }
+    },
+    getToken() {
+      this.token = JSON.parse(localStorage.getItem("token"))
+    },
   }
 });
 </script>
