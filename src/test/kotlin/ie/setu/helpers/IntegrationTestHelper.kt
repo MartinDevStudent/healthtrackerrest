@@ -262,7 +262,10 @@ class IntegrationTestHelper(var origin: String) {
      * @return An `HttpResponse<String>` object containing the server's response as a string.
      * @throws UnirestException if an error occurs during the HTTP request.
      */
-    fun retrieveIngredientById(id: Int, token: String): HttpResponse<String> {
+    fun retrieveIngredientById(
+        id: Int,
+        token: String,
+    ): HttpResponse<String> {
         return Unirest.get("$origin/api/ingredients/$id")
             .header("Authorization", "Bearer $token")
             .asString()
