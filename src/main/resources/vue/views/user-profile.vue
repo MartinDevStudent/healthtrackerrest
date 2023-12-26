@@ -77,16 +77,15 @@ app.component("user-profile", {
     password: null,
     noUserFound: false,
     activities: [],
+    token: null
   }),
-  created: function () {
+  created() {
     const userId = this.$javalin.pathParams["user-id"];
     const url = `/api/users/${userId}`
-    axios.get(url)
-      .then(res => this.user = res.data)
-      .catch(error => {
-        console.error("No user found for id passed in the path parameter: " + error)
-        this.noUserFound = true
-      })
+
+    this.getToken()
+    this.getUser(url)
+
     axios.get(url + `/activities`)
       .then(res => this.activities = res.data)
       .catch(error => {
@@ -94,6 +93,17 @@ app.component("user-profile", {
       })
   },
   methods: {
+    async getUser(url) {
+      try {
+        const response = await axios.get(url,
+          { headers: { "Authorization": `Bearer ${this.token}`}
+        })
+        this.user = response.data
+      } catch(error) {
+        console.error("No user found for id passed in the path parameter: " + error)
+        this.noUserFound = true
+      }
+    },
     updateUser: function () {
       const userId = this.$javalin.pathParams["user-id"];
       const url = `/api/users/${userId}`
@@ -125,7 +135,10 @@ app.component("user-profile", {
             console.error(error)
           });
       }
-    }
+    },
+    getToken() {
+      this.token = JSON.parse(localStorage.getItem("token"))
+    },
   }
 });
 </script>
