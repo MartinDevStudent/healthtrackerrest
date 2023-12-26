@@ -78,12 +78,13 @@ class IngredientControllerTest {
             val allMealsResponse = requests.retrieveMeals(jwtToken)
             val allMeals: List<Meal> = jsonToObject(allMealsResponse.body.toString())
 
-            val meal = if (allMeals.any { x -> x.name == VALID_MEAL_NAME }) {
-                allMeals.first { x -> x.name == VALID_MEAL_NAME }
-            } else {
-                val addMealResponse = requests.addMeal(VALID_MEAL_NAME, jwtToken)
-                jsonToObject(addMealResponse.body.toString())
-            }
+            val meal =
+                if (allMeals.any { x -> x.name == VALID_MEAL_NAME }) {
+                    allMeals.first { x -> x.name == VALID_MEAL_NAME }
+                } else {
+                    val addMealResponse = requests.addMeal(VALID_MEAL_NAME, jwtToken)
+                    jsonToObject(addMealResponse.body.toString())
+                }
 
             val addedIngredientsResponse = requests.retrieveIngredientByMealId(meal.id, jwtToken)
             val addedIngredients: ArrayList<Ingredient> = jsonToObject(addedIngredientsResponse.body.toString())
@@ -115,12 +116,13 @@ class IngredientControllerTest {
             val allMealsResponse = requests.retrieveMeals(jwtToken)
             val allMeals: List<Meal> = jsonToObject(allMealsResponse.body.toString())
 
-            val meal = if (allMeals.any { x -> x.name == VALID_MEAL_NAME }) {
-                allMeals.first { x -> x.name == VALID_MEAL_NAME }
-            } else {
-                val addMealResponse = requests.addMeal(VALID_MEAL_NAME, jwtToken)
-                jsonToObject(addMealResponse.body.toString())
-            }
+            val meal =
+                if (allMeals.any { x -> x.name == VALID_MEAL_NAME }) {
+                    allMeals.first { x -> x.name == VALID_MEAL_NAME }
+                } else {
+                    val addMealResponse = requests.addMeal(VALID_MEAL_NAME, jwtToken)
+                    jsonToObject(addMealResponse.body.toString())
+                }
 
             // Assert - retrieve the ingredients from the database and verify return code
             val retrieveResponse = requests.retrieveIngredientByMealId(meal.id, jwtToken)
