@@ -28,7 +28,8 @@
               <a class="nav-link" href="/ingredients">Ingredient</a>
             </li>
           </ul>
-          <button class="btn btn-outline-success me-2" type="button"><a href="/login">Login</a></button>
+          <button class="btn btn-outline-success me-2 mr-2" type="button"><a href="/login">Login</a></button>
+          <button class="btn btn-outline-success me-2" type="button"><a href="/register">Register</a></button>
         </div>
       </nav>
       <!--End of nav bar-->
