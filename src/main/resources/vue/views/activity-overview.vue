@@ -89,45 +89,47 @@ app.component("activity-overview", {
   }),
   created() {
     this.getToken();
-    this.fetchActivities();
-    this.fetchUsers();
+    this.getActivities();
+    this.getUsers();
   },
   methods: {
-    fetchActivities: async function () {
+    async getActivities() {
       try {
-        const res = await axios.get("/api/activities", {
-          headers: { "Authorization": `Bearer ${this.token}`}
+        const response = await axios.get("/api/activities", {
+          headers: { "Authorization": `Bearer ${this.token}` }
         })
-        this.activities = res.data
+        this.activities = response.data
       } catch(error) {
-        if (error.response.status !== 404) {
+        if (error.response.status === 401) {
+          location.href = '/login'
+        } else if (error.response.status !== 404) {
           alert("Error while fetching activities")
         }
       }
     },
-    deleteActivity: async function (activity, index) {
+    async deleteActivity(activity, index) {
       if (confirm('Are you sure you want to delete this activity? This action cannot be undone.', 'Warning')) {
         //user confirmed delete
-        const activityId = activity.id;
-        const url = `/api/activities/${activityId}`;
+        const activityId = activity.id
+        const url = `/api/activities/${activityId}`
 
         try {
-          const res = await axios.delete(url, {
+          const response = await axios.delete(url, {
             headers: { "Authorization": `Bearer ${this.token}`}
           })
 
           //delete from the local state so Vue will reload list automatically
-          this.activities.splice(index, 1).push(res.data)
+          this.activities.splice(index, 1).push(response.data)
         } catch(error)  {
           console.error(error)
         }
       }
     },
-    addActivity: async function (){
-      const url = `/api/activities`;
+    async addActivity() {
+      const url = `/api/activities`
 
       try {
-        const res = await axios.post(url, {
+        const response = await axios.post(url, {
             description: this.formData.description,
             duration: this.formData.duration,
             calories: this.formData.calories,
@@ -137,21 +139,25 @@ app.component("activity-overview", {
           headers: { "Authorization": `Bearer ${this.token}`}
         })
 
-        this.activities.push(res.data)
-        this.hideForm= true;
+        this.activities.push(response.data)
+        this.hideForm= true
       } catch(error)  {
         console.error(error)
       }
     },
-    fetchUsers: async function () {
+    async getUsers() {
       try {
         const response = await axios.get("/api/users")
         this.users = response.data
-      } catch {
-        alert("Error while fetching users")
+      } catch(error) {
+        if (error.response.status === 401) {
+          location.href = '/login'
+        } else {
+          alert("Error while fetching users")
+        }
       }
     },
-    getToken: function () {
+    getToken() {
       this.token = JSON.parse(localStorage.getItem("token"))
     }
   },

@@ -30,8 +30,12 @@ app.component("meal-ingredient-overview",{
           headers: { "Authorization": `Bearer ${this.token}` }
         })
         this.ingredients = response.data
-      } catch {
-        alert("Error while fetching ingredients")
+      } catch(error) {
+        if (error.response.status === 401) {
+          location.href = '/login';
+        } else {
+          alert("Error while fetching ingredients")
+        }
       }
     },
     getToken() {
