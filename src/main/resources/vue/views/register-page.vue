@@ -5,7 +5,7 @@
         <div class="card-header">
           <div class="row">
             <div class="col-6">
-              Login
+              Register
             </div>
           </div>
           <div class="card-body">
@@ -29,7 +29,7 @@
                 <input type="password" class="form-control" v-model="formData.password" name="password" placeholder="Password"/>
               </div>
             </form>
-            <button rel="tooltip" title="Register" class="btn btn-info btn-simple btn-link mr-2" @click="registerUser()">Login</button>
+            <button rel="tooltip" title="Register" class="btn btn-info btn-simple btn-link mr-2" @click="registerUser()">Register</button>
           </div>
         </div>
       </div>
