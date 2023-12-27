@@ -24,14 +24,11 @@
               </div>
             </form>
             <button rel="tooltip" title="Login" class="btn btn-info btn-simple btn-link mr-2" @click="login()">Login</button>
-            <button rel="tooltip" title="Validate" class="btn btn-info btn-simple btn-link" @click="validate()">Validate</button>
           </div>
         </div>
       </div>
     </div>
     <br />
-    <p v-if="token !== null">{{ `Bearer token: ${token}` }}</p>
-    <p v-if="validationResponse !== null">{{ `${validationResponse}, you were able to login using the bearer token above` }}</p>
   </app-layout>
 </template>
 
@@ -66,13 +63,6 @@
         } catch {
           alert("Error while logging in")
         }
-      },
-      validate() {
-        axios.get("/api/login/validate", {
-          headers: { "Authorization": `Bearer ${store.token}`}
-        })
-            .then(res => this.validationResponse = res.data)
-            .catch(() => alert("Error while validating token"));
       },
     },
     computed: {
