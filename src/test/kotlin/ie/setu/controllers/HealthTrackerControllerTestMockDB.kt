@@ -62,8 +62,8 @@ class HealthTrackerControllerTestMockDB {
             val retrieveResponse = retrieveUserByEmail(VALID_EMAIL, jwtDTO.jwt)
 
             // Assert - verify the return code and the contents of the retrieved user
-            assertEquals(200, retrieveResponse.status)
             val retrievedUser: User = jsonToObject(addResponse.body.toString())
+            assertEquals(200, retrieveResponse.status)
             assertEquals(VALID_EMAIL, retrievedUser.email)
             assertEquals(VALID_NAME, retrievedUser.name)
         }

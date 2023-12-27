@@ -96,14 +96,14 @@ app.component("activity-overview", {
     async getActivities() {
       try {
         const response = await axios.get("/api/activities", {
-          headers: { "Authorization": `Bearer ${this.token}`}
+          headers: { "Authorization": `Bearer ${this.token}` }
         })
         this.activities = response.data
       } catch(error) {
-        if (error.response.status === 404) {
+        if (error.response.status === 401) {
+          location.href = '/login'
+        } else if (error.response.status !== 404) {
           alert("Error while fetching activities")
-        } else if (error.response.status !== 401) {
-          location.href = '/login';
         }
       }
     },
@@ -149,8 +149,12 @@ app.component("activity-overview", {
       try {
         const response = await axios.get("/api/users")
         this.users = response.data
-      } catch {
-        alert("Error while fetching users")
+      } catch(error) {
+        if (error.response.status === 401) {
+          location.href = '/login'
+        } else {
+          alert("Error while fetching users")
+        }
       }
     },
     getToken() {
