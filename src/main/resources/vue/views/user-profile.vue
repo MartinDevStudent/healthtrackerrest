@@ -95,8 +95,12 @@ app.component("user-profile", {
         })
         this.user = response.data
       } catch(error) {
-        console.error("No user found for id passed in the path parameter: " + error)
-        this.noUserFound = true
+        if (error.response.status === 401) {
+          location.href = '/login'
+        } else {
+          console.error("No user found for id passed in the path parameter: " + error)
+          this.noUserFound = true
+        }
       }
     },
     async getUserActivities(baseUrl) {

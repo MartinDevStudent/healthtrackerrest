@@ -64,12 +64,14 @@ app.component("meal-overview", {
   methods: {
     async getMeals() {
       try {
-        const res = await axios.get("/api/meals",{
-          headers: { "Authorization": `Bearer ${this.token}`}
+        const response = await axios.get("/api/meals", {
+          headers: { "Authorization": `Bearer ${this.token}` }
         })
-        this.meals = res.data
+        this.meals = response.data
       } catch(error) {
-        if (error.response.status) {
+        if (error.response.status === 401) {
+          location.href = '/login';
+        } else {
           alert("Error while fetching meals")
         }
       }
@@ -77,12 +79,11 @@ app.component("meal-overview", {
     async deleteMeal(meal, index) {
       if (confirm('Are you sure you want to delete this meal? This action cannot be undone.', 'Warning')) {
         //user confirmed delete
-        const mealId = meal.id;
-        const url = `/api/meals/${mealId}`;
+        const mealId = meal.id
 
         try {
-          const res = await axios.delete(url, {
-            headers: { "Authorization": `Bearer ${this.token}`}
+          const res = await axios.delete(`/api/meals/${mealId}`, {
+            headers: { "Authorization": `Bearer ${this.token}` }
           })
           //delete from the local state so Vue will reload list automatically
           this.meals.splice(index, 1).push(res.data)

@@ -75,53 +75,54 @@ app.component("activity-profile", {
     noActivityFound: false,
     token: null,
   }),
-  created: function () {
+  created() {
     this.getToken();
     this.getActivity();
   },
   methods: {
-    getActivity: async function () {
+    async getActivity() {
       const activityId = this.$javalin.pathParams["activity-id"];
-      const url = `/api/activities/${activityId}`
 
       try {
-        const res = await axios.get(url, {
-          headers: { "Authorization": `Bearer ${this.token}`}
+        const response = await axios.get(`/api/activities/${activityId}`, {
+          headers: { "Authorization": `Bearer ${this.token}` }
         })
-        this.activity = res.data
-      } catch {
-        alert("Error while fetching user" + activityId)
-        this.noUserFound = true
+        this.activity = response.data
+      } catch(error) {
+        if (error.response.status === 401) {
+          location.href = '/login';
+        } else {
+          alert("Error while fetching user" + activityId)
+          this.noUserFound = true
+        }
       }
     },
-    updateActivity: async function () {
+    async updateActivity() {
       const activityId = this.$javalin.pathParams["activity-id"];
-      const url = `/api/activities/${activityId}`
 
       try {
-        const res = await axios.patch(url, {
+        const response = await axios.patch(`/api/activities/${activityId}`, {
           description: this.activity.description,
           duration: this.activity.duration,
           calories: this.activity.calories,
           started: this.activity.started,
           userId: this.activity.userId,
-        },{
-          headers: { "Authorization": `Bearer ${this.token}`}
+        }, {
+          headers: { "Authorization": `Bearer ${this.token}` }
         });
 
-        this.activity.push(res.data)
+        this.activity.push(response.data)
         alert("Activity updated!")
       } catch(error) {
         console.error(error)
       }
     },
-    deleteActivity: async function () {
+    async deleteActivity() {
       if (confirm("Do you really want to delete?")) {
         const activityId = this.$javalin.pathParams["activity-id"];
-        const url = `/api/activities/${activityId}`
 
         try {
-          await axios.delete(url,{
+          await axios.delete(`/api/activities/${activityId}`,{
             headers: { "Authorization": `Bearer ${this.token}`}
           })
 
@@ -132,7 +133,7 @@ app.component("activity-profile", {
         }
       }
     },
-    getToken: function () {
+    getToken() {
       this.token = JSON.parse(localStorage.getItem("token"))
     }
   }

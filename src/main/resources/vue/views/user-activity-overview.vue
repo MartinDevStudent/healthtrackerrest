@@ -9,7 +9,6 @@
       </ul>
     </div>
   </app-layout>
-
 </template>
 
 <script>
@@ -32,8 +31,12 @@ app.component("user-activity-overview",{
           headers: {"Authorization": `Bearer ${this.token}`}
         })
         this.activities = response.data
-      } catch {
-        alert("Error while fetching activities")
+      } catch(error) {
+        if (error.response.status === 401) {
+          location.href = '/login'
+        } else {
+          alert("Error while fetching activities")
+        }
       }
     },
     getToken() {

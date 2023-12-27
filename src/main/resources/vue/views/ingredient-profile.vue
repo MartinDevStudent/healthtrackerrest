@@ -98,7 +98,11 @@ app.component("ingredient-profile", {
         this.ingredient = response.data
         this.ingredientFound = true
       } catch(error) {
-        console.error("No ingredient found for id passed in the path parameter: " + error)
+        if (error.response.status === 401) {
+          location.href = '/login';
+        } else {
+          console.error("No ingredient found for id passed in the path parameter: " + error)
+        }
       }
     },
     async getRdas() {
