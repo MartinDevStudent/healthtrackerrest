@@ -10,6 +10,7 @@ import io.javalin.http.BadRequestResponse
 import io.javalin.http.ConflictResponse
 import io.javalin.http.Context
 import io.javalin.http.NotFoundResponse
+import jsonToObject
 
 object MealController {
     private val ingredientDao = IngredientDAO()
@@ -91,8 +92,14 @@ object MealController {
      * @param ctx The context object containing the HTTP request body with the meal data.
      */
     fun create(ctx: Context) {
-        val mapper = jacksonObjectMapper()
-        val mealDto = mapper.readValue<Meal>(ctx.body())
+        //val mapper = jacksonObjectMapper()
+        //val mealDto = mapper.readValue<Meal>(ctx.body())
+
+        val mealDto: Meal = jsonToObject(ctx.body())
+        val errorDetails = mealDto.validate()
+
+        if (errorDetails.isNotEmpty())
+            throw BadRequestResponse(message = "Invalid meal", errorDetails)
 
         var meal = mealDao.findByMealName(mealDto.name)
 
