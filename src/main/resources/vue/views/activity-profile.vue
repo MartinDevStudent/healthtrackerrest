@@ -112,7 +112,8 @@ app.component("activity-profile", {
         this.activity.push(response.data)
         alert("Activity updated!")
       } catch(error) {
-        console.error(error)
+        const problemDetails = this.getProblemDetailsString(error.response.data.details)
+        alert(`Validation Errors\n\n` + problemDetails)
       }
     },
     async deleteActivity() {
@@ -130,6 +131,13 @@ app.component("activity-profile", {
             console.error(error)
         }
       }
+    },
+    getProblemDetailsString(details) {
+      return Object.entries(details).map(x => {
+        const [property, issue] = x
+
+        return `${property}:  ${issue}`
+      }).join("\n")
     },
     getToken() {
       this.token = JSON.parse(localStorage.getItem("token"))
