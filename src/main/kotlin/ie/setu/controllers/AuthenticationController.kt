@@ -9,6 +9,7 @@ import ie.setu.utils.authentication.JwtProvider
 import ie.setu.utils.authentication.decodeJWT
 import ie.setu.utils.authentication.isCorrectPassword
 import io.javalin.http.Context
+import io.javalin.http.UnauthorizedResponse
 
 /**
  * Singleton object for handling authentication-related operations.
@@ -29,19 +30,17 @@ object AuthenticationController {
 
         val user = userDao.findByEmail(userLoginDTO.email)
 
-        if (user == null) {
-            ctx.status(401)
-        }
+        if (user == null)
+            throw UnauthorizedResponse("User cannot login in specified email address")
 
         val isCorrectPassword = isCorrectPassword(userLoginDTO.password, user!!.passwordHash!!)
 
-        if (isCorrectPassword) {
-            val token = JwtProvider.provider.generateToken(user)
-            ctx.json(JwtDTO(token))
-            ctx.status(200)
-        } else {
-            ctx.status(401)
-        }
+        if (!isCorrectPassword)
+            throw UnauthorizedResponse("User cannot login in specified email address")
+
+        val token = JwtProvider.provider.generateToken(user)
+        ctx.json(JwtDTO(token))
+        ctx.status(200)
     }
 
     /**
