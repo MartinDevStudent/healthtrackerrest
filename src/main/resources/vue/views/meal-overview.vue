@@ -16,15 +16,17 @@
             </div>
           </div>
           <div class="card-body" :class="{ 'd-none': hideForm}">
-            <form id="addMeal">
+            <form @submit.prevent="addMeal">
               <div class="input-group mb-3">
                 <div class="input-group-prepend">
                   <span class="input-group-text" id="input-meal-name">Name</span>
                 </div>
-                <input type="text" class="form-control" v-model="formData.name" name="name" placeholder="Name"/>
+                <input type="text" class="form-control" v-model="formData.name" name="name" placeholder="Name" required />
               </div>
+              <button rel="tooltip" title="Update" class="btn btn-info btn-simple btn-link" type="submit">
+                Add Meal
+              </button>
             </form>
-            <button rel="tooltip" title="Update" class="btn btn-info btn-simple btn-link" @click="this.addMeal()">Add Meal</button>
           </div>
         </div>
       </div>
@@ -82,25 +84,23 @@ app.component("meal-overview", {
         const mealId = meal.id
 
         try {
-          const res = await axios.delete(`/api/meals/${mealId}`, {
+          const response = await axios.delete(`/api/meals/${mealId}`, {
             headers: { "Authorization": `Bearer ${this.token}` }
           })
           //delete from the local state so Vue will reload list automatically
-          this.meals.splice(index, 1).push(res.data)
+          this.meals.splice(index, 1).push(response.data)
         } catch(error) {
           console.error(error)
         }
       }
     },
     async addMeal() {
-      const url = `/api/meals`;
-
       try {
-        const res = await axios.post(url,
+        const response = await axios.post(`/api/meals`,
           { name: this.formData.name },
           { headers: { "Authorization": `Bearer ${this.token}`}
         })
-        this.meals.push(res.data)
+        this.meals.push(response.data)
         this.hideForm= true;
       } catch {
         alert("Invalid name for meal")
