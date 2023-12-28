@@ -26,9 +26,6 @@ fun registerRoutes(app: io.javalin.Javalin) {
         // Login
         path("api/login") {
             post(AuthenticationController::login, Roles.ANYONE)
-            path("validate") {
-                get(AuthenticationController::validate, Roles.USER, Roles.ADMIN)
-            }
             path("register") {
                 post(UserController::create, Roles.ANYONE)
             }
