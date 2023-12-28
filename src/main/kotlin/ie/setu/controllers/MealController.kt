@@ -130,6 +130,11 @@ object MealController {
         val userId = ctx.pathParam("user-id").toInt()
         val mealDto: Meal = jsonToObject(ctx.body())
 
+        val errorDetails = mealDto.validate()
+
+        if (errorDetails.isNotEmpty())
+            throw BadRequestResponse(message = "Invalid meal", errorDetails)
+
         var meal = mealDao.findByMealName(mealDto.name)
 
         if (meal == null) {
