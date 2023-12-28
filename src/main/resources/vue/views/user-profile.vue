@@ -125,7 +125,8 @@ app.component("user-profile", {
         this.user.push(response.data)
         alert("User updated!")
       } catch(error) {
-        console.error(error)
+        const problemDetails = this.getProblemDetailsString(error.response.data.details)
+        alert(`Validation Errors\n\n` + problemDetails)
       }
     },
     async deleteUser() {
@@ -143,6 +144,13 @@ app.component("user-profile", {
           console.error(error)
         }
       }
+    },
+    getProblemDetailsString(details) {
+      return Object.entries(details).map(x => {
+        const [property, issue] = x
+
+        return `${property}:  ${issue}`
+      }).join("\n")
     },
     getToken() {
       this.token = JSON.parse(localStorage.getItem("token"))
