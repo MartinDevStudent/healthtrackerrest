@@ -50,7 +50,7 @@
     methods: {
       async registerUser() {
         try {
-          const response = await axios.post("/api/login/register", {
+          await axios.post("/api/login/register", {
             name: this.formData.name,
             email: this.formData.email,
             password: this.formData.password,
@@ -58,9 +58,17 @@
 
             alert("Account created! You can now login")
             location.href = '/login';
-        } catch {
-          alert("Invalid registration details")
+        } catch(error) {
+          const problemDetails = this.getProblemDetailsString(error.response.data.details)
+          alert(`Validation Errors\n\n` + problemDetails)
         }
+      },
+      getProblemDetailsString(details) {
+        return Object.entries(details).map(x => {
+          const [property, issue] = x
+
+          return `${property}:  ${issue}`
+        }).join("\n")
       },
     },
   });
