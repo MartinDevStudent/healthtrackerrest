@@ -6,6 +6,7 @@ import ie.setu.domain.user.User
 import ie.setu.domain.user.UserResponseDTO
 import ie.setu.utils.authentication.hashPassword
 import io.javalin.apibuilder.CrudHandler
+import io.javalin.http.BadRequestResponse
 import io.javalin.http.Context
 import jsonToObject
 
@@ -76,6 +77,12 @@ object UserController : CrudHandler {
      */
     override fun create(ctx: Context) {
         val userDTO: CreateUserDTO = jsonToObject(ctx.body())
+
+        val errorDetails = userDTO.validate()
+
+        if (errorDetails.isNotEmpty())
+            throw BadRequestResponse(message = "Invalid user details", errorDetails)
+
         val passwordHash = hashPassword(userDTO.password!!)
 
         val user =
