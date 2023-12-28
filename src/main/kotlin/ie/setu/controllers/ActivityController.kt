@@ -99,7 +99,7 @@ object ActivityController : CrudHandler {
         val errorDetails = activity.validate()
 
         if (user === null) {
-            errorDetails["userId"] = "Invalid user id"
+            errorDetails["userId"] = "invalid user id"
         }
 
         if (errorDetails.isNotEmpty())

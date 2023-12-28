@@ -142,13 +142,14 @@ app.component("activity-overview", {
         this.activities.push(response.data)
         this.hideForm= true
       } catch(error)  {
-        console.error(error)
+        const problemDetails = this.getProblemDetailsString(error.response.data.details)
+        alert(`Validation Errors\n\n` + problemDetails)
       }
     },
     async getUsers() {
       try {
         const response = await axios.get("/api/users", {
-          headers: { "Authorization": `Bearer ${this.token}`}
+          headers: { "Authorization": `Bearer ${this.token}` }
         })
         this.users = response.data
       } catch(error) {
@@ -158,6 +159,13 @@ app.component("activity-overview", {
           alert("Error while fetching users")
         }
       }
+    },
+    getProblemDetailsString(details) {
+      return Object.entries(details).map(x => {
+        const [property, issue] = x
+
+        return `${property}:  ${issue}`
+      }).join("\n")
     },
     getToken() {
       this.token = JSON.parse(localStorage.getItem("token"))
