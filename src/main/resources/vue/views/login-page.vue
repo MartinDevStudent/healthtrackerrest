@@ -14,16 +14,16 @@
                 <div class="input-group-prepend">
                   <span class="input-group-text" id="input-login-email">Email</span>
                 </div>
-                <input type="email" class="form-control" v-model="formData.email" name="email" placeholder="Email"/>
+                <input type="email" class="form-control" v-model="formData.email" name="email" placeholder="Email" required />
               </div>
               <div class="input-group mb-3">
                 <div class="input-group-prepend">
                   <span class="input-group-text" id="input-login-password">Password</span>
                 </div>
-                <input type="password" class="form-control" v-model="formData.password" name="password" placeholder="Password"/>
+                <input type="password" class="form-control" v-model="formData.password" name="password" placeholder="Password" required/>
               </div>
+              <button rel="tooltip" title="Login" class="btn btn-info btn-simple btn-link mr-2" type="submit">Login</button>
             </form>
-            <button rel="tooltip" title="Login" class="btn btn-info btn-simple btn-link mr-2" @click="login()">Login</button>
           </div>
         </div>
       </div>
