@@ -12,7 +12,7 @@ data class CreateUserDTO(
 
         if (this.name.isNullOrBlank()) errorDetails["name"] = "name cannot be an empty string"
         if (!isValidEmail(this.email)) errorDetails["email"] = "invalid email address"
-        if (this.password!!.length < 3) errorDetails["password"] = "password cannot be less than three characters"
+        if (!this.password.isNullOrEmpty() && this.password!!.length < 3) errorDetails["password"] = "password cannot be less than three characters"
 
         return errorDetails
     }

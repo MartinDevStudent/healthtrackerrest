@@ -8,6 +8,7 @@ import ie.setu.utils.authentication.hashPassword
 import io.javalin.apibuilder.CrudHandler
 import io.javalin.http.BadRequestResponse
 import io.javalin.http.Context
+import io.javalin.http.NotFoundResponse
 import jsonToObject
 
 /**
@@ -110,11 +111,10 @@ object UserController : CrudHandler {
         ctx: Context,
         resourceId: String,
     ) {
-        if (userDao.delete(resourceId.toInt()) != 0) {
-            ctx.status(204)
-        } else {
-            ctx.status(404)
-        }
+        if (userDao.delete(resourceId.toInt()) == 0)
+            throw NotFoundResponse("No user with specified id found")
+
+        ctx.status(204)
     }
 
     /**
@@ -128,21 +128,25 @@ object UserController : CrudHandler {
     ) {
         val userId = resourceId.toInt()
         val userDto: CreateUserDTO = jsonToObject(ctx.body())
-
         val user = userDao.findById(userId)
+
+        val errorDetails = userDto.validate()
+
         if (user === null) {
-            ctx.status(404)
-        } else {
-            user.name = userDto.name
-            user.email = userDto.email
-            user.passwordHash = if (userDto.password === null) user.passwordHash else hashPassword(userDto.password!!)
+            errorDetails["userId"] = "invalid user id"
         }
 
-        if ((userDao.update(id = userId, user = user!!)) != 0) {
-            ctx.json(UserResponseDTO.fromUser(user))
-            ctx.status(204)
-        } else {
-            ctx.status(404)
-        }
+        if (errorDetails.isNotEmpty())
+            throw BadRequestResponse(message = "Invalid user details", errorDetails)
+
+        user!!.name = userDto.name
+        user.email = userDto.email
+        user.passwordHash = if (userDto.password === null) user.passwordHash else hashPassword(userDto.password!!)
+
+        if ((userDao.update(id = userId, user = user)) == 0)
+            throw NotFoundResponse("No user with specified id found")
+
+        ctx.json(UserResponseDTO.fromUser(user))
+        ctx.status(204)
     }
 }
