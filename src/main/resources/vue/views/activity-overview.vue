@@ -16,30 +16,30 @@
             </div>
           </div>
           <div class="card-body" :class="{ 'd-none': hideForm}">
-          <form id="addActivity">
+          <form @submit.prevent="addActivity">
               <div class="input-group mb-3">
                 <div class="input-group-prepend">
                   <span class="input-group-text" id="input-activity-description">Description</span>
                 </div>
-                <input type="text" class="form-control" v-model="formData.description" name="description" placeholder="Description"/>
+                <input type="text" class="form-control" v-model="formData.description" name="description" placeholder="Description" required />
               </div>
               <div class="input-group mb-3">
                 <div class="input-group-prepend">
                   <span class="input-group-text" id="input-activity-duration">Duration</span>
                 </div>
-                <input class="form-control" v-model="formData.duration" name="duration" placeholder="Duration" type="number" step=".01"/>
+                <input class="form-control" v-model="formData.duration" name="duration" placeholder="Duration" type="number" step=".01" required />
               </div>
               <div class="input-group mb-3">
                 <div class="input-group-prepend">
                   <span class="input-group-text" id="input-activity-calories">Calories</span>
                 </div>
-                <input type="number" class="form-control" v-model="formData.calories" name="calories" placeholder="Calories"/>
+                <input type="number" class="form-control" v-model="formData.calories" name="calories" placeholder="Calories" required />
               </div>
               <div class="input-group mb-3">
                 <div class="input-group-prepend">
                   <span class="input-group-text" id="input-activity-started">Started</span>
                 </div>
-                <input type="datetime-local" class="form-control" v-model="formData.started" name="started" placeholder="Started"/>
+                <input type="datetime-local" class="form-control" v-model="formData.started" name="started" placeholder="Started" required />
               </div>
               <div class="input-group mb-3">
                 <div class="input-group-prepend">
@@ -51,8 +51,10 @@
                   </option>
                 </select>
               </div>
+              <button rel="tooltip" title="Update" class="btn btn-info btn-simple btn-link" type="submit">
+                Add Activity
+              </button>
             </form>
-            <button rel="tooltip" title="Update" class="btn btn-info btn-simple btn-link" @click="addActivity()">Add Activity</button>
           </div>
         </div>
       </div>
@@ -126,17 +128,15 @@ app.component("activity-overview", {
       }
     },
     async addActivity() {
-      const url = `/api/activities`
-
       try {
-        const response = await axios.post(url, {
+        const response = await axios.post(`/api/activities`, {
             description: this.formData.description,
             duration: this.formData.duration,
             calories: this.formData.calories,
             started: this.formData.started,
             userId: this.formData.userId
         }, {
-          headers: { "Authorization": `Bearer ${this.token}`}
+          headers: { "Authorization": `Bearer ${this.token}` }
         })
 
         this.activities.push(response.data)
@@ -147,7 +147,9 @@ app.component("activity-overview", {
     },
     async getUsers() {
       try {
-        const response = await axios.get("/api/users")
+        const response = await axios.get("/api/users", {
+          headers: { "Authorization": `Bearer ${this.token}`}
+        })
         this.users = response.data
       } catch(error) {
         if (error.response.status === 401) {
