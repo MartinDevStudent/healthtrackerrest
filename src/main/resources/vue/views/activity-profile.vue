@@ -5,65 +5,63 @@
       <p> View <a :href="'/activities'">all activities</a>.</p>
     </div>
     <div class="card bg-light mb-3" v-if="!noActivityFound">
-      <div class="card-header">
-        <div class="row">
-          <div class="col-6"> Activity Profile </div>
-          <div class="col" align="right">
-            <button rel="tooltip" title="Update"
-                    class="btn btn-info btn-simple btn-link"
-                    @click="updateActivity()">
-              <i class="far fa-save" aria-hidden="true"></i>
-            </button>
-            <button rel="tool tip" title="Delete"
-                    class="btn btn-info btn-simple btn-link"
-                    @click="deleteActivity()">
-              <i class="fas fa-trash" aria-hidden="true"></i>
-            </button>
+      <form @submit.prevent="updateActivity">
+        <div class="card-header">
+          <div class="row">
+            <div class="col-6"> Activity Profile </div>
+            <div class="col" align="right">
+              <button rel="tooltip" title="Update" class="btn btn-info btn-simple btn-link" type="submit">
+                <i class="far fa-save" aria-hidden="true"></i>
+              </button>
+              <button rel="tool tip" title="Delete"
+                      class="btn btn-info btn-simple btn-link"
+                      @click="deleteActivity()">
+                <i class="fas fa-trash" aria-hidden="true"></i>
+              </button>
+            </div>
           </div>
         </div>
-      </div>
-      <div class="card-body">
-        <form>
-          <div class="input-group mb-3">
-            <div class="input-group-prepend">
-              <span class="input-group-text" id="input-activity-id">Activity ID</span>
+        <div class="card-body">
+            <div class="input-group mb-3">
+              <div class="input-group-prepend">
+                <span class="input-group-text" id="input-activity-id">Activity ID</span>
+              </div>
+              <input type="number" class="form-control" v-model="activity.id" name="id" readonly/>
             </div>
-            <input type="number" class="form-control" v-model="activity.id" name="id" readonly/>
-          </div>
-          <div class="input-group mb-3">
-            <div class="input-group-prepend">
-              <span class="input-group-text" id="input-activity-description">Description</span>
+            <div class="input-group mb-3">
+              <div class="input-group-prepend">
+                <span class="input-group-text" id="input-activity-description">Description</span>
+              </div>
+              <input type="text" class="form-control" v-model="activity.description" name="description" placeholder="Description" required />
             </div>
-            <input type="text" class="form-control" v-model="activity.description" name="description" placeholder="Description"/>
-          </div>
-          <div class="input-group mb-3">
-            <div class="input-group-prepend">
-              <span class="input-group-text" id="input-activity-duration">Duration</span>
+            <div class="input-group mb-3">
+              <div class="input-group-prepend">
+                <span class="input-group-text" id="input-activity-duration">Duration</span>
+              </div>
+              <input type="number" class="form-control" v-model="activity.duration" name="duration" step=".01" placeholder="Duration" required />
             </div>
-            <input type="number" class="form-control" v-model="activity.duration" name="duration" step=".01" placeholder="Duration"/>
-          </div>
-          <div class="input-group mb-3">
-            <div class="input-group-prepend">
+            <div class="input-group mb-3">
+              <div class="input-group-prepend">
 
-              <span class="input-group-text" id="input-activity-calories">Calories</span>
+                <span class="input-group-text" id="input-activity-calories">Calories</span>
+              </div>
+              <input type="number" class="form-control" v-model="activity.calories" name="calories" placeholder="Calories" required />
             </div>
-            <input type="number" class="form-control" v-model="activity.calories" name="calories" placeholder="Calories"/>
-          </div>
-          <div class="input-group mb-3">
-            <div class="input-group-prepend">
-              <span class="input-group-text" id="input-activity-started">Started</span>
+            <div class="input-group mb-3">
+              <div class="input-group-prepend">
+                <span class="input-group-text" id="input-activity-started">Started</span>
+              </div>
+              <input type="datetime-local" class="form-control" v-model="activity.started" name="started" readonly placeholder="Started" required />
             </div>
-            <input type="datetime-local" class="form-control" v-model="activity.started" name="started" readonly placeholder="Started"/>
-          </div>
-          <div class="input-group mb-3">
-            <div class="input-group-prepend">
-              <span class="input-group-text" id="input-activity-userId">User Id</span>
+            <div class="input-group mb-3">
+              <div class="input-group-prepend">
+                <span class="input-group-text" id="input-activity-userId">User Id</span>
+              </div>
+              <input type="number" class="form-control" v-model="activity.userId" name="userId" readonly placeholder="User Id"/>
             </div>
-            <input type="number" class="form-control" v-model="activity.userId" name="userId" readonly placeholder="User Id"/>
           </div>
         </form>
       </div>
-    </div>
   </app-layout>
 </template>
 
@@ -114,7 +112,8 @@ app.component("activity-profile", {
         this.activity.push(response.data)
         alert("Activity updated!")
       } catch(error) {
-        console.error(error)
+        const problemDetails = this.getProblemDetailsString(error.response.data.details)
+        alert(`Validation Errors\n\n` + problemDetails)
       }
     },
     async deleteActivity() {
@@ -132,6 +131,13 @@ app.component("activity-profile", {
             console.error(error)
         }
       }
+    },
+    getProblemDetailsString(details) {
+      return Object.entries(details).map(x => {
+        const [property, issue] = x
+
+        return `${property}:  ${issue}`
+      }).join("\n")
     },
     getToken() {
       this.token = JSON.parse(localStorage.getItem("token"))

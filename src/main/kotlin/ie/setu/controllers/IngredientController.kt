@@ -3,6 +3,7 @@ package ie.setu.controllers
 import ie.setu.domain.repository.IngredientDAO
 import ie.setu.domain.repository.RecommendedDailyAllowancesDAO
 import io.javalin.http.Context
+import io.javalin.http.NotFoundResponse
 
 /**
  * Singleton object for handling ingredient-related operations.
@@ -24,12 +25,13 @@ object IngredientController {
      */
     fun getAll(ctx: Context) {
         val ingredients = ingredientDao.getAll()
-        if (ingredients.size != 0) {
-            ctx.json(ingredients)
-            ctx.status(200)
-        } else {
-            ctx.status(404)
+
+        if (ingredients.isEmpty()) {
+            throw NotFoundResponse("No ingredients found")
         }
+
+        ctx.json(ingredients)
+        ctx.status(200)
     }
 
     /**
@@ -43,12 +45,13 @@ object IngredientController {
      */
     fun getOne(ctx: Context) {
         val ingredient = ingredientDao.findByIngredientId(ctx.pathParam("ingredient-id").toInt())
-        if (ingredient != null) {
-            ctx.json(ingredient)
-            ctx.status(200)
-        } else {
-            ctx.status(404)
+
+        if (ingredient == null) {
+            throw NotFoundResponse("No ingredient with specified id found")
         }
+
+        ctx.json(ingredient)
+        ctx.status(200)
     }
 
     /**
@@ -58,11 +61,12 @@ object IngredientController {
      */
     fun getRecommendedDailyAllowances(ctx: Context) {
         val recommendedDailyAllowances = recommendedDailyAllowancesDao.get()
-        if (recommendedDailyAllowances != null) {
-            ctx.json(recommendedDailyAllowances)
-            ctx.status(200)
-        } else {
-            ctx.status(404)
+
+        if (recommendedDailyAllowances == null) {
+            throw NotFoundResponse("No recommended daily allowances found")
         }
+
+        ctx.json(recommendedDailyAllowances)
+        ctx.status(200)
     }
 }

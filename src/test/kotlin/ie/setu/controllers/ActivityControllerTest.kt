@@ -100,7 +100,7 @@ class ActivityControllerTest {
         }
 
         @Test
-        fun `adding an activity when no user exists for it, returns a 404 response`() {
+        fun `adding an activity when no user exists for it, returns a 400 response`() {
             // Arrange - check there is no user for -1 id
             val userId = Integer.MIN_VALUE
 
@@ -117,7 +117,7 @@ class ActivityControllerTest {
 
             // Assert
             assertEquals(404, requests.retrieveUserById(userId, jwtToken).status)
-            assertEquals(404, addActivityResponse.status)
+            assertEquals(400, addActivityResponse.status)
         }
     }
 
@@ -258,10 +258,10 @@ class ActivityControllerTest {
         }
 
         @Test
-        fun `updating an activity when it doesn't exist, returns a 404 response`() {
+        fun `updating an activity when it doesn't exist, returns a 400 response`() {
             // Arrange, Act & Assert - attempt to update the email and name of user that doesn't exist
             assertEquals(
-                404,
+                400,
                 requests.updateActivity(
                     Integer.MIN_VALUE,
                     UPDATED_DESCRIPTION,

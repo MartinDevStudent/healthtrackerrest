@@ -1,12 +1,14 @@
 package ie.setu.controllers
 
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
 import ie.setu.domain.Meal
 import ie.setu.domain.repository.IngredientDAO
 import ie.setu.domain.repository.MealDAO
 import ie.setu.infrastructure.NutrientHttpClient
+import io.javalin.http.BadRequestResponse
+import io.javalin.http.ConflictResponse
 import io.javalin.http.Context
+import io.javalin.http.NotFoundResponse
+import jsonToObject
 
 object MealController {
     private val ingredientDao = IngredientDAO()
@@ -19,12 +21,13 @@ object MealController {
      */
     fun getAll(ctx: Context) {
         val meals = mealDao.getAll()
-        if (meals.isNotEmpty()) {
-            ctx.json(meals)
-            ctx.status(200)
-        } else {
-            ctx.status(404)
+
+        if (meals.isEmpty()) {
+            throw NotFoundResponse("No meals found")
         }
+
+        ctx.json(meals)
+        ctx.status(200)
     }
 
     /**
@@ -34,12 +37,13 @@ object MealController {
      */
     fun getOne(ctx: Context) {
         val meal = mealDao.findByMealId(ctx.pathParam("meal-id").toInt())
-        if (meal != null) {
-            ctx.json(meal)
-            ctx.status(200)
-        } else {
-            ctx.status(404)
+
+        if (meal == null) {
+            throw NotFoundResponse("No meal with specified id found")
         }
+
+        ctx.json(meal)
+        ctx.status(200)
     }
 
     /**
@@ -49,12 +53,13 @@ object MealController {
      */
     fun getByUserId(ctx: Context) {
         val meals = mealDao.findByUserId(ctx.pathParam("user-id").toInt())
-        if (meals.isNotEmpty()) {
-            ctx.json(meals)
-            ctx.status(200)
-        } else {
-            ctx.status(404)
+
+        if (meals.isEmpty()) {
+            throw NotFoundResponse("No meals associated with specified user found")
         }
+
+        ctx.json(meals)
+        ctx.status(200)
     }
 
     /**
@@ -68,12 +73,13 @@ object MealController {
      */
     fun getIngredientsByMealId(ctx: Context) {
         val ingredients = ingredientDao.findByMealId(ctx.pathParam("meal-id").toInt())
-        if (ingredients.isNotEmpty()) {
-            ctx.json(ingredients)
-            ctx.status(200)
-        } else {
-            ctx.status(404)
+
+        if (ingredients.isEmpty()) {
+            throw NotFoundResponse("Meal with specified id not found")
         }
+
+        ctx.json(ingredients)
+        ctx.status(200)
     }
 
     /**
@@ -88,35 +94,38 @@ object MealController {
      * @param ctx The context object containing the HTTP request body with the meal data.
      */
     fun create(ctx: Context) {
-        val mapper = jacksonObjectMapper()
-        val mealDto = mapper.readValue<Meal>(ctx.body())
+        val mealDto: Meal = jsonToObject(ctx.body())
+        val errorDetails = mealDto.validate()
+
+        if (errorDetails.isNotEmpty()) {
+            throw BadRequestResponse(message = "Invalid meal", errorDetails)
+        }
 
         var meal = mealDao.findByMealName(mealDto.name)
 
         if (meal != null) {
-            ctx.status(409)
-            ctx.result("Meal already exists in database")
-        } else {
-            val ingredients = NutrientHttpClient.get(mealDto.name)
-
-            if (ingredients.isNotEmpty()) {
-                meal =
-                    Meal(
-                        id = mealDao.save(mealDto),
-                        name = mealDto.name,
-                    )
-
-                ingredients.forEach {
-                    val ingredientId = ingredientDao.save(it)
-                    ingredientDao.associateIngredientWithMeal(ingredientId, meal.id)
-                }
-
-                ctx.json(meal)
-                ctx.status(201)
-            } else {
-                ctx.status(400)
-            }
+            throw ConflictResponse("Meal already exists in database")
         }
+
+        val ingredients = NutrientHttpClient.get(mealDto.name)
+
+        if (ingredients.isEmpty()) {
+            throw BadRequestResponse()
+        }
+
+        meal =
+            Meal(
+                id = mealDao.save(mealDto),
+                name = mealDto.name,
+            )
+
+        ingredients.forEach {
+            val ingredientId = ingredientDao.save(it)
+            ingredientDao.associateIngredientWithMeal(ingredientId, meal.id)
+        }
+
+        ctx.json(meal)
+        ctx.status(201)
     }
 
     /**
@@ -127,36 +136,38 @@ object MealController {
      */
     fun createUserMeal(ctx: Context) {
         val userId = ctx.pathParam("user-id").toInt()
-        val mapper = jacksonObjectMapper()
-        val mealDto = mapper.readValue<Meal>(ctx.body())
+        val mealDto: Meal = jsonToObject(ctx.body())
+
+        val errorDetails = mealDto.validate()
+
+        if (errorDetails.isNotEmpty()) {
+            throw BadRequestResponse(message = "Invalid meal", errorDetails)
+        }
 
         var meal = mealDao.findByMealName(mealDto.name)
 
         if (meal == null) {
             val ingredientDTOs = NutrientHttpClient.get(mealDto.name)
 
-            if (ingredientDTOs.isNotEmpty()) {
-                meal =
-                    Meal(
-                        id = mealDao.save(mealDto),
-                        name = mealDto.name,
-                    )
-
-                ingredientDTOs.forEach {
-                    val ingredientId = ingredientDao.save(it)
-                    ingredientDao.associateIngredientWithMeal(ingredientId, meal.id)
-                }
-                mealDao.associateMealWithUser(userId, meal.id)
-                ctx.json(meal)
-                ctx.status(201)
-            } else {
-                ctx.status(400)
+            if (ingredientDTOs.isEmpty()) {
+                throw BadRequestResponse("Invalid meal name")
             }
-        } else {
-            mealDao.associateMealWithUser(userId, meal.id)
-            ctx.json(meal)
-            ctx.status(201)
+
+            meal =
+                Meal(
+                    id = mealDao.save(mealDto),
+                    name = mealDto.name,
+                )
+
+            ingredientDTOs.forEach {
+                val ingredientId = ingredientDao.save(it)
+                ingredientDao.associateIngredientWithMeal(ingredientId, meal.id)
+            }
         }
+
+        mealDao.associateMealWithUser(userId, meal.id)
+        ctx.json(meal)
+        ctx.status(201)
     }
 
     /**
@@ -170,11 +181,11 @@ object MealController {
      * @param ctx The context object containing the meal ID as a path parameter.
      */
     fun delete(ctx: Context) {
-        if (mealDao.delete(ctx.pathParam("meal-id").toInt()) != 0) {
-            ctx.status(204)
-        } else {
-            ctx.status(404)
+        if (mealDao.delete(ctx.pathParam("meal-id").toInt()) == 0) {
+            throw NotFoundResponse("No meal with specified id found")
         }
+
+        ctx.status(204)
     }
 
     /**
@@ -183,11 +194,11 @@ object MealController {
      * @param ctx The Javalin context object representing the HTTP request and response.
      */
     fun deleteUserMealsByUserId(ctx: Context) {
-        if (mealDao.deleteByUserId(ctx.pathParam("user-id").toInt()) != 0) {
-            ctx.status(204)
-        } else {
-            ctx.status(404)
+        if (mealDao.deleteByUserId(ctx.pathParam("user-id").toInt()) == 0) {
+            throw NotFoundResponse("No user with specified id found or user does not have any meals")
         }
+
+        ctx.status(204)
     }
 
     /**
@@ -199,10 +210,10 @@ object MealController {
         val userId = ctx.pathParam("user-id").toInt()
         val mealId = ctx.pathParam("meal-id").toInt()
 
-        if (mealDao.deleteUserMealByMealId(userId, mealId) != 0) {
-            ctx.status(204)
-        } else {
-            ctx.status(404)
+        if (mealDao.deleteUserMealByMealId(userId, mealId) == 0) {
+            throw NotFoundResponse("No user with specified id or meal with specified id found")
         }
+
+        ctx.status(204)
     }
 }

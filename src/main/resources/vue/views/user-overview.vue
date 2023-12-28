@@ -16,28 +16,29 @@
         </div>
       </div>
       <div class="card-body" :class="{ 'd-none': hideForm}">
-        <form id="addUser">
+        <form @submit.prevent="addUser">
           <div class="input-group mb-3">
             <div class="input-group-prepend">
               <span class="input-group-text" id="input-user-name">Name</span>
             </div>
-            <input type="text" class="form-control" v-model="formData.name" name="name" placeholder="Name"/>
+            <input type="text" class="form-control" v-model="formData.name" name="name" placeholder="Name" required />
           </div>
           <div class="input-group mb-3">
             <div class="input-group-prepend">
               <span class="input-group-text" id="input-user-email">Email</span>
             </div>
-            <input type="email" class="form-control" v-model="formData.email" name="email" placeholder="Email"/>
+            <input type="email" class="form-control" v-model="formData.email" name="email" placeholder="Email" required />
           </div>
           <div class="input-group mb-3">
             <div class="input-group-prepend">
               <span class="input-group-text" id="input-user-password">Password</span>
             </div>
-            <input type="password" class="form-control" v-model="formData.password" name="password" placeholder="******"/>
+            <input type="password" class="form-control" v-model="formData.password" name="password" placeholder="Password" required />
           </div>
+          <button rel="tooltip" title="AddUser" class="btn btn-info btn-simple btn-link" type="submit">
+            Add User
+          </button>
         </form>
-        <button rel="tooltip" title="AddUser" class="btn btn-info btn-simple btn-link" @click="addUser()">Add User
-        </button>
       </div>
     </div>
     <div class="list-group list-group-flush" name="list-group">
@@ -118,8 +119,16 @@ app.component("user-overview", {
         this.users.push(response.data)
         this.hideForm= true;
       } catch(error) {
-        console.error(error)
+        const problemDetails = this.getProblemDetailsString(error.response.data.details)
+        alert(`Validation Errors\n\n` + problemDetails)
       }
+    },
+    getProblemDetailsString(details) {
+      return Object.entries(details).map(x => {
+        const [property, issue] = x
+
+        return `${property}:  ${issue}`
+      }).join("\n")
     },
     getToken() {
       this.token = JSON.parse(localStorage.getItem("token"))
