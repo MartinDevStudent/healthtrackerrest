@@ -6,7 +6,6 @@ import ie.setu.domain.repository.UserDAO
 import ie.setu.domain.user.UserLoginDTO
 import ie.setu.utils.authentication.JwtDTO
 import ie.setu.utils.authentication.JwtProvider
-import ie.setu.utils.authentication.decodeJWT
 import ie.setu.utils.authentication.isCorrectPassword
 import io.javalin.http.Context
 import io.javalin.http.UnauthorizedResponse
@@ -43,20 +42,5 @@ object AuthenticationController {
         val token = JwtProvider.provider.generateToken(user)
         ctx.json(JwtDTO(token))
         ctx.status(200)
-    }
-
-    /**
-     * Validates a user's JWT and returns a greeting message.
-     *
-     * @param ctx The context for handling the HTTP request and response.
-     */
-    fun validate(ctx: Context) {
-        try {
-            val decodedJWT = decodeJWT(ctx)
-            ctx.result("Hi " + decodedJWT.getClaim("name").asString())
-            ctx.status(200)
-        } catch (e: Exception) {
-            ctx.status(401)
-        }
     }
 }

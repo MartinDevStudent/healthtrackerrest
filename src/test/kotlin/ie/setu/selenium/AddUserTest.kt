@@ -80,11 +80,9 @@ class AddUserTest {
         driver.findElement(By.name("password")).sendKeys("password")
         driver.findElement(By.cssSelector("button[title='Login']")).click()
 
-        wait!!.until(ExpectedConditions.alertIsPresent())
+        wait!!.until(ExpectedConditions.visibilityOfElementLocated(By.id("modal")))
 
-        assertThat(driver.switchTo().alert().text).isEqualTo("You have logged in!")
-
-        driver.switchTo().alert().accept()
+        driver.findElement(By.name("close-modal")).click()
     }
 
     /**
