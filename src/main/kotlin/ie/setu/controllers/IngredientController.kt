@@ -26,8 +26,9 @@ object IngredientController {
     fun getAll(ctx: Context) {
         val ingredients = ingredientDao.getAll()
 
-        if (ingredients.isEmpty())
+        if (ingredients.isEmpty()) {
             throw NotFoundResponse("No ingredients found")
+        }
 
         ctx.json(ingredients)
         ctx.status(200)
@@ -45,8 +46,9 @@ object IngredientController {
     fun getOne(ctx: Context) {
         val ingredient = ingredientDao.findByIngredientId(ctx.pathParam("ingredient-id").toInt())
 
-        if (ingredient == null)
+        if (ingredient == null) {
             throw NotFoundResponse("No ingredient with specified id found")
+        }
 
         ctx.json(ingredient)
         ctx.status(200)
@@ -60,8 +62,9 @@ object IngredientController {
     fun getRecommendedDailyAllowances(ctx: Context) {
         val recommendedDailyAllowances = recommendedDailyAllowancesDao.get()
 
-        if (recommendedDailyAllowances == null)
+        if (recommendedDailyAllowances == null) {
             throw NotFoundResponse("No recommended daily allowances found")
+        }
 
         ctx.json(recommendedDailyAllowances)
         ctx.status(200)

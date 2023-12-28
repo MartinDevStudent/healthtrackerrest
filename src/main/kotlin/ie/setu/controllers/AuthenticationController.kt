@@ -30,13 +30,15 @@ object AuthenticationController {
 
         val user = userDao.findByEmail(userLoginDTO.email)
 
-        if (user == null)
+        if (user == null) {
             throw UnauthorizedResponse("User cannot login in specified email address")
+        }
 
-        val isCorrectPassword = isCorrectPassword(userLoginDTO.password, user!!.passwordHash!!)
+        val isCorrectPassword = isCorrectPassword(userLoginDTO.password, user.passwordHash!!)
 
-        if (!isCorrectPassword)
+        if (!isCorrectPassword) {
             throw UnauthorizedResponse("User cannot login in specified email address")
+        }
 
         val token = JwtProvider.provider.generateToken(user)
         ctx.json(JwtDTO(token))

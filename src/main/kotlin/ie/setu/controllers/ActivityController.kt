@@ -30,8 +30,9 @@ object ActivityController : CrudHandler {
     override fun getAll(ctx: Context) {
         val activities = activityDao.getAll()
 
-        if (activities.isEmpty())
+        if (activities.isEmpty()) {
             throw NotFoundResponse("No Activities in database")
+        }
 
         ctx.status(200)
         ctx.json(mapObjectWithDateToJson(activities))
@@ -56,8 +57,9 @@ object ActivityController : CrudHandler {
     ) {
         val activity = activityDao.findByActivityId(resourceId.toInt())
 
-        if (activity == null)
+        if (activity == null) {
             throw NotFoundResponse("No activity with specified id found in database")
+        }
 
         ctx.json(mapObjectWithDateToJson(activity))
         ctx.status(200)
@@ -71,8 +73,9 @@ object ActivityController : CrudHandler {
     fun getByUserId(ctx: Context) {
         val activities = activityDao.findByUserId(ctx.pathParam("user-id").toInt())
 
-        if (activities.isEmpty())
+        if (activities.isEmpty()) {
             throw NotFoundResponse("No activities associated with user id specified")
+        }
 
         ctx.json(mapObjectWithDateToJson(activities))
         ctx.status(200)
@@ -102,8 +105,9 @@ object ActivityController : CrudHandler {
             errorDetails["userId"] = "invalid user id"
         }
 
-        if (errorDetails.isNotEmpty())
+        if (errorDetails.isNotEmpty()) {
             throw BadRequestResponse(message = "Invalid activity", errorDetails)
+        }
 
         val activityId = activityDao.save(activity)
         activity.id = activityId
@@ -138,11 +142,13 @@ object ActivityController : CrudHandler {
             errorDetails["userId"] = "Invalid user id"
         }
 
-        if (errorDetails.isNotEmpty())
+        if (errorDetails.isNotEmpty()) {
             throw BadRequestResponse(message = "Invalid activity", errorDetails)
+        }
 
-        if ((activityDao.update(id = resourceId.toInt(), activity = foundActivity)) == 0)
+        if ((activityDao.update(id = resourceId.toInt(), activity = foundActivity)) == 0) {
             throw NotFoundResponse("No activity with specified id found")
+        }
 
         ctx.status(204)
     }
@@ -164,8 +170,9 @@ object ActivityController : CrudHandler {
         ctx: Context,
         resourceId: String,
     ) {
-        if (activityDao.delete(resourceId.toInt()) == 0)
+        if (activityDao.delete(resourceId.toInt()) == 0) {
             throw NotFoundResponse("No activity with specified id found")
+        }
 
         ctx.status(204)
     }
@@ -176,8 +183,9 @@ object ActivityController : CrudHandler {
      * @param ctx The context for handling the HTTP request and response.
      */
     fun deleteByUserId(ctx: Context) {
-        if (activityDao.deleteByUserId(ctx.pathParam("user-id").toInt()) != 0)
+        if (activityDao.deleteByUserId(ctx.pathParam("user-id").toInt()) != 0) {
             throw NotFoundResponse("No user with specified id found")
+        }
 
         ctx.status(204)
     }

@@ -27,8 +27,9 @@ object UserController : CrudHandler {
     override fun getAll(ctx: Context) {
         val users = userDao.getAll()
 
-        if (users.isEmpty())
+        if (users.isEmpty()) {
             throw NotFoundResponse("No users currently saved in database")
+        }
 
         ctx.status(200)
         ctx.json(
@@ -49,8 +50,9 @@ object UserController : CrudHandler {
     ) {
         val user = userDao.findById(resourceId.toInt())
 
-        if (user == null)
+        if (user == null) {
             throw NotFoundResponse("No users with specified id found")
+        }
 
         ctx.json(UserResponseDTO.fromUser(user))
         ctx.status(200)
@@ -64,8 +66,9 @@ object UserController : CrudHandler {
     fun getByEmailAddress(ctx: Context) {
         val user = userDao.findByEmail(ctx.pathParam("email-address"))
 
-        if (user == null)
+        if (user == null) {
             throw NotFoundResponse("No users with specified email address found")
+        }
 
         ctx.json(UserResponseDTO.fromUser(user))
         ctx.status(200)
@@ -81,8 +84,9 @@ object UserController : CrudHandler {
 
         val errorDetails = userDTO.validate()
 
-        if (errorDetails.isNotEmpty())
+        if (errorDetails.isNotEmpty()) {
             throw BadRequestResponse(message = "Invalid user details", errorDetails)
+        }
 
         val passwordHash = hashPassword(userDTO.password!!)
 
@@ -111,8 +115,9 @@ object UserController : CrudHandler {
         ctx: Context,
         resourceId: String,
     ) {
-        if (userDao.delete(resourceId.toInt()) == 0)
+        if (userDao.delete(resourceId.toInt()) == 0) {
             throw NotFoundResponse("No user with specified id found")
+        }
 
         ctx.status(204)
     }
@@ -136,15 +141,17 @@ object UserController : CrudHandler {
             errorDetails["userId"] = "invalid user id"
         }
 
-        if (errorDetails.isNotEmpty())
+        if (errorDetails.isNotEmpty()) {
             throw BadRequestResponse(message = "Invalid user details", errorDetails)
+        }
 
         user!!.name = userDto.name
         user.email = userDto.email
         user.passwordHash = if (userDto.password === null) user.passwordHash else hashPassword(userDto.password!!)
 
-        if ((userDao.update(id = userId, user = user)) == 0)
+        if ((userDao.update(id = userId, user = user)) == 0) {
             throw NotFoundResponse("No user with specified id found")
+        }
 
         ctx.json(UserResponseDTO.fromUser(user))
         ctx.status(204)

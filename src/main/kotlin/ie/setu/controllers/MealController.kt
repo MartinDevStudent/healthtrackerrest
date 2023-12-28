@@ -22,8 +22,9 @@ object MealController {
     fun getAll(ctx: Context) {
         val meals = mealDao.getAll()
 
-        if (meals.isEmpty())
+        if (meals.isEmpty()) {
             throw NotFoundResponse("No meals found")
+        }
 
         ctx.json(meals)
         ctx.status(200)
@@ -37,8 +38,9 @@ object MealController {
     fun getOne(ctx: Context) {
         val meal = mealDao.findByMealId(ctx.pathParam("meal-id").toInt())
 
-        if (meal == null)
+        if (meal == null) {
             throw NotFoundResponse("No meal with specified id found")
+        }
 
         ctx.json(meal)
         ctx.status(200)
@@ -52,8 +54,9 @@ object MealController {
     fun getByUserId(ctx: Context) {
         val meals = mealDao.findByUserId(ctx.pathParam("user-id").toInt())
 
-        if (meals.isEmpty())
+        if (meals.isEmpty()) {
             throw NotFoundResponse("No meals associated with specified user found")
+        }
 
         ctx.json(meals)
         ctx.status(200)
@@ -71,8 +74,9 @@ object MealController {
     fun getIngredientsByMealId(ctx: Context) {
         val ingredients = ingredientDao.findByMealId(ctx.pathParam("meal-id").toInt())
 
-        if (ingredients.isEmpty())
+        if (ingredients.isEmpty()) {
             throw NotFoundResponse("Meal with specified id not found")
+        }
 
         ctx.json(ingredients)
         ctx.status(200)
@@ -93,23 +97,27 @@ object MealController {
         val mealDto: Meal = jsonToObject(ctx.body())
         val errorDetails = mealDto.validate()
 
-        if (errorDetails.isNotEmpty())
+        if (errorDetails.isNotEmpty()) {
             throw BadRequestResponse(message = "Invalid meal", errorDetails)
+        }
 
         var meal = mealDao.findByMealName(mealDto.name)
 
-        if (meal != null)
+        if (meal != null) {
             throw ConflictResponse("Meal already exists in database")
+        }
 
         val ingredients = NutrientHttpClient.get(mealDto.name)
 
-        if (ingredients.isEmpty())
+        if (ingredients.isEmpty()) {
             throw BadRequestResponse()
+        }
 
-        meal = Meal(
-            id = mealDao.save(mealDto),
-            name = mealDto.name,
-        )
+        meal =
+            Meal(
+                id = mealDao.save(mealDto),
+                name = mealDto.name,
+            )
 
         ingredients.forEach {
             val ingredientId = ingredientDao.save(it)
@@ -132,21 +140,24 @@ object MealController {
 
         val errorDetails = mealDto.validate()
 
-        if (errorDetails.isNotEmpty())
+        if (errorDetails.isNotEmpty()) {
             throw BadRequestResponse(message = "Invalid meal", errorDetails)
+        }
 
         var meal = mealDao.findByMealName(mealDto.name)
 
         if (meal == null) {
             val ingredientDTOs = NutrientHttpClient.get(mealDto.name)
 
-            if (ingredientDTOs.isEmpty())
+            if (ingredientDTOs.isEmpty()) {
                 throw BadRequestResponse("Invalid meal name")
+            }
 
-            meal = Meal(
-                id = mealDao.save(mealDto),
-                name = mealDto.name,
-            )
+            meal =
+                Meal(
+                    id = mealDao.save(mealDto),
+                    name = mealDto.name,
+                )
 
             ingredientDTOs.forEach {
                 val ingredientId = ingredientDao.save(it)
@@ -170,8 +181,9 @@ object MealController {
      * @param ctx The context object containing the meal ID as a path parameter.
      */
     fun delete(ctx: Context) {
-        if (mealDao.delete(ctx.pathParam("meal-id").toInt()) == 0)
+        if (mealDao.delete(ctx.pathParam("meal-id").toInt()) == 0) {
             throw NotFoundResponse("No meal with specified id found")
+        }
 
         ctx.status(204)
     }
@@ -182,8 +194,9 @@ object MealController {
      * @param ctx The Javalin context object representing the HTTP request and response.
      */
     fun deleteUserMealsByUserId(ctx: Context) {
-        if (mealDao.deleteByUserId(ctx.pathParam("user-id").toInt()) == 0)
+        if (mealDao.deleteByUserId(ctx.pathParam("user-id").toInt()) == 0) {
             throw NotFoundResponse("No user with specified id found or user does not have any meals")
+        }
 
         ctx.status(204)
     }
@@ -197,8 +210,9 @@ object MealController {
         val userId = ctx.pathParam("user-id").toInt()
         val mealId = ctx.pathParam("meal-id").toInt()
 
-        if (mealDao.deleteUserMealByMealId(userId, mealId) == 0)
+        if (mealDao.deleteUserMealByMealId(userId, mealId) == 0) {
             throw NotFoundResponse("No user with specified id or meal with specified id found")
+        }
 
         ctx.status(204)
     }
