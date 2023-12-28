@@ -26,16 +26,16 @@ object UserController : CrudHandler {
      */
     override fun getAll(ctx: Context) {
         val users = userDao.getAll()
-        if (users.size != 0) {
-            ctx.status(200)
-        } else {
-            ctx.status(404)
-        }
+
+        if (users.isEmpty())
+            throw NotFoundResponse("No users currently saved in database")
+
+        ctx.status(200)
         ctx.json(
             users.map {
                 UserResponseDTO.fromUser(it)
             },
-        )
+        ).status()
     }
 
     /**
@@ -48,12 +48,12 @@ object UserController : CrudHandler {
         resourceId: String,
     ) {
         val user = userDao.findById(resourceId.toInt())
-        if (user != null) {
-            ctx.json(UserResponseDTO.fromUser(user))
-            ctx.status(200)
-        } else {
-            ctx.status(404)
-        }
+
+        if (user == null)
+            throw NotFoundResponse("No users with specified id found")
+
+        ctx.json(UserResponseDTO.fromUser(user))
+        ctx.status(200)
     }
 
     /**
@@ -63,12 +63,12 @@ object UserController : CrudHandler {
      */
     fun getByEmailAddress(ctx: Context) {
         val user = userDao.findByEmail(ctx.pathParam("email-address"))
-        if (user != null) {
-            ctx.json(UserResponseDTO.fromUser(user))
-            ctx.status(200)
-        } else {
-            ctx.status(404)
-        }
+
+        if (user == null)
+            throw NotFoundResponse("No users with specified email address found")
+
+        ctx.json(UserResponseDTO.fromUser(user))
+        ctx.status(200)
     }
 
     /**
