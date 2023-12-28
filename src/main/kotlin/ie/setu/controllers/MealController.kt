@@ -110,7 +110,8 @@ object MealController {
         val ingredients = NutrientHttpClient.get(mealDto.name)
 
         if (ingredients.isEmpty()) {
-            throw BadRequestResponse()
+            errorDetails["name"] = "${mealDto.name} is not a valid meal name"
+            throw BadRequestResponse("Invalid meal", errorDetails)
         }
 
         meal =
