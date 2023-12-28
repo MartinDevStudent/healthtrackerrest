@@ -9,27 +9,27 @@
             </div>
           </div>
           <div class="card-body">
-            <form @submit.prevent="register">
+            <form @submit.prevent="registerUser">
               <div class="input-group mb-3">
                 <div class="input-group-prepend">
                   <span class="input-group-text" id="input-login-email">Name</span>
                 </div>
-                <input type="email" class="form-control" v-model="formData.name" name="name" placeholder="Name"/>
+                <input type="text" class="form-control" v-model="formData.name" name="name" placeholder="Name" required/>
               </div>
               <div class="input-group mb-3">
                 <div class="input-group-prepend">
                   <span class="input-group-text" id="input-login-email">Email</span>
                 </div>
-                <input type="email" class="form-control" v-model="formData.email" name="email" placeholder="Email"/>
+                <input type="email" class="form-control" v-model="formData.email" name="email" placeholder="Email" required/>
               </div>
               <div class="input-group mb-3">
                 <div class="input-group-prepend">
                   <span class="input-group-text" id="input-login-password">Password</span>
                 </div>
-                <input type="password" class="form-control" v-model="formData.password" name="password" placeholder="Password"/>
+                <input type="password" class="form-control" v-model="formData.password" name="password" placeholder="Password" required />
               </div>
+              <button rel="tooltip" title="Register" class="btn btn-info btn-simple btn-link mr-2" type="submit">Register</button>
             </form>
-            <button rel="tooltip" title="Register" class="btn btn-info btn-simple btn-link mr-2" @click="registerUser()">Register</button>
           </div>
         </div>
       </div>
