@@ -35,6 +35,26 @@
       </div>
     </div>
     <br />
+
+    <!-- Modal -->
+    <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalLabel">{{ this.modalTitle }}</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <p><span v-html="modalBody"></span></p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
   </app-layout>
 </template>
 
@@ -45,6 +65,8 @@
     data: () => {
       return {
         formData: [],
+        modalTitle: null,
+        modalBody: null
       };
     },
     methods: {
@@ -60,7 +82,8 @@
             location.href = '/login';
         } catch(error) {
           const problemDetails = this.getProblemDetailsString(error.response.data.details)
-          alert(`Validation Errors\n\n` + problemDetails)
+          //alert(`Validation Errors\n\n` + problemDetails)
+          this.showModal("Validation Errors", problemDetails)
         }
       },
       getProblemDetailsString(details) {
@@ -68,8 +91,14 @@
           const [property, issue] = x
 
           return `${property}:  ${issue}`
-        }).join("\n")
+        }).join("<br />")
       },
+      showModal(title, body = "") {
+        this.modalTitle = title
+        this.modalBody = body
+
+        return $('#modal').modal('show')
+      }
     },
   });
 </script>
