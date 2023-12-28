@@ -5,57 +5,55 @@
       <p> View <a :href="'/users'">all users</a>.</p>
     </div>
     <div class="card bg-light mb-3" v-if="!noUserFound">
-      <div class="card-header">
-        <div class="row">
-          <div class="col-6"> User Profile </div>
-          <div class="col" align="right">
-            <button rel="tooltip" title="Update"
-                    class="btn btn-info btn-simple btn-link"
-                    @click="updateUser()">
-              <i class="far fa-save" aria-hidden="true"></i>
-            </button>
-            <button rel="tooltip" title="Delete"
-                    class="btn btn-info btn-simple btn-link"
-                    @click="deleteUser()">
-              <i class="fas fa-trash" aria-hidden="true"></i>
-            </button>
+      <form @submit.prevent="updateUser">
+        <div class="card-header">
+          <div class="row">
+            <div class="col-6"> User Profile </div>
+            <div class="col" align="right">
+              <button rel="tooltisp" title="Update" class="btn btn-info btn-simple btn-link" type="submit">
+                <i class="far fa-save" aria-hidden="true"></i>
+              </button>
+              <button rel="tooltip" title="Delete"
+                      class="btn btn-info btn-simple btn-link"
+                      @click="deleteUser()">
+                <i class="fas fa-trash" aria-hidden="true"></i>
+              </button>
+            </div>
           </div>
         </div>
-      </div>
-      <div class="card-body">
-        <form>
-          <div class="input-group mb-3">
-            <div class="input-group-prepend">
-              <span class="input-group-text" id="input-user-id">User ID</span>
+        <div class="card-body">
+            <div class="input-group mb-3">
+              <div class="input-group-prepend">
+                <span class="input-group-text" id="input-user-id">User ID</span>
+              </div>
+              <input type="number" class="form-control" v-model="user.id" name="id" readonly placeholder="Id" required />
             </div>
-            <input type="number" class="form-control" v-model="user.id" name="id" readonly placeholder="Id"/>
-          </div>
-          <div class="input-group mb-3">
-            <div class="input-group-prepend">
-              <span class="input-group-text" id="input-user-name">Name</span>
+            <div class="input-group mb-3">
+              <div class="input-group-prepend">
+                <span class="input-group-text" id="input-user-name">Name</span>
+              </div>
+              <input type="text" class="form-control" v-model="user.name" name="name" placeholder="Name" required/>
             </div>
-            <input type="text" class="form-control" v-model="user.name" name="name" placeholder="Name"/>
-          </div>
-          <div class="input-group mb-3">
-            <div class="input-group-prepend">
-              <span class="input-group-text" id="input-user-email">Email</span>
+            <div class="input-group mb-3">
+              <div class="input-group-prepend">
+                <span class="input-group-text" id="input-user-email">Email</span>
+              </div>
+              <input type="email" class="form-control" v-model="user.email" name="email" placeholder="Email" required />
             </div>
-            <input type="email" class="form-control" v-model="user.email" name="email" placeholder="Email"/>
-          </div>
-          <div class="input-group mb-3">
-            <div class="input-group-prepend">
-              <span class="input-group-text" id="input-user-password">Password</span>
+            <div class="input-group mb-3">
+              <div class="input-group-prepend">
+                <span class="input-group-text" id="input-user-password">Password</span>
+              </div>
+              <input type="password" class="form-control" v-model="password" name="password" placeholder="*******"/>
             </div>
-            <input type="password" class="form-control" v-model="password" name="password" placeholder="*******"/>
-          </div>
-          <div class="input-group mb-3">
-            <div class="input-group-prepend">
-              <span class="input-group-text" id="input-user-level">Level</span>
+            <div class="input-group mb-3">
+              <div class="input-group-prepend">
+                <span class="input-group-text" id="input-user-level">Level</span>
+              </div>
+              <input type="text" class="form-control" v-model="user.level" name="level" readonly placeholder="Level"/>
             </div>
-            <input type="text" class="form-control" v-model="user.level" name="level" readonly placeholder="Level"/>
-          </div>
-        </form>
-      </div>
+        </div>
+      </form>
       <div class="card-footer text-left">
         <p  v-if="activities.length === 0"> No activities yet...</p>
         <p  v-if="activities.length > 0"> Activities so far...</p>
