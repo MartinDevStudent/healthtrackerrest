@@ -1,15 +1,21 @@
-<template id="login-page" v-if="store.token">
+<template id="register-page">
   <app-layout>
     <div class="list-group list-group-flush">
       <div class="card bg-light mb-3">
         <div class="card-header">
           <div class="row">
             <div class="col-6">
-              Login
+              Register
             </div>
           </div>
           <div class="card-body">
-            <form @submit.prevent="login">
+            <form @submit.prevent="register">
+              <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                  <span class="input-group-text" id="input-login-email">Name</span>
+                </div>
+                <input type="email" class="form-control" v-model="formData.name" name="name" placeholder="Name"/>
+              </div>
               <div class="input-group mb-3">
                 <div class="input-group-prepend">
                   <span class="input-group-text" id="input-login-email">Email</span>
@@ -23,7 +29,7 @@
                 <input type="password" class="form-control" v-model="formData.password" name="password" placeholder="Password"/>
               </div>
             </form>
-            <button rel="tooltip" title="Login" class="btn btn-info btn-simple btn-link mr-2" @click="login()">Login</button>
+            <button rel="tooltip" title="Register" class="btn btn-info btn-simple btn-link mr-2" @click="registerUser()">Register</button>
           </div>
         </div>
       </div>
@@ -33,41 +39,29 @@
 </template>
 
 <script>
-  app.component('login-page',
+  app.component('register-page',
   {
-    template: "#login-page",
+    template: "#register-page",
     data: () => {
       return {
         formData: [],
       };
     },
     methods: {
-      async login() {
+      async registerUser() {
         try {
-          const res = await axios.post("/api/login", {
+          const response = await axios.post("/api/login/register", {
+            name: this.formData.name,
             email: this.formData.email,
             password: this.formData.password,
-          }, {
-            headers: { "Content-Type": "application/json"}
           })
 
-          if (res.status < 400) {
-            store.setToken(res.data.jwt)
-            localStorage.setItem("token", JSON.stringify(res.data.jwt));
-            alert("You have logged in!")
-            location.href = '/'
-          } else {
-            alert("Invalid login details")
-          }
+            alert("Account created! You can now login")
+            location.href = '/login';
         } catch {
-          alert("Error while logging in")
+          alert("Invalid registration details")
         }
       },
     },
-    computed: {
-      token: function () {
-        return store.token
-      }
-    }
   });
 </script>

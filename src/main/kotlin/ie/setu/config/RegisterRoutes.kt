@@ -91,6 +91,9 @@ fun registerRoutes(app: io.javalin.Javalin) {
         path("login") {
             get(VueComponent("<login-page></login-page>"), Roles.ANYONE)
         }
+        path("register") {
+            get(VueComponent("<register-page></register-page>"), Roles.ANYONE)
+        }
         path("meals") {
             get(VueComponent("<meal-overview></meal-overview>"), Roles.ANYONE)
             path("{meal-id}") {

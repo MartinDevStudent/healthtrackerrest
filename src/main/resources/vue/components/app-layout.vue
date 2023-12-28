@@ -28,7 +28,15 @@
               <a class="nav-link" href="/ingredients">Ingredient</a>
             </li>
           </ul>
-          <button class="btn btn-outline-success me-2" type="button"><a href="/login">Login</a></button>
+          <button v-if="token === null" class="btn btn-outline-success me-2 mr-2" onclick="location.href = '/login';">
+            Login
+          </button>
+          <button v-if="token === null" class="btn btn-outline-success me-2" onclick="location.href = '/register';">
+            Register
+          </button>
+          <button v-else class="btn btn-outline-danger me-2" @click="logout()">
+            Logout
+          </button>
         </div>
       </nav>
       <!--End of nav bar-->
@@ -47,9 +55,19 @@
   app.component("app-layout",
   {
     template: "#app-layout",
-    computed: {
-      token: function () {
-        return store.token
+    data: () => ({
+      token: null,
+    }),
+    created() {
+      this.getToken()
+    },
+    methods: {
+      getToken() {
+        this.token = JSON.parse(localStorage.getItem("token"))
+      },
+      logout() {
+        localStorage.removeItem("token")
+        location.href = '/login'
       }
     }
   });
