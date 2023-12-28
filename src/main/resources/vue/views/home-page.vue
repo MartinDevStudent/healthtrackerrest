@@ -42,6 +42,25 @@
         </div>
         <p>{{ $javalin.state.user }}</p>
     </div>
+    <!-- Modal -->
+    <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalLabel">{{ this.modalTitle }}</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            {{ this.modalBody }}
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
   </app-layout>
 </template>
 
@@ -55,6 +74,8 @@ app.component('home-page',
         users: [],
         ingredients: [],
         token: null,
+        modalTitle: null,
+        modalBody: null
       }),
       created() {
         this.getToken()
@@ -74,7 +95,7 @@ app.component('home-page',
             if (error.response.status === 401) {
               location.href = '/login';
             } else if (error.response.status !== 404) {
-              alert("Error while fetching users")
+              this.showModal("Error while fetching users")
             }
           }
         },
@@ -86,7 +107,7 @@ app.component('home-page',
             this.activities = response.data
           } catch(error) {
             if (error.response.status !== 404) {
-              alert("Error while fetching activities")
+              this.showModal("Error while fetching activities")
             }
           }
         },
@@ -98,7 +119,7 @@ app.component('home-page',
             this.meals = response.data
           } catch(error) {
             if (error.response.status !== 404) {
-              alert("Error while fetching meals")
+              this.showModal("Error while fetching meals")
             }
           }
         },
@@ -110,12 +131,18 @@ app.component('home-page',
             this.ingredients = response.data
           } catch (error) {
             if (error.response.status !== 404) {
-              alert("Error while fetching ingredients")
+              this.showModal("Error while fetching ingredients")
             }
           }
         },
         getToken() {
           this.token = JSON.parse(localStorage.getItem("token"))
+        },
+        showModal(title, body = "") {
+          this.modalTitle = title
+          this.modalBody = body
+
+          return $('#exampleModal').modal('show')
         }
       }
     });
