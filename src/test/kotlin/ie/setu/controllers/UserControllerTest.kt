@@ -163,9 +163,9 @@ class UserControllerTest {
         }
 
         @Test
-        fun `updating a user when it doesn't exist, returns a 404 response`() {
+        fun `updating a user when it doesn't exist, returns a 400 response`() {
             // Arrange, Act & Assert - attempt to update the email and name of user that doesn't exist
-            assertEquals(404, requests.updateUser(Integer.MIN_VALUE, UPDATED_NAME, UPDATED_EMAIL, VALID_PASSWORD, jwtToken).status)
+            assertEquals(400, requests.updateUser(Integer.MIN_VALUE, UPDATED_NAME, UPDATED_EMAIL, VALID_PASSWORD, jwtToken).status)
         }
     }
 
