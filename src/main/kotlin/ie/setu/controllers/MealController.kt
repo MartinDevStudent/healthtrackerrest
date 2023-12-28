@@ -1,7 +1,5 @@
 package ie.setu.controllers
 
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
 import ie.setu.domain.Meal
 import ie.setu.domain.repository.IngredientDAO
 import ie.setu.domain.repository.MealDAO
@@ -92,9 +90,6 @@ object MealController {
      * @param ctx The context object containing the HTTP request body with the meal data.
      */
     fun create(ctx: Context) {
-        //val mapper = jacksonObjectMapper()
-        //val mealDto = mapper.readValue<Meal>(ctx.body())
-
         val mealDto: Meal = jsonToObject(ctx.body())
         val errorDetails = mealDto.validate()
 
@@ -133,8 +128,7 @@ object MealController {
      */
     fun createUserMeal(ctx: Context) {
         val userId = ctx.pathParam("user-id").toInt()
-        val mapper = jacksonObjectMapper()
-        val mealDto = mapper.readValue<Meal>(ctx.body())
+        val mealDto: Meal = jsonToObject(ctx.body())
 
         var meal = mealDao.findByMealName(mealDto.name)
 
