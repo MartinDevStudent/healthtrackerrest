@@ -29,6 +29,26 @@
       </div>
     </div>
     <br />
+
+    <!-- Modal -->
+    <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalLabel">{{ this.modalTitle }}</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            {{ this.modalBody }}
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
   </app-layout>
 </template>
 
@@ -39,30 +59,36 @@
     data: () => {
       return {
         formData: [],
+        modalTitle: null,
+        modalBody: null
       };
     },
     methods: {
       async login() {
         try {
-          const res = await axios.post("/api/login", {
+          const response = await axios.post("/api/login", {
             email: this.formData.email,
             password: this.formData.password,
           }, {
             headers: { "Content-Type": "application/json"}
           })
 
-          if (res.status < 400) {
-            store.setToken(res.data.jwt)
-            localStorage.setItem("token", JSON.stringify(res.data.jwt));
-            alert("You have logged in!")
+          store.setToken(response.data.jwt)
+          localStorage.setItem("token", JSON.stringify(response.data.jwt));
+
+          this.showModal("You have logged in!").on('hidden.bs.modal',  () => {
             location.href = '/'
-          } else {
-            alert("Invalid login details")
-          }
+          })
         } catch {
-          alert("Error while logging in")
+          this.showModal("Error while logging in")
         }
       },
+      showModal(title, body = "") {
+        this.modalTitle = title
+        this.modalBody = body
+
+        return $('#exampleModal').modal('show')
+      }
     },
     computed: {
       token: function () {
