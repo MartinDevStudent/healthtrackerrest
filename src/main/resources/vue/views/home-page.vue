@@ -53,7 +53,7 @@
             </button>
           </div>
           <div class="modal-body">
-            {{ this.modalBody }}
+            <p><span v-html="modalBody"></span></p>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -142,7 +142,7 @@ app.component('home-page',
           this.modalTitle = title
           this.modalBody = body
 
-          return $('#exampleModal').modal('show')
+          return $('#modal').modal('show')
         }
       }
     });
