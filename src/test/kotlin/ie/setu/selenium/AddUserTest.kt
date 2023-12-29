@@ -54,7 +54,7 @@ class AddUserTest {
         driver =
             ChromeDriver(
                 ChromeOptions().apply {
-                    //addArguments("--headless")
+                    addArguments("--headless")
                     addArguments("--disable-gpu")
                 },
             )
