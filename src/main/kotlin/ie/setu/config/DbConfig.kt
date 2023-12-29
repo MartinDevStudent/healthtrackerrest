@@ -7,6 +7,23 @@ import org.jetbrains.exposed.sql.name
 class DbConfig {
     private val logger = KotlinLogging.logger {}
 
+    /**
+     * Retrieves a connection to the PostgreSQL database using the specified configuration parameters.
+     *
+     * This function establishes a connection to a PostgreSQL database with the provided credentials and returns
+     * a [Database] instance representing the connected database.
+     *
+     * @return A [Database] instance representing the connection to the PostgreSQL database.
+     *
+     * @throws SQLException if there is an error establishing the database connection.
+     *
+     * Example Usage:
+     * ```kotlin
+     * val databaseConnection = getDbConnection()
+     * ```
+     *
+     * @see Database
+     */
     fun getDbConnection(): Database {
         @Suppress("ktlint:standard:property-naming")
         val PGHOST = "flora.db.elephantsql.com"
