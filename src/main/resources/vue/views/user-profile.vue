@@ -13,9 +13,13 @@
               <button rel="tooltisp" title="Update" class="btn btn-info btn-simple btn-link" type="submit">
                 <i class="far fa-save" aria-hidden="true"></i>
               </button>
-              <button rel="tooltip" title="Delete"
-                      class="btn btn-info btn-simple btn-link"
-                      @click="deleteUser()">
+              <button
+                rel="tooltip"
+                title="Delete"
+                class="btn btn-info btn-simple btn-link"
+                @click="confirmDeleteUser()"
+                type="button"
+              >
                 <i class="fas fa-trash" aria-hidden="true"></i>
               </button>
             </div>
@@ -64,18 +68,59 @@
         </ul>
       </div>
     </div>
+    <!-- Regular Modal -->
+    <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalLabel">{{ this.modalTitle }}</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <p><span v-html="modalBody"></span></p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Delete Modal -->
+    <div class="modal fade" id="delete-modal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalLabel">{{ this.modalTitle }}</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <p><span v-html="modalBody"></span></p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+            <button type="button" id="delete" class="btn btn-danger" >Delete</button>
+          </div>
+        </div>
+      </div>
+    </div>
   </app-layout>
 </template>
 
 <script>
-app.component("user-profile", {
+  app.component("user-profile", {
   template: "#user-profile",
   data: () => ({
     user: null,
     password: null,
     noUserFound: false,
     activities: [],
-    token: null
+    token: null,
+    modalTitle: null,
+    modalBody: null
   }),
   created() {
     const userId = this.$javalin.pathParams["user-id"];
@@ -122,27 +167,32 @@ app.component("user-profile", {
         }, {
           headers: { "Authorization": `Bearer ${this.token}` }
         })
+
+        this.showModal("User updated!")
         this.user.push(response.data)
-        alert("User updated!")
       } catch(error) {
         const problemDetails = this.getProblemDetailsString(error.response.data.details)
-        alert(`Validation Errors\n\n` + problemDetails)
+        this.showModal(`Validation Errors`, problemDetails)
       }
     },
+    confirmDeleteUser() {
+      this.showModal("Are you sure you want to delete?", "This action cannot be undone...", true)
+          .on("click", "#delete", () => this.deleteUser())
+    },
     async deleteUser() {
-      if (confirm("Do you really want to delete?")) {
-        const userId = this.$javalin.pathParams["user-id"];
+      const userId = this.$javalin.pathParams["user-id"];
 
-        try {
-          await axios.delete(`/api/users/${userId}`, {
-            headers: { "Authorization": `Bearer ${this.token}` }
-          })
-          alert("User deleted")
-          //display the /users endpoint
-          window.location.href = '/users'
-        } catch(error) {
-          console.error(error)
-        }
+      try {
+        await axios.delete(`/api/users/${userId}`, {
+          headers: { "Authorization": `Bearer ${this.token}` }
+        })
+
+        this.showModal("User deleted")
+
+        // navigate to /users endpoint
+        window.location.href = '/users'
+      } catch(error) {
+        this.showModal("Error deleting user")
       }
     },
     getProblemDetailsString(details) {
@@ -155,6 +205,12 @@ app.component("user-profile", {
     getToken() {
       this.token = JSON.parse(localStorage.getItem("token"))
     },
+    showModal(title, body = "", showDeletionModal = false) {
+      this.modalTitle = title
+      this.modalBody = body
+
+      return $(showDeletionModal ? '#delete-modal' : '#modal').modal('show')
+    }
   }
 });
 </script>
