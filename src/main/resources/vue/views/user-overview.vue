@@ -54,9 +54,49 @@
             </button>
           </a>
           <button rel="tooltip" title="Delete" class="btn btn-info btn-simple btn-link"
-                  @click="deleteUser(user, index)">
+                  @click="confirmDeleteUser(user, index)">
             <i class="fas fa-trash" aria-hidden="true"></i>
           </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Regular Modal -->
+    <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalLabel">{{ this.modalTitle }}</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <p><span v-html="modalBody"></span></p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Delete Modal -->
+    <div class="modal fade" id="delete-modal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalLabel">{{ this.modalTitle }}</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <p><span v-html="modalBody"></span></p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+            <button type="button" id="delete" class="btn btn-danger" >Delete</button>
+          </div>
         </div>
       </div>
     </div>
@@ -70,7 +110,9 @@ app.component("user-overview", {
     users: [],
     formData: [],
     hideForm :true,
-    token: null
+    token: null,
+    modalTitle: null,
+    modalBody: null
   }),
   created() {
     this.getToken()
@@ -87,24 +129,27 @@ app.component("user-overview", {
         if (error.response.status === 401) {
           location.href = '/login'
         } else {
-          alert("Error while fetching users")
+          this.showModal("Error while fetching users")
         }
       }
     },
+    confirmDeleteUser(user, index) {
+      this.showModal("Are you sure you want to delete?", "This action cannot be undone...", true)
+          .on("click", "#delete", () => this.deleteUser(user, index))
+    },
     async deleteUser(user, index) {
-      if (confirm('Are you sure you want to delete this user? This action cannot be undone.', 'Warning')) {
-        //user confirmed delete
-        const userId = user.id;
+      try {
+        const response = await axios.delete(`/api/users/${user.id}`, {
+          headers: { "Authorization": `Bearer ${this.token}` }
+        })
 
-        try {
-          const response = await axios.delete(`/api/users/${userId}`, {
-            headers: { "Authorization": `Bearer ${this.token}` }
-          })
-          //delete from the local state so Vue will reload list automatically
-          this.users.splice(index, 1).push(response.data)
-        } catch(error) {
-          console.error(error)
-        }
+        // close modal
+        $('#delete-modal').modal('hide')
+
+        // delete from the local state so Vue will reload list automatically
+        this.users.splice(index, 1).push(response.data)
+      } catch(error) {
+          this.showModal("Error deleting user")
       }
     },
     async addUser() {
@@ -120,7 +165,7 @@ app.component("user-overview", {
         this.hideForm= true;
       } catch(error) {
         const problemDetails = this.getProblemDetailsString(error.response.data.details)
-        alert(`Validation Errors\n\n` + problemDetails)
+        this.showModal(`Validation Errors`, problemDetails)
       }
     },
     getProblemDetailsString(details) {
@@ -128,11 +173,17 @@ app.component("user-overview", {
         const [property, issue] = x
 
         return `${property}:  ${issue}`
-      }).join("\n")
+      }).join("<br />")
     },
     getToken() {
       this.token = JSON.parse(localStorage.getItem("token"))
     },
+    showModal(title, body = "", showDeletionModal = false) {
+      this.modalTitle = title
+      this.modalBody = body
+
+      return $(showDeletionModal ? '#delete-modal' : '#modal').modal('show')
+    }
   }
 });
 </script>
