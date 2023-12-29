@@ -23,24 +23,21 @@
 ## 📖 Table of Contents
 - [📖 Table of Contents](#-table-of-contents)
 - [📍 Overview](#-overview)
-- [📦 Features](#-features)
 - [📂 repository Structure](#-repository-structure)
 - [⚙️ Modules](#modules)
 - [🚀 Getting Started](#-getting-started)
     - [🔧 Installation](#-installation)
     - [🤖 Running healthtrackerrest](#-running-healthtrackerrest)
     - [🧪 Tests](#-tests)
-- [🛣 Roadmap](#-roadmap)
 - [🤝 Contributing](#-contributing)
 - [📄 License](#-license)
-- [👏 Acknowledgments](#-acknowledgments)
 
 ---
 
 
 ## 📍 Overview
 
-The Health Tracker REST repository houses a backend service designed to monitor and manage health-related data. It provides an API for tracking health metrics, allowing users to store, update, and retrieve health information efficiently. The application serves as a central point for integrating with user interfaces or other systems that require access to health data. By automating the handling of health records, it offers a valuable tool for individuals or healthcare providers looking to digitalize and streamline health management operations. The included GitHub workflows ensure the codebase remains deployable and properly tested through continuous integration practices.
+The Health Tracker REST repository houses a full-stack application designed to monitor and manage health-related data. It provides an interface and API for tracking user activities and meals, as well as showing nutritional information about the ingredients in eah meal. Both the API and website are protected using JWT bearer token authentication.
 
 The application was built with:
 
@@ -54,34 +51,13 @@ The application was built with:
   - [Bootstrap](https://getbootstrap.com) CSS library
   - [KtLint](https://github.com/pinterest/ktlint) kotlin linter
   - [Maven](https://maven.apache.org) build management
+  - [Dokka](https://github.com/Kotlin/dokka) document generator
 
 Tests:
 
   - [junit](https://github.com/junit-team/junit4)
+  - [Selenium](https://www.selenium.dev)
   - [Unirest](https://github.com/Kong/unirest-java) to call endpoints in tests
-
----
-
-## 📦 Features
-
-Based on the provided information, here is a comprehensive technical analysis of the codebase and its components formatted as a Markdown table:
-
-```markdown
-|    | Feature            | Description                                                                                                        |
-|----|--------------------|--------------------------------------------------------------------------------------------------------------------|
-| ⚙️ | **Architecture**   | Multi-layered with separation of concerns; uses Model-View-Controller (MVC) pattern structured in a RESTful manner. |
-| 📄 | **Documentation**  | Documentation coverage might be lacking; recommended to include API docs, design decisions, and setup instructions.  |
-| 🔗 | **Dependencies**   | Utilizes Kotlin and potentially other libraries (exact dependencies not listed). Relies on GitHub Actions for CI/CD. |
-| 🧩 | **Modularity**     | Appears to leverage modular design; separable components for data access, business logic, and presentation layers.   |
-| 🧪 | **Testing**        | Includes unit tests and mock database testing; may benefit from more comprehensive integration tests.                |
-| ⚡️  | **Performance**    | Performance not directly addressed in the summary; requires benchmarks and profiling for accurate analysis.          |
-| 🔐 | **Security**       | Security practices are not detailed; assessment of authentication, authorization, and data protection needed.        |
-| 🔀 | **Version Control**| Uses GitHub for version control with `.github/workflows` indicating integrated CI/CD setup.                           |
-| 🔌 | **Integrations**   | Interactions with other systems/services are not described; specifics on APIs and services integration needed.       |
-| 📶 | **Scalability**    | Scalability considerations not evident; architecture should allow for scaling, but requires load testing.            |
-```
-
-Given the limited details provided, it is clear that critical elements such as documentation, security practices, and performance measures need more attention for a complete analysis. The summary indicates that testing is in place, the application probably embraces a modular architecture suitable for a Kotlin backend, and CI/CD is set up through GitHub Actions. However, the specific implementations, detailed architecture design, dependency tree, and integration mechanisms are not provided, and so these assessments are somewhat speculative. Further investigation of the repository would be necessary to validate these assumptions and to provide additional technical insights.
 
 ---
 
@@ -295,15 +271,6 @@ Given the limited details provided, it is clear that critical elements such as d
 
 ## 🚀 Getting Started
 
-***Dependencies***
-
-Please ensure you have the following dependencies installed on your system:
-
-`- ℹ️ Dependency 1`
-
-`- ℹ️ Dependency 2`
-
-`- ℹ️ ...`
 
 ### 🔧 Installation
 
@@ -335,23 +302,12 @@ gradle test
 
 ---
 
-
-## 🛣 Project Roadmap
-
-> - [X] `ℹ️  Task 1: Implement X`
-> - [ ] `ℹ️  Task 2: Implement Y`
-> - [ ] `ℹ️ ...`
-
-
----
-
 ## 🤝 Contributing
 
 Contributions are welcome! Here are several ways you can contribute:
 
-- **[Submit Pull Requests](https://github.com/MartinDevStudent/healthtrackerrest/blob/main/CONTRIBUTING.md)**: Review open PRs, and submit your own PRs.
-- **[Join the Discussions](https://github.com/MartinDevStudent/healthtrackerrest/discussions)**: Share your insights, provide feedback, or ask questions.
-- **[Report Issues](https://github.com/MartinDevStudent/healthtrackerrest/issues)**: Submit bugs found or log feature requests for MARTINDEVSTUDENT.
+- **[Submit Pull Requests](https://github.com/MartinDevStudent/healthtrackerrest/pulls)**: Review open PRs, and submit your own PRs.
+- **[Report Issues](https://github.com/MartinDevStudent/healthtrackerrest/issues)**: Submit bugs found or log feature requests for healthtrackerrest.
 
 #### *Contributing Guidelines*
 
@@ -389,11 +345,6 @@ Once your PR is reviewed and approved, it will be merged into the main branch.
 
 This project is protected under the [SELECT-A-LICENSE](https://choosealicense.com/licenses) License. For more details, refer to the [LICENSE](https://choosealicense.com/licenses/) file.
 
----
-
-## 👏 Acknowledgments
-
-- List any resources, contributors, inspiration, etc. here.
 
 [**Return**](#Top)
 
