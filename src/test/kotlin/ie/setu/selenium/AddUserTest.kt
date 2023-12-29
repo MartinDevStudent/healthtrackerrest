@@ -54,7 +54,7 @@ class AddUserTest {
         driver =
             ChromeDriver(
                 ChromeOptions().apply {
-                    addArguments("--headless")
+                    //addArguments("--headless")
                     addArguments("--disable-gpu")
                 },
             )
@@ -130,10 +130,9 @@ class AddUserTest {
 
             wait!!.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("button[title='Delete']")))
             driver.findElement(By.cssSelector("button[title='Delete']")).click()
-            assertThat(
-                driver.switchTo().alert().text,
-            ).isEqualTo("Do you really want to delete?")
-            driver.switchTo().alert().accept()
+
+            wait!!.until(ExpectedConditions.visibilityOfElementLocated(By.id("delete-modal")))
+            driver.findElement(By.id("delete")).click()
         }
     }
 }
