@@ -13,9 +13,13 @@
               <button rel="tooltip" title="Update" class="btn btn-info btn-simple btn-link" type="submit">
                 <i class="far fa-save" aria-hidden="true"></i>
               </button>
-              <button rel="tool tip" title="Delete"
-                      class="btn btn-info btn-simple btn-link"
-                      @click="deleteActivity()">
+              <button
+                rel="tool tip"
+                title="Delete"
+                class="btn btn-info btn-simple btn-link"
+                @click="confirmDeleteActivity()"
+                type="button"
+              >
                 <i class="fas fa-trash" aria-hidden="true"></i>
               </button>
             </div>
@@ -62,6 +66,45 @@
           </div>
         </form>
       </div>
+    <!-- Regular Modal -->
+    <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalLabel">{{ this.modalTitle }}</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <p><span v-html="modalBody"></span></p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Delete Modal -->
+    <div class="modal fade" id="delete-modal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalLabel">{{ this.modalTitle }}</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <p><span v-html="modalBody"></span></p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+            <button type="button" id="delete" class="btn btn-danger" >Delete</button>
+          </div>
+        </div>
+      </div>
+    </div>
   </app-layout>
 </template>
 
@@ -72,6 +115,8 @@ app.component("activity-profile", {
     activity: null,
     noActivityFound: false,
     token: null,
+    modalTitle: null,
+    modalBody: null
   }),
   created() {
     this.getToken();
@@ -90,7 +135,7 @@ app.component("activity-profile", {
         if (error.response.status === 401) {
           location.href = '/login';
         } else {
-          alert("Error while fetching user" + activityId)
+          this.showModal(`Error while fetching activity ${activityId}`)
           this.noUserFound = true
         }
       }
@@ -109,27 +154,29 @@ app.component("activity-profile", {
           headers: { "Authorization": `Bearer ${this.token}` }
         });
 
-        this.activity.push(response.data)
-        alert("Activity updated!")
+        this.activity = response.data
+        this.showModal("Activity updated!")
       } catch(error) {
         const problemDetails = this.getProblemDetailsString(error.response.data.details)
-        alert(`Validation Errors\n\n` + problemDetails)
+        this.showModal("Validation Errors", problemDetails)
       }
     },
+    confirmDeleteActivity() {
+      this.showModal("Are you sure you want to delete?", "This action cannot be undone...", true)
+          .on("click", "#delete", () => this.deleteActivity())
+    },
     async deleteActivity() {
-      if (confirm("Do you really want to delete?")) {
-        const activityId = this.$javalin.pathParams["activity-id"];
+      const activityId = this.$javalin.pathParams["activity-id"];
 
-        try {
-          await axios.delete(`/api/activities/${activityId}`,{
-            headers: { "Authorization": `Bearer ${this.token}`}
-          })
+      try {
+        await axios.delete(`/api/activities/${activityId}`,{
+          headers: { "Authorization": `Bearer ${this.token}` }
+        })
 
-          alert("Activity deleted");
-          window.location.href = '/activities';
-        } catch(error) {
-            console.error(error)
-        }
+        this.showModal("Activity deleted")
+        window.location.href = '/activities'
+      } catch(error) {
+        this.showModal("Error deleting activity")
       }
     },
     getProblemDetailsString(details) {
@@ -137,10 +184,16 @@ app.component("activity-profile", {
         const [property, issue] = x
 
         return `${property}:  ${issue}`
-      }).join("\n")
+      }).join("<br />")
     },
     getToken() {
       this.token = JSON.parse(localStorage.getItem("token"))
+    },
+    showModal(title, body = "", showDeletionModal = false) {
+      this.modalTitle = title
+      this.modalBody = body
+
+      return $(showDeletionModal ? '#delete-modal' : '#modal').modal('show')
     }
   }
 });
