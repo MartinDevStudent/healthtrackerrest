@@ -138,19 +138,18 @@ app.component("user-overview", {
           .on("click", "#delete", () => this.deleteUser(user, index))
     },
     async deleteUser(user, index) {
-      if (confirm('Are you sure you want to delete this user? This action cannot be undone.', 'Warning')) {
-        //user confirmed delete
-        const userId = user.id;
+      try {
+        const response = await axios.delete(`/api/users/${user.id}`, {
+          headers: { "Authorization": `Bearer ${this.token}` }
+        })
 
-        try {
-          const response = await axios.delete(`/api/users/${userId}`, {
-            headers: { "Authorization": `Bearer ${this.token}` }
-          })
-          //delete from the local state so Vue will reload list automatically
-          this.users.splice(index, 1).push(response.data)
-        } catch(error) {
-          console.error(error)
-        }
+        // close modal
+        $('#delete-modal').modal('hide')
+
+        // delete from the local state so Vue will reload list automatically
+        this.users.splice(index, 1).push(response.data)
+      } catch(error) {
+          this.showModal("Error deleting user")
       }
     },
     async addUser() {
@@ -166,7 +165,7 @@ app.component("user-overview", {
         this.hideForm= true;
       } catch(error) {
         const problemDetails = this.getProblemDetailsString(error.response.data.details)
-        alert(`Validation Errors\n\n` + problemDetails)
+        this.showModal(`Validation Errors`, problemDetails)
       }
     },
     getProblemDetailsString(details) {
@@ -174,7 +173,7 @@ app.component("user-overview", {
         const [property, issue] = x
 
         return `${property}:  ${issue}`
-      }).join("\n")
+      }).join("<br />")
     },
     getToken() {
       this.token = JSON.parse(localStorage.getItem("token"))
