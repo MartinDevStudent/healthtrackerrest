@@ -18,6 +18,24 @@ class JavalinConfig {
             error(404) { ctx -> ctx.json("404 : Not Found") }
         }
 
+    /**
+     * Starts the Javalin web service, initializes necessary configurations, and registers routes.
+     *
+     * This function is responsible for starting the Javalin web service, including setting up the assigned port,
+     * decoding JWTs in the request headers, and registering routes for handling incoming requests.
+     *
+     * @return The configured and started [Javalin] instance representing the running web service.
+     *
+     * Example Usage:
+     * ```kotlin
+     * val javalinInstance = startJavalinService()
+     * ```
+     *
+     * @see Javalin
+     * @see JwtProvider.decodeHandler
+     * @see registerRoutes
+     * @see getRemoteAssignedPort
+     */
     fun startJavalinService(): Javalin {
         app.start(getRemoteAssignedPort())
         app.before(JwtProvider.decodeHandler)

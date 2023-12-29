@@ -37,6 +37,26 @@ inline fun <reified T : Any> jsonToObject(json: String): T =
         .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
         .readValue<T>(json)
 
+/**
+ * Creates and configures an [ObjectMapper] for JSON serialization and deserialization.
+ *
+ * This function initializes and configures an [ObjectMapper] with modules and settings suitable
+ * for handling JSON serialization and deserialization, including support for Java time, Joda time,
+ * Kotlin classes, and disabling the serialization of dates as timestamps.
+ *
+ * @return An [ObjectMapper] configured for JSON processing.
+ *
+ * Example Usage:
+ * ```kotlin
+ * val objectMapper = jsonObjectMapper()
+ * ```
+ *
+ * @see ObjectMapper
+ * @see JavaTimeModule
+ * @see JodaModule
+ * @see KotlinModule
+ * @see SerializationFeature.WRITE_DATES_AS_TIMESTAMPS
+ */
 fun jsonObjectMapper(): ObjectMapper =
     ObjectMapper()
         .registerModule(JavaTimeModule())
